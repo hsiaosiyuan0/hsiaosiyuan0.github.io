@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Lifetime | hsiaosiyuan</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="http://hsiaosiyuan0.github.io/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="http://hsiaosiyuan0.github.io/">~/hsiaosiyuan</a>
+      </li>
+      
+
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">Lifetime</span></h1>
+
+<h2 class="date">2020/08/19</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h1 id="lifetime">Lifetime</h1>
+<p>Rust 的绝大部分语法都非常简洁、易于理解，而其为了保证内存安全引入的 lifetime 概念则对大部分人来说是第一次接触</p>
+<h2 id="变量的作用域">变量的作用域</h2>
+<p>孤零零的「作用域」是不明确的，所以这里的标题是「变量的作用域」，因为作用域的概念，指的就是一个区间、在改区间内，某个变量是可用的。这里「区间」的定义不同，又分为静态作用域或者动态作用域，更多的可以参考 <a href="../javascript/%E9%97%AD%E5%8C%85%E7%9A%84%E4%BD%9C%E7%94%A8.md">闭包的作用</a></p>
+<p>Rust 受到 <a href="https://ocaml.org/">OCaml</a> 这样函数式语言的影响，对变量的 Scope 定义有着一些相似的理解，比如在 OCaml 中通过下面的方式定义变量：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ocaml" data-lang="ocaml"> <span style="color:#66d9ef">let</span> add_vect v1 v2 <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">let</span> len <span style="color:#f92672">=</span> min <span style="color:#f92672">(</span>Array.length v1<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>Array.length v2<span style="color:#f92672">)</span> <span style="color:#66d9ef">in</span>  <span style="color:#f92672">//</span> <span style="color:#f92672">---------+--</span> s1
+      <span style="color:#66d9ef">let</span> res <span style="color:#f92672">=</span> Array.make len 0<span style="color:#f92672">.</span>0 <span style="color:#66d9ef">in</span>                     <span style="color:#f92672">//</span> <span style="color:#f92672">---+-</span> s2 <span style="color:#f92672">|</span>
+        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">=</span> 0 <span style="color:#66d9ef">to</span> len <span style="color:#f92672">-</span> 1 <span style="color:#66d9ef">do</span>                           <span style="color:#f92672">//</span>    <span style="color:#f92672">|</span>     <span style="color:#f92672">|</span> 
+          res<span style="color:#f92672">.(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">&lt;-</span> v1<span style="color:#f92672">.(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">+.</span> v2<span style="color:#f92672">.(</span>i<span style="color:#f92672">)</span>                     <span style="color:#f92672">//</span>    <span style="color:#f92672">|</span>     <span style="color:#f92672">|</span>
+        <span style="color:#66d9ef">done</span><span style="color:#f92672">;</span>                                             <span style="color:#f92672">//</span> <span style="color:#f92672">---+-----+</span>
+</code></pre></div><p>上面这段代码，定义了一个名为 <code>add_vect</code> 的函数，该函数具有两个形参：<code>v1</code> <code>v2</code>，<code>let a in b</code> 语句表示定义了变量 <code>a</code>，它的 lifetime（可用期）在随后的（in 之后）的语句内，换句话说 in 之后出现了一个新的 scope，在这个 scope 中 <code>a</code> 是可用的</p>
+<p>虽然初次接触这样的语法会感到不习惯，但是相信大家也能体会到这里 <code>in</code> 关键字的含义 - <code>in a new scope</code></p>
+<p>回到 Rust 中，它虽然没有沿用上面的语法，但是它对作用域的理解和定义，却是和上面相同的，比如手册中的例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">{
+    <span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>;              <span style="color:#75715e">// ----------+-- &#39;b
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">//           |
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> r <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>x;             <span style="color:#75715e">// --+-- &#39;a  |
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">//   |       |
+</span><span style="color:#75715e"></span>    println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;r: {}&#34;</span>, r);   <span style="color:#75715e">//   |       |
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">// --+       |
+</span><span style="color:#75715e"></span>}                           <span style="color:#75715e">// ----------+
+</span></code></pre></div><p>可以想象每个 <code>let</code> 语句都有一个隐含的 <code>in</code> 关键字</p>
+<h2 id="作用域标识">作用域标识</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">{
+    <span style="color:#66d9ef">let</span> r;                  <span style="color:#75715e">// ---------+-- &#39;a
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">//          |
+</span><span style="color:#75715e"></span>    {                       <span style="color:#75715e">//          |
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>;          <span style="color:#75715e">// -+-- &#39;b  |
+</span><span style="color:#75715e"></span>        r <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>x;             <span style="color:#75715e">//  |       |
+</span><span style="color:#75715e"></span>    }                       <span style="color:#75715e">// -+       |
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">//          |
+</span><span style="color:#75715e"></span>    println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;r: {}&#34;</span>, r);   <span style="color:#75715e">//          |
+</span><span style="color:#75715e"></span>}                           <span style="color:#75715e">// ---------+
+</span></code></pre></div><p>上面这个例子演示的是一个因为错误地在大的作用域中的引用较小作用域中的内容而引发的内存操作错误。显然这个例子在 Rust 中是不能通过编译的</p>
+<p>和我们用眼睛区别上面的例子是非法的类似，Rust 中通过 <code>borrow checker</code> 来自动地确保变量和它们的作用域是正确的，所以很明显它需要将作用域具象化，否则后续针对作用域的校验都无从谈起</p>
+<p>回顾开始的两个例子，为了方便描述不同的作用域，我们使用了 <code>s1 s2 'a 'b</code>，它们的取名没有特殊的含义，仅仅是一个标识的作用。<code>borrow checker</code> 内部为了做到区别每个作用域，也需要对它们进行标识</p>
+<h2 id="作用域泛型参数">作用域泛型参数</h2>
+<p>在程序运行的过程中，每个变量都有其固定的作用域，而且对于静态作用域的语言来说，这个关系在程序运行前就可以确定，这就给 Rust 的 <code>borrow checker</code> 静态分析提供了充要条件</p>
+<p>虽然静态作用域可以静态分析，但是它始终是一个运行时的概念 - 程序运行阶段，变量才是真正绑定到内存空间的某一块的；而对于函数，它在运行就类似一个模板，等到被调用时才会准备其调用环境（调用栈、参数传递等等），所以对于函数的定义，如果参数是引用类型，该参数的作用域要如何描述呢？</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">longest</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span><span style="color:#f92672">&gt;</span>(x: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>, y: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>) -&gt; <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span> {
+    <span style="color:#66d9ef">if</span> x.len() <span style="color:#f92672">&gt;</span> y.len() {
+        x
+    } <span style="color:#66d9ef">else</span> {
+        y
+    }
+}
+</code></pre></div><p><!-- raw HTML omitted -->例1<!-- raw HTML omitted --></p>
+<p>像上面的例子这样，引用类型形参的 lifetime 通过 lifetime annotation 来标注。例子中的 <code>'a</code> 和下面的 <code>'a</code> 有什么联系吗？</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">{
+    <span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>;              <span style="color:#75715e">// ----------+-- &#39;b
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">//           |
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> r <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>x;             <span style="color:#75715e">// --+-- &#39;a  |
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">//   |       |
+</span><span style="color:#75715e"></span>    println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;r: {}&#34;</span>, r);   <span style="color:#75715e">//   |       |
+</span><span style="color:#75715e"></span>                            <span style="color:#75715e">// --+       |
+</span><span style="color:#75715e"></span>}                           <span style="color:#75715e">// ----------+
+</span></code></pre></div><p><!-- raw HTML omitted -->例2<!-- raw HTML omitted --></p>
+<p>上面的例子就是前面出现过的，再次放到这里是为了方便对比。这两个例子在不同的位置都出现了 <code>'a</code>，有什么联系吗？</p>
+<p>例1 中函数 <code>longest</code> 签名中的 <code>'a</code> 和 例2 中的 <code>'a</code> 关系就好比是「形参」和「实参」的关系。更进一步说 例1 中的 <code>longest&lt;'a&gt;</code> 是一个泛型参数，比如在 TS 中，我们会这样写一个泛型函数的签名：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">longest</span>&lt;<span style="color:#f92672">T</span>&gt;(<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">T</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">T</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">T</span>;
+</code></pre></div><p>因为泛型函数在被处理（编译、类型检查等等）之前，就是一个模板，其中的泛型参数等到被处理时才会替换为实际的类型，比如在编译型的语言中：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-swift" data-lang="swift"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swapTwoValues</span>&lt;T&gt;(<span style="color:#66d9ef">_</span> a: <span style="color:#66d9ef">inout</span> T, <span style="color:#66d9ef">_</span> b: <span style="color:#66d9ef">inout</span> T) {
+    <span style="color:#66d9ef">let</span> temporaryA = a
+    a = b
+    b = temporaryA
+}
+
+<span style="color:#66d9ef">var</span> someInt = <span style="color:#ae81ff">3</span>
+<span style="color:#66d9ef">var</span> anotherInt = <span style="color:#ae81ff">107</span>
+swapTwoValues(&amp;someInt, &amp;anotherInt)
+</code></pre></div><p>上面这段 swift 代码，当编译器运行发现调用 <code>swapTwoValues(&amp;someInt, &amp;anotherInt)</code> 的时候，才会为 <code>swapTwoValues&lt;T&gt;</code> 生成一个针对整型的版本的函数实现 <code>swapTwoValues&lt;Int&gt;</code></p>
+<p>相似的，在 Rust 中，如果形参是引用类型，那么就需要对其作用域进行标注，标注的方式就是给变量的作用域一个标识符，比如例子中的 <code>'a</code>，并且这个标识是一个泛型参数 - 因为函数尚未运行，等待函数被调用时，这个泛型参数会被 <code>borrow checker</code> 替换成实际变量所属的作用域标识，然后再进行作用域检查</p>
+<h2 id="理解作用域泛型参数">理解作用域泛型参数</h2>
+<p>Rust 函数签名中的作用域泛型参数，除了作为「作用域标识占位符标记」这个作用外，还起到「说明入参的作用域和返回值的作用域、之间的关系」的作用，比如上面的例子中：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">longest</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span><span style="color:#f92672">&gt;</span>(x: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>, y: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>) -&gt; <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>
+</code></pre></div><p>我们看到返回值是一个引用类型，那么它的作用域必然和入参的作用域存在联系（除了 <code>'static</code>），因为返回值的作用域一共只有下面的几种情况：</p>
+<ol>
+<li>引用类型，和入参相关</li>
+<li>引用类型，<code>'static</code></li>
+<li>值类型，在函数内实例化，作用域为函数体，不过在返回时 move out 交出所有权</li>
+</ol>
+<p>显然只有 情况1 需要特殊对待，那么我们书写函数时，如何标记引用参数的作用域呢？</p>
+<p>来看下面的例子，这个例子中 <code>longest</code> 签名中只使用了一个作用域参数，但是 <code>longest</code> 被调用时，涉及到 3 个不同的作用域：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">longest</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span><span style="color:#f92672">&gt;</span>(x: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>, y: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>) -&gt; <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span> {
+    <span style="color:#66d9ef">if</span> x.len() <span style="color:#f92672">&gt;</span> y.len() {
+        x
+    } <span style="color:#66d9ef">else</span> {
+        y
+    }
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> a <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;a&#34;</span>);             <span style="color:#75715e">// &#39;a
+</span><span style="color:#75715e"></span>    {
+        <span style="color:#66d9ef">let</span> b <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;aa&#34;</span>);        <span style="color:#75715e">// &#39;b
+</span><span style="color:#75715e"></span>        {
+            <span style="color:#66d9ef">let</span> c <span style="color:#f92672">=</span> longest(<span style="color:#f92672">&amp;</span>a, <span style="color:#f92672">&amp;</span>b);       <span style="color:#75715e">// &#39;c
+</span><span style="color:#75715e"></span>            println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{}&#34;</span>, c);
+        }
+    }
+}
+</code></pre></div><p><!-- raw HTML omitted -->例3 <a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2018&amp;gist=c7629d6706f280109c23fda451796a32">运行</a><!-- raw HTML omitted --></p>
+<p>这里需要再明确作用域的一个特性 - 作用域之间只有包含关系，没有相交关系：</p>
+<p><!-- raw HTML omitted --></p>
+<p>例3 中在调用 <code>longest(&amp;a, &amp;b)</code> 时，入参加上返回值涉及到 3 个不同的作用域。所以，虽然 <code>longest</code> 签名中只使用了一个作用域参数，但并不表示实际的作用域必须唯一 - 实际的作用域可以为多个，不过这些作用域需要是包含的关系，在调用时会被替换为 3 者间最小范围的作用域。下面我们将代码进行作用域的补全，来演示 <code>borrow checker</code> 的工作方式（注意这并不是 Rust 的语法，只是用来演示）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">longest</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span><span style="color:#f92672">&gt;</span>(x: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>, y: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>) -&gt; <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span> {
+    <span style="color:#66d9ef">if</span> x.len() <span style="color:#f92672">&gt;</span> y.len() {
+        x
+    } <span style="color:#66d9ef">else</span> {
+        y
+    }
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> a <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;a&#34;</span>);             <span style="color:#75715e">// &#39;a
+</span><span style="color:#75715e"></span>    {
+        <span style="color:#66d9ef">let</span> b <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;aa&#34;</span>);        <span style="color:#75715e">// &#39;b
+</span><span style="color:#75715e"></span>        {
+            <span style="color:#66d9ef">let</span> c <span style="color:#f92672">=</span> longest(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;a</span> a <span style="color:#66d9ef">as</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;c</span> a, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;b</span> b <span style="color:#66d9ef">as</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;c</span> b);     <span style="color:#75715e">// &#39;c
+</span><span style="color:#75715e"></span>            println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{}&#34;</span>, c);
+        }
+    }
+}
+</code></pre></div><p>我们看到在调用时，<code>borrow checker</code> 会做作用域的转换 <code>as</code>，比如 <code>&amp;'a a as &amp;'c a</code>。我们知道这样的转换是能成功的，因为作用域 <code>'a</code> 包含了作用域 <code>'c</code>。知道了这个转换过程后，下面的错误例子应该就变得很好理解了：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">longest</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span><span style="color:#f92672">&gt;</span>(x: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>, y: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>) -&gt; <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span> {
+    <span style="color:#66d9ef">if</span> x.len() <span style="color:#f92672">&gt;</span> y.len() {
+        x
+    } <span style="color:#66d9ef">else</span> {
+        y
+    }
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> c;                                 <span style="color:#75715e">// &#39;c
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> a <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;a&#34;</span>);             <span style="color:#75715e">// &#39;a
+</span><span style="color:#75715e"></span>    {
+        <span style="color:#66d9ef">let</span> b <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;aa&#34;</span>);        <span style="color:#75715e">// &#39;b
+</span><span style="color:#75715e"></span>        {
+            c <span style="color:#f92672">=</span> longest(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;a</span> a <span style="color:#66d9ef">as</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;d</span> a, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;b</span> b <span style="color:#66d9ef">as</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;d</span> b);     <span style="color:#75715e">// &#39;d
+</span><span style="color:#75715e"></span>        }
+    }
+    <span style="color:#75715e">// c 此时绑定的引用其作用域是 &#39;d，于是在做作用域转换的时候就会发生错误，转化的过程如下：
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 1. 先直接转换 &amp;&#39;d c as &amp;&#39;c c，显然不能成功，因为 &#39;d 的范围小于 &#39;c
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 2. 查看 &amp;&#39;d c 是否是向下转换而来，取符合条件的外部作用域的范围最小的一个，所以转换变为
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 3. &amp;&#39;b c as &amp;&#39;c c，此时因为依然不能转换，则无法通过作用域校验
+</span><span style="color:#75715e"></span>    println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{}&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;d</span> c <span style="color:#66d9ef">as</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;c</span> c);
+}
+</code></pre></div><p>作为对比，我们可以看下面这个稍微修改后的例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">longest</span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">&#39;a</span><span style="color:#f92672">&gt;</span>(x: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>, y: <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span>) -&gt; <span style="color:#66d9ef">&amp;</span><span style="color:#a6e22e">&#39;a</span> <span style="color:#66d9ef">str</span> {
+    <span style="color:#66d9ef">if</span> x.len() <span style="color:#f92672">&gt;</span> y.len() {
+        x
+    } <span style="color:#66d9ef">else</span> {
+        y
+    }
+}
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> c;                              <span style="color:#75715e">// &#39;c
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">let</span> a <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;a&#34;</span>);          <span style="color:#75715e">// &#39;a      
+</span><span style="color:#75715e"></span>    {
+        <span style="color:#66d9ef">let</span> b <span style="color:#f92672">=</span> String::from(<span style="color:#e6db74">&#34;aa&#34;</span>);     <span style="color:#75715e">// &#39;b    
+</span><span style="color:#75715e"></span>        {
+            c <span style="color:#f92672">=</span> longest(<span style="color:#f92672">&amp;</span>a, <span style="color:#f92672">&amp;</span>b);        <span style="color:#75715e">// &#39;d
+</span><span style="color:#75715e"></span>        }
+        <span style="color:#75715e">// c 此时绑定的引用其作用域是 &#39;d，转化的过程如下：
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 1. 先直接转换 &amp;&#39;d c as &amp;&#39;c c，显然不能成功，因为 &#39;d 的范围小于 &#39;c
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 2. 查看 &amp;&#39;d c 是否是向下转换而来，取符合条件的外部作用域的范围最小的一个，所以转换变为
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 3. &amp;&#39;b c as &amp;&#39;b c，转换成功，因此通过作用域检查
+</span><span style="color:#75715e"></span>        println<span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;{}&#34;</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;d</span> c <span style="color:#66d9ef">as</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">&#39;b</span> c);
+    }
+}
+</code></pre></div><h2 id="使用作用域泛型参数">使用作用域泛型参数</h2>
+<p>在上一节中，我们通过补全每一步的作用域以及作用域之间的相互转换来理解 <code>borrow checker</code> 的工作方式，在平时的编码过程中，我们完全不必自己对作用域做面面俱到的检查，也没有必要对自己做这方面的训练，交给 <code>borrow checker</code> 来完成就可以了，我们只需要根据 <code>borrow checker</code> 的提示、结合自己的代码需求调整相关代码就可以了</p>
+<p>之所以这么说，是希望大家在使用作用域泛型参数时不要有太大的心里负担。因为很可能大家想一次性书写出通过 <code>borrow checker</code> 校验的代码，当面对频繁的错误提示时产生挫败感</p>
+<p>对于作用域泛型参数，在书写的时候，只要考虑通过作用域泛型参数来描述<strong>各个引用之间的作用域关系</strong>（比如 入参和返回值）即可，就像我们已经熟练使用的类型泛型参数一样，后续的工作（作用域校验，类型校验）统统交给编译工具链来确保代码的正确性即可</p>
+<p><a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2018&amp;gist=1b919d280f9d049ebc39bc1269ff5e41">struct 演示</a></p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://doc.rust-lang.org/1.9.0/book/lifetimes.html">https://doc.rust-lang.org/1.9.0/book/lifetimes.html</a></li>
+<li><a href="https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html">https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html</a></li>
+<li><a href="https://stackoverflow.com/questions/29861388/when-is-it-useful-to-define-multiple-lifetimes-in-a-struct">https://stackoverflow.com/questions/29861388/when-is-it-useful-to-define-multiple-lifetimes-in-a-struct</a></li>
+</ul>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/hsiaosiyuan0">GitHub</a>
+      
+    </footer>
+  </body>
+</html>
+

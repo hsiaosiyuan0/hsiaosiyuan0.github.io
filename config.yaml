@@ -1,4 +1,4 @@
-baseURL: "http://example.org/"
+baseURL: "http://hsiaosiyuan0.github.io/"
 languageCode: "en-us"
 title: "hsiaosiyuan"
 preserveTaxonomyNames: true
@@ -6,7 +6,7 @@ enableEmoji: true
 markup.goldmark.renderer: true
 toc: true
 theme: "hugo-classic"
-
+publishDir: "docs"
 permalinks:
   post: "/post/:year/:month/:day/:slug/"
 

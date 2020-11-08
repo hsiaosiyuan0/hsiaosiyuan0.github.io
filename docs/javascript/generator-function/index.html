@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Generator Function | hsiaosiyuan</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="http://hsiaosiyuan0.github.io/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="http://hsiaosiyuan0.github.io/">~/hsiaosiyuan</a>
+      </li>
+      
+
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">Generator Function</span></h1>
+
+<h2 class="date">2019/08/04</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h1 id="generator-function">Generator Function</h1>
+<p>目前在我的玩具 JS 引擎 <a href="https://github.com/hsiaosiyuan0/naive">naive</a> 中还没有实现 Generator，所以这篇除了可以当做是预先调研之外，也可以作为稍微深入到 Generator 实现细节的介绍。</p>
+<h2 id="普通函数">普通函数</h2>
+<p>由于 Generator Function 和普通函数长得太像了，所以先回顾一下普通函数实现细节。</p>
+<p>我们知道在 C 语言中函数最终体现为代码段中的一段内容，该段内容就是函数体内容对应的机器码，而函数名则为该段代码的首地址，在编译期间会被替换处理。</p>
+<p>但是在学习 JS 的时候，并不是每个地方都能以 C 语言来参考，这里把 C 换成任何其他语言也说得通；可以在一些问题发生的时候，使用已经掌握的知识来参考联想，但是最终还是要回归到该语言自身的<a href="https://www.ecma-international.org/ecma-262/6.0/">技术规格文档</a>中。</p>
+<p>在 JS 中，函数作为一个对象，该对象包含了以下几个内容：</p>
+<ol>
+<li>形参信息</li>
+<li>函数体内容所对应的字节码</li>
+<li>与之关联的<a href="https://github.com/hsiaosiyuan0/blog/blob/master/%2Fposts%2Fjavascript%2F%E9%97%AD%E5%8C%85.md">闭包</a></li>
+</ol>
+<p>当我们调用函数的时候，引擎就会做以下的事情：</p>
+<ol>
+<li>创建一个表示调用信息的对象 <code>CallInfo</code></li>
+<li>将第一步创建的对象添加到调用栈中</li>
+<li>引擎根据调用栈顶层的调用信息继续执行</li>
+</ol>
+<p>而 <code>CallInfo</code>，包含下面的内容：</p>
+<ol>
+<li>调用的函数对象</li>
+<li>PC，表示接下来需要被执行的字节码的地址</li>
+<li><code>this</code> 对象，用于在执行 <code>THIS</code> 指令的时候取得对应的对象</li>
+</ol>
+<p>另外 JS 引擎在运行时会用到两个栈结构，一个作为调用栈，一个作为操作数栈。我们上面介绍的是调用栈，而操作数栈用于存放指令执行时所用到的操作数，包括局部变量和临时变量。</p>
+<h2 id="生成器函数">生成器函数</h2>
+<p>我们来看一个典型的生成器函数的例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span><span style="color:#f92672">*</span> <span style="color:#a6e22e">idMaker</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">index</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+  <span style="color:#66d9ef">while</span>(<span style="color:#66d9ef">true</span>)
+    <span style="color:#66d9ef">yield</span> <span style="color:#a6e22e">index</span><span style="color:#f92672">++</span>;
+}
+</code></pre></div><p>想必大家第一次接触到这个语法的时候一头雾水，因为一直以来 <code>while(true){ /* no break or return */ }</code> 这样的形式，直接告诉我们该循环为一个死循环。恰好上面的例子中，<code>while</code> 语句中也没有 <code>break</code> 和 <code>return</code>，如果是死循环，那么这段代码肯定就失去意义了，如果不是死循环，又打破了我们之前的认知。</p>
+<p>其实 <code>yield</code> 语句，不过是一个语法糖(Syntactic sugar)。所谓语法糖就是一些方便程序员书写代码的语法，它们总能找到不使用该语法的对应写法。如果我们参考了<a href="https://www.ecma-international.org/ecma-262/6.0/">技术规格文档</a>，那么发现其实 <code>yield</code> 隐含了 <code>return</code> 的语义，知道这个就放心了，原来我们之前的认知是准确无误的。</p>
+<p>在了解了 <code>yield</code> 隐含了 <code>return</code> 的语义后，死循环的问题可以先不用考虑了，但是产生了一个新的问题：在普通函数中，一旦 <code>return</code> 出去了，等于函数主动放弃了执行权，那么再没有办法恢复之前的执行状态。但是我们的生成器函数，是可以不断执行的，换句话说，在 <code>yield</code> 隐含的 <code>return</code> 语义生效后依然可以保持执行状态，以便下一次执行时从上一次暂停点继续执行。</p>
+<p>因为 JS 引擎是一个单线程的引擎，所以同一时间内，只有一段 JS 代码(函数)会被执行，换句话说，这段时间内执行的代码就占据了程序(引擎)的控制权，而当当前函数(callee)执行完毕后，引擎转而继续执行 caller 中的内容，就称函数交出了对引擎的控制权。我们可以显式地交出控制权，通过显式地 <code>return</code> 语句；或者隐式地交出控制权，通过编译器在每个函数末尾自动插入的 <code>return</code> 语句。之所以普通函数 <code>return</code> 之后无法再之前恢复状态是因为，保存之前调用信息的 <code>CallInfo</code> 对象已经从调用栈中被移除了，也就无法知道之前的 <code>PC</code> 等信息了</p>
+<p>不知道大家看到这里会不会有灵光一闪的感觉：如果 <code>CallInfo</code> 对象在调用结束后，能以一种方式保存它，那么后续再次调用它时，不就能继续执行了吗？没错，生成器函数本质上就是这个道理。</p>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/hsiaosiyuan0">GitHub</a>
+      
+    </footer>
+  </body>
+</html>
+

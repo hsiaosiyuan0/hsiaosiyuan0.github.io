@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>汇编语言学习小结 | hsiaosiyuan</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="http://hsiaosiyuan0.github.io/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="http://hsiaosiyuan0.github.io/">~/hsiaosiyuan</a>
+      </li>
+      
+
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">汇编语言学习小结</span></h1>
+
+<h2 class="date">2019/06/17</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h1 id="汇编语言学习小结">汇编语言学习小结</h1>
+<p>学习汇编语言书「guide-to-assembly-language-programming-in-linux」的收获:</p>
+<ol>
+<li>了解汇编语言的语法</li>
+<li>了解 CPU 和 内存的基本结构</li>
+<li>栈及其相关操作</li>
+<li>了解汇编语言层面如何进行 Procedure 调用，包括传参和返回值和返回点如何处理</li>
+<li>了解汇编语言和 C 语言如何相互调用，以及 C 语言是如何编译成汇编语言</li>
+</ol>
+<h2 id="汇编语言的语法">汇编语言的语法</h2>
+<p>汇编语言的语法包括预处理和指令生成两种，预处理部分在汇编的预处理阶段被处理，而指令生成部分则会在编译阶段生成具体的指令。
+比如预处理阶段的 <code>macro</code> 和 <code>%define</code> 以及指令生成阶段的 <code>add AX, 1</code>。</p>
+<p>对于指令生成的语法，都是每一行对应一条指令，且语法形式为 <code>opode operand1, operand2, ...</code> 即操作码接操作数的形式。</p>
+<h2 id="了解-cpu-和内存的基本结构">了解 CPU 和内存的基本结构</h2>
+<p>CPU 由各种运算电路以及寄存器组成。运算电路负责实际的运算，而寄存器用于存放参数，临时结果，最终结果。寄存器分为通用寄存器和特定用途寄存器。</p>
+<p>特定用途寄存器又大致分为： 段寄存器，标志寄存器和指令指针寄存器，等。对于 EBP 和 ESP 这两个寄存，有时又被称为特殊通用寄存器，这是因为在进行栈的相关操作时这两个寄存器会有特殊用途。所谓“通用”指的是，该寄存器可以作为计算或者存放临时结果的寄存器，而特殊寄存器则被限定了其用途，比如指令指针寄存器，只可以用于存放接下来的指令的位置。</p>
+<p>之所以 ESP 和 EBP 被称为通用寄存器就是因为，这两个寄存器也是可以在计算时用于存放临时结果的，只不过在栈相关操作时，为了方便将他们的功能基于约定地限定了。</p>
+<p>对于内存的基本结构而言，CPU 并不能够直接访问内存上的数据，而是要通过地址总线，数据总线和控制总线，来指挥内存芯片来读取或者写入内存数据。由于内存以及 CPU 的设计结构限制，会有存在内存上的数据需要进行对齐的要求，如前所述，该要求并不是绝对的。数据对齐一般都是有编译器自动完成的，这在 C 语言中就涉及到数据 padding。</p>
+<h2 id="栈及其相关操作">栈及其相关操作</h2>
+<p>栈是一个后进先出的结构，并且向低地址方向增长，栈中只会存放 word 和 double words 长度的元素，不会单独存放单个字节。TOS 指向的是栈顶元素的最低字节，栈中元素被 pop 后，只是将 TOS 向高地址方向进行移动，以此达到元素被移出的效果。移出元素的内存中的数据则实在下一次的入栈操作时被覆写。</p>
+<h2 id="了解-procedure-调用细节">了解 Procedure 调用细节</h2>
+<p>过程调用时的参数可以通过寄存器或者栈进行传递。使用寄存器和栈个有利弊。使用寄存器能获取更高的性能，这是因为减少了内存操作，操作数直接存在于寄存器中了。使用寄存器的弊端就是，寄存器数量是有限的，所以主要还是应该将它们用于计算。使用栈传递的参数的好处就是可以将原本用于传参的寄存器解放出来，用于计算，弊端就是在涉及到具体的计算时，需要将数据从栈中载入寄存器。</p>
+<p>参数的释放，可以由调用者或者被调用者来释放。在参数长度固定的情况下，由被调用者进行参数的释放，比较符合模块化的设计思路。当参数长度不固定时，则只能有调用者来进行参数的释放。</p>
+<p>在过程内部，在需要使用寄存器时，首先需要想将其进行压栈备份，然后在过程执行完毕后，进行出栈恢复。</p>
+<p>call 指令的操作数并不是过程的相对代码段基地址的偏移量，而是相对被调用过程的第一条指令想对于 call 指令的下一条指令的相对偏移量，比如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">%</span><span style="color:#a6e22e">include</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">io.mac</span><span style="color:#960050;background-color:#1e0010">&#34;</span>
+<span style="color:#a6e22e">.DATA</span>
+<span style="color:#a6e22e">prompt_msg1</span>  <span style="color:#66d9ef">db</span>   <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">Please</span> <span style="color:#66d9ef">input</span> <span style="color:#66d9ef">the</span> <span style="color:#66d9ef">first</span> <span style="color:#66d9ef">number</span>: <span style="color:#960050;background-color:#1e0010">&#34;</span>,<span style="color:#ae81ff">0</span>
+<span style="color:#a6e22e">prompt_msg2</span>  <span style="color:#66d9ef">db</span>   <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">Please</span> <span style="color:#66d9ef">input</span> <span style="color:#66d9ef">the</span> <span style="color:#66d9ef">second</span> <span style="color:#66d9ef">number</span>: <span style="color:#960050;background-color:#1e0010">&#34;</span>,<span style="color:#ae81ff">0</span>
+<span style="color:#a6e22e">sum_msg</span>      <span style="color:#66d9ef">db</span>   <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#66d9ef">The</span> <span style="color:#66d9ef">sum</span> <span style="color:#66d9ef">is</span> <span style="color:#960050;background-color:#1e0010">&#34;</span>,<span style="color:#ae81ff">0</span>
+
+<span style="color:#a6e22e">.CODE</span>
+      <span style="color:#a6e22e">.STARTUP</span>
+      <span style="color:#a6e22e">PutStr</span>  <span style="color:#66d9ef">prompt_msg1</span>    <span style="color:#75715e">; request first number
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">GetInt</span>  <span style="color:#66d9ef">CX</span>             <span style="color:#75715e">; CX = first number
+</span><span style="color:#75715e"></span>
+      <span style="color:#a6e22e">PutStr</span>  <span style="color:#66d9ef">prompt_msg2</span>    <span style="color:#75715e">; request second number
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">GetInt</span>  <span style="color:#66d9ef">DX</span>             <span style="color:#75715e">; DX = second number
+</span><span style="color:#75715e"></span>
+      <span style="color:#a6e22e">call</span>    <span style="color:#66d9ef">sum</span>            <span style="color:#75715e">; returns sum in AX
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">PutStr</span>  <span style="color:#66d9ef">sum_msg</span>        <span style="color:#75715e">; display sum
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">PutInt</span>  <span style="color:#66d9ef">AX</span>
+      <span style="color:#a6e22e">nwln</span>
+done:
+      <span style="color:#a6e22e">.EXIT</span>
+
+<span style="color:#75715e">;-----------------------------------------------------------
+</span><span style="color:#75715e">; Procedure sum receives two integers in CX and DX.
+</span><span style="color:#75715e">; The sum of the two integers is returned in AX.
+</span><span style="color:#75715e">;-----------------------------------------------------------
+</span><span style="color:#75715e"></span>sum:
+      <span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">AX</span>,<span style="color:#66d9ef">CX</span>          <span style="color:#75715e">; sum = first number
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">add</span>     <span style="color:#66d9ef">AX</span>,<span style="color:#66d9ef">DX</span>          <span style="color:#75715e">; sum = sum + second number
+</span><span style="color:#75715e"></span>      <span style="color:#66d9ef">ret</span>
+</code></pre></div><p>上面代码中的 <code>call sum</code> 执行过程如下:</p>
+<ol>
+<li><code>call sum</code> 指令被读取，此时 EIP 寄存器已经为 <code>PutStr  sum_msg</code> 相对代码段基地址的偏移量了，假设 <code>call sum</code> 的地址为 <code>x</code>，则此时 EIP 的内容为 <code>x+1</code>。</li>
+<li><code>call sum</code> 的操作数为 <code>sum</code> 第一条指令的地址 <code>mov AX，CX</code> 相对于 <code>PutStr  sum_msg</code> 的相对偏移量。假设 <code>mov AX，CX</code> 地址为 y，此时 call 的操作数为 <code>y - (x + 1)</code>。因此，call 指令执行完成后，即对 EIP 中的地址进行调整，使得 EIP 中的地址变为了 <code>sum</code> 第一条命令的地址，即 <code>y = (y - (x + 1) + (x + 1))</code>。</li>
+</ol>
+<p>除了修改 EIP 的内容达到指令跳转的功能外，call 指令还会将当前(修改前)的 EIP 内容压入栈中，因此在被调用过程的内部，可以使用 ret 指令进行返回。有一点需要注意的时，在执行 ret 指令时，ESP 必须指向栈上的记录返回地址的元素，这在由被调用的过程释放参数的情况下需要注意，可以使用 ret 的操作数来完成释放并返回的效果:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#a6e22e">ret</span>     <span style="color:#66d9ef">optional-value</span>
+<span style="color:#75715e">; 类似
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">EIP</span><span style="color:#960050;background-color:#1e0010">=</span><span style="color:#66d9ef">SS</span>:<span style="color:#66d9ef">ESP</span>
+<span style="color:#a6e22e">ESP</span><span style="color:#960050;background-color:#1e0010">=</span><span style="color:#66d9ef">ESP</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#66d9ef">optional-value</span>
+</code></pre></div><p>局部变量的处理，通过使用 enter 和 leave 指令来完成:</p>
+<p>enter 指令的格式为:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#a6e22e">enter</span>   <span style="color:#66d9ef">bytes</span>,<span style="color:#66d9ef">level</span>
+
+</code></pre></div><p>level 用于高级语言中表示栈的嵌套层次</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#a6e22e">enter</span>   <span style="color:#66d9ef">XX</span>,<span style="color:#ae81ff">0</span>
+<span style="color:#75715e">; 等价于
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">push</span>    <span style="color:#66d9ef">EBP</span> 
+<span style="color:#66d9ef">mov</span>     <span style="color:#66d9ef">EBP</span>,<span style="color:#66d9ef">ESP</span>
+<span style="color:#a6e22e">sub</span>     <span style="color:#66d9ef">ESP</span>,<span style="color:#66d9ef">XX</span>
+</code></pre></div><p>注意上面的 <code>sub ESP,XX</code>，前面提到栈是往低地址进行增长的，这里的减就是这个意思。</p>
+<p>leave 指令的执行类似:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">ESP</span>,<span style="color:#66d9ef">EBP</span>
+<span style="color:#a6e22e">pop</span>     <span style="color:#66d9ef">EBP</span>
+</code></pre></div><p>注意这里是将 EBP 赋值给了 ESP，而 EBP 的内容是在进入被调用过程后立即保存的 ESP 的值。</p>
+<p>一般的过程调用模板类似，当然这是由被调用函数释放参数的过程:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">proc-name:
+    <span style="color:#a6e22e">enter</span>   <span style="color:#66d9ef">XX</span>,<span style="color:#ae81ff">0</span>
+    <span style="color:#75715e">;procedure body
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">leave</span>
+    <span style="color:#a6e22e">ret</span>     <span style="color:#66d9ef">YY</span>
+</code></pre></div><p>如果过程需要使用到局部变量，那么 XX 将是一个非零的值。YY 目的是释放传入的参数。</p>
+<p>再补充一下 call 与 jmp 的区别：</p>
+<ul>
+<li>jmp 指令只会跳转到指定的位置</li>
+<li>call 指令除了会进行跳转之外，还会将将钱 EIP 寄存器的内容压入栈中</li>
+</ul>
+<p>这里分别是 call 和 jmp 的手册: <a href="https://c9x.me/x86/html/file_module_x86_id_26.html">call</a>， <a href="https://c9x.me/x86/html/file_module_x86_id_147.html">jmp</a></p>
+<p>可以看到，上文的描述并不是完全的准确，call 和 jmp 一样，根据跳转的距离分为 short, near，far。在 short 和 near(部分) 情况下，使用的相对位移，其他情况使用的是绝对地址。</p>
+<h2 id="和-c-语言相互调用">和 C 语言相互调用</h2>
+<p>本书的 C 编译成汇编的例子在实际操作中可能因为 gcc 版本的差异，导致汇编结果不同。而且汇编的结果显示:</p>
+<p>C 代码:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">test</span>(<span style="color:#66d9ef">int</span> x, <span style="color:#66d9ef">int</span> y, <span style="color:#66d9ef">int</span> z) {
+    <span style="color:#66d9ef">return</span> x <span style="color:#f92672">+</span> y <span style="color:#f92672">+</span> z;
+}
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">void</span>) {
+    <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">25</span>, y <span style="color:#f92672">=</span> <span style="color:#ae81ff">70</span>;
+    <span style="color:#66d9ef">int</span> value;
+    value <span style="color:#f92672">=</span> test(x, y, <span style="color:#ae81ff">5</span>);
+}
+</code></pre></div><p>的汇编结果为，使用 <code>gcc -S -masm=intel test.c</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">	<span style="color:#a6e22e">.file</span>	<span style="color:#e6db74">&#34;test.c&#34;</span>
+	<span style="color:#a6e22e">.intel_syntax</span> <span style="color:#66d9ef">noprefix</span>
+	<span style="color:#a6e22e">.text</span>
+	<span style="color:#a6e22e">.globl</span>	<span style="color:#66d9ef">test</span>
+	<span style="color:#a6e22e">.type</span>	<span style="color:#66d9ef">test</span>, <span style="color:#a6e22e">@function</span>
+test:
+.LFB0:
+	<span style="color:#a6e22e">.cfi_startproc</span>
+	<span style="color:#a6e22e">push</span>	<span style="color:#66d9ef">rbp</span>
+	<span style="color:#a6e22e">.cfi_def_cfa_offset</span> <span style="color:#ae81ff">16</span>
+	<span style="color:#a6e22e">.cfi_offset</span> <span style="color:#ae81ff">6</span>, -<span style="color:#ae81ff">16</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">rbp</span>, <span style="color:#66d9ef">rsp</span>
+	<span style="color:#a6e22e">.cfi_def_cfa_register</span> <span style="color:#ae81ff">6</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">4</span>[<span style="color:#66d9ef">rbp</span>], <span style="color:#66d9ef">edi</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">8</span>[<span style="color:#66d9ef">rbp</span>], <span style="color:#66d9ef">esi</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">12</span>[<span style="color:#66d9ef">rbp</span>], <span style="color:#66d9ef">edx</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">edx</span>, <span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">4</span>[<span style="color:#66d9ef">rbp</span>]
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">8</span>[<span style="color:#66d9ef">rbp</span>]
+	<span style="color:#a6e22e">add</span>	<span style="color:#66d9ef">edx</span>, <span style="color:#66d9ef">eax</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">12</span>[<span style="color:#66d9ef">rbp</span>]
+	<span style="color:#a6e22e">add</span>	<span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">edx</span>
+	<span style="color:#a6e22e">pop</span>	<span style="color:#66d9ef">rbp</span>
+	<span style="color:#a6e22e">.cfi_def_cfa</span> <span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">8</span>
+	<span style="color:#a6e22e">ret</span>
+	<span style="color:#a6e22e">.cfi_endproc</span>
+.LFE0:
+	<span style="color:#a6e22e">.size</span>	<span style="color:#66d9ef">test</span>, <span style="color:#66d9ef">.-test</span>
+	<span style="color:#a6e22e">.globl</span>	<span style="color:#66d9ef">main</span>
+	<span style="color:#a6e22e">.type</span>	<span style="color:#66d9ef">main</span>, <span style="color:#a6e22e">@function</span>
+main:
+.LFB1:
+	<span style="color:#a6e22e">.cfi_startproc</span>
+	<span style="color:#a6e22e">push</span>	<span style="color:#66d9ef">rbp</span>
+	<span style="color:#a6e22e">.cfi_def_cfa_offset</span> <span style="color:#ae81ff">16</span>
+	<span style="color:#a6e22e">.cfi_offset</span> <span style="color:#ae81ff">6</span>, -<span style="color:#ae81ff">16</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">rbp</span>, <span style="color:#66d9ef">rsp</span>
+	<span style="color:#a6e22e">.cfi_def_cfa_register</span> <span style="color:#ae81ff">6</span>
+	<span style="color:#a6e22e">sub</span>	<span style="color:#66d9ef">rsp</span>, <span style="color:#ae81ff">16</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">12</span>[<span style="color:#66d9ef">rbp</span>], <span style="color:#ae81ff">25</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">8</span>[<span style="color:#66d9ef">rbp</span>], <span style="color:#ae81ff">70</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">ecx</span>, <span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">8</span>[<span style="color:#66d9ef">rbp</span>]
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">12</span>[<span style="color:#66d9ef">rbp</span>]
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">edx</span>, <span style="color:#ae81ff">5</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">esi</span>, <span style="color:#66d9ef">ecx</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">edi</span>, <span style="color:#66d9ef">eax</span>
+	<span style="color:#a6e22e">call</span>	<span style="color:#66d9ef">test</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">DWORD</span> <span style="color:#66d9ef">PTR</span> -<span style="color:#ae81ff">4</span>[<span style="color:#66d9ef">rbp</span>], <span style="color:#66d9ef">eax</span>
+	<span style="color:#a6e22e">mov</span>	<span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0</span>
+	<span style="color:#a6e22e">leave</span>
+	<span style="color:#a6e22e">.cfi_def_cfa</span> <span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">8</span>
+	<span style="color:#a6e22e">ret</span>
+	<span style="color:#a6e22e">.cfi_endproc</span>
+.LFE1:
+	<span style="color:#a6e22e">.size</span>	<span style="color:#66d9ef">main</span>, <span style="color:#66d9ef">.-main</span>
+	<span style="color:#a6e22e">.ident</span>	<span style="color:#e6db74">&#34;GCC: (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0&#34;</span>
+	<span style="color:#a6e22e">.section</span>	<span style="color:#66d9ef">.note.GNU-stack</span>,<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#a6e22e">@progbits</span>
+</code></pre></div><p>可以看到并没有使用栈进行传参，而是使用的寄存器，所以问题在就在如果代码是 C 和汇编进行的混编，那么汇编的部分如何知道 C 语言使用的是哪几个寄存器进行的传参？后续看到的再进行补充</p>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/hsiaosiyuan0">GitHub</a>
+      
+    </footer>
+  </body>
+</html>
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cpps on hsiaosiyuan</title>
+    <link>http://hsiaosiyuan0.github.io/cpp/</link>
+    <description>Recent content in Cpps on hsiaosiyuan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 Jun 2019 00:00:00 +0800</lastBuildDate><atom:link href="http://hsiaosiyuan0.github.io/cpp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The as-if rule</title>
+      <link>http://hsiaosiyuan0.github.io/cpp/the-as-if-rule/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://hsiaosiyuan0.github.io/cpp/the-as-if-rule/</guid>
+      <description>The as-if rule 之前了解过 CPP 编译器会有返回值优化「RVO, Return Value Optimization」功能。所以搜索了一下 C 编译器是否也具有该功能。
+所谓 RVO，考虑下面的代码：
+#include &amp;lt;iostream&amp;gt; struct C { C() {} C(const C&amp;amp;) { std::cout &amp;lt;&amp;lt; &amp;#34;A copy was made.\n&amp;#34;; } }; C f() { return C(); } int main() { std::cout &amp;lt;&amp;lt; &amp;#34;Hello World!\n&amp;#34;; C obj = f(); return 0; } 在函数 f 中，直接返回了栈上创建的 C 的实例。在未做优化的情况下，目标代码会将栈上的返回值数据拷贝给 caller；而在有了 RVO 的情况下，该拷贝操作可以被优化掉，即原本在 f 调用栈上创建的返回值，直接创建在 caller 的调用栈上，这样在 f 调用结束后，caller 可以直接使用返回值而不需要拷贝。
+而 C/CPP 中的这些优化(包括 RVO)，都遵循了 as-if 原则，规则的细节可以参考 The as-if rule.</description>
+    </item>
+    
+  </channel>
+</rss>
