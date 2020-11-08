@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Decorator has different implementations in babel and tsc | hsiaosiyuan</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="http://example.org/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="http://example.org/">~/hsiaosiyuan</a>
+      </li>
+      
+
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">Decorator has different implementations in babel and tsc</span></h1>
+
+<h2 class="date">2020/08/20</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h1 id="decorator-has-different-implementations-in-babel-and-tsc">Decorator has different implementations in babel and tsc</h1>
+<p>Assuming we have below code:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Controller</span>, <span style="color:#a6e22e">Get</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;@nestjs/common&#39;</span>;
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AppService</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./app.service&#39;</span>;
+
+<span style="color:#66d9ef">@Controller</span>()
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
+  <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">appService</span>: <span style="color:#66d9ef">AppService</span>) {}
+
+  <span style="color:#66d9ef">@Get</span>()
+  <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
+  }
+}
+</code></pre></div><p>for tsc with the option <code>emitDecoratorMetadata</code> is turned on, above code will be translated into：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Controller</span>, <span style="color:#a6e22e">Get</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;@nestjs/common&#39;</span>;
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AppService</span> } <span style="color:#a6e22e">from</span> <span style="color:#e6db74">&#39;./app.service&#39;</span>;
+<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">AppController</span> <span style="color:#f92672">=</span> <span style="color:#75715e">/** @class */</span> (() =&gt; {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">_a</span>;
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">AppController</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
+        <span style="color:#a6e22e">constructor</span>(<span style="color:#a6e22e">appService</span>) {
+            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">appService</span>;
+        }
+        <span style="color:#a6e22e">getHello</span>() {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
+        }
+    };
+    <span style="color:#a6e22e">__decorate</span>([
+        <span style="color:#a6e22e">Get</span>(),
+        <span style="color:#a6e22e">__metadata</span>(<span style="color:#e6db74">&#34;design:type&#34;</span>, Function),
+        <span style="color:#a6e22e">__metadata</span>(<span style="color:#e6db74">&#34;design:paramtypes&#34;</span>, []),
+        <span style="color:#a6e22e">__metadata</span>(<span style="color:#e6db74">&#34;design:returntype&#34;</span>, String)
+    ], <span style="color:#a6e22e">AppController</span>.<span style="color:#a6e22e">prototype</span>, <span style="color:#e6db74">&#34;getHello&#34;</span>, <span style="color:#66d9ef">null</span>);
+    <span style="color:#a6e22e">AppController</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">__decorate</span>([
+        <span style="color:#a6e22e">Controller</span>(),
+        <span style="color:#75715e">// see here, the parameter type is retained
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">__metadata</span>(<span style="color:#e6db74">&#34;design:paramtypes&#34;</span>, [<span style="color:#66d9ef">typeof</span> (<span style="color:#a6e22e">_a</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">typeof</span> <span style="color:#a6e22e">AppService</span> <span style="color:#f92672">!==</span> <span style="color:#e6db74">&#34;undefined&#34;</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">AppService</span>) <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;function&#34;</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">_a</span> <span style="color:#f92672">:</span> Object])
+    ], <span style="color:#a6e22e">AppController</span>);
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">AppController</span>;
+})();
+</code></pre></div><p>However, since babel&rsquo;s internal translation process will remove the types before it&rsquo;s doing the actual translating process, the type information is missed from the decorate metadata:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">AppController</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_decorate</span>([(<span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">_common</span>.<span style="color:#a6e22e">Controller</span>)()], <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">_initialize</span>) {
+  <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
+    <span style="color:#a6e22e">constructor</span>(<span style="color:#a6e22e">appService</span>) {
+      <span style="color:#a6e22e">_initialize</span>(<span style="color:#66d9ef">this</span>);
+
+      <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">appService</span>;
+    }
+
+  }
+
+  <span style="color:#66d9ef">return</span> {
+    <span style="color:#a6e22e">F</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">AppController</span>,
+    <span style="color:#a6e22e">d</span><span style="color:#f92672">:</span> [{
+      <span style="color:#a6e22e">kind</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;method&#34;</span>,
+      <span style="color:#a6e22e">decorators</span><span style="color:#f92672">:</span> [(<span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">_common</span>.<span style="color:#a6e22e">Get</span>)()],
+      <span style="color:#a6e22e">key</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;getHello&#34;</span>,
+      <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getHello</span>() {
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
+      }
+    }]
+  };
+});
+</code></pre></div><p>The babel&rsquo;s result works fine when the type information is meaningless for your program, but it will break in some situations when the type information is one of the important factors of your framework, for example, the nestjs use the type information to do its dependency injection:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Controller</span>, <span style="color:#a6e22e">Get</span>, <span style="color:#a6e22e">Post</span>, <span style="color:#a6e22e">Body</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;@nestjs/common&#39;</span>;
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">CreateCatDto</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./dto/create-cat.dto&#39;</span>;
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">CatsService</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./cats.service&#39;</span>;
+<span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Cat</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./interfaces/cat.interface&#39;</span>;
+
+<span style="color:#66d9ef">@Controller</span>(<span style="color:#e6db74">&#39;cats&#39;</span>)
+<span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CatsController</span> {
+  <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#a6e22e">catsService</span>: <span style="color:#66d9ef">CatsService</span>) {}
+  <span style="color:#75715e">// compare with below
+</span><span style="color:#75715e"></span>  <span style="color:#75715e">// constructor(private @inject(CatsService) catsService: CatsService) {}
+</span><span style="color:#75715e"></span>
+  <span style="color:#66d9ef">@Post</span>()
+  <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">create</span>(<span style="color:#66d9ef">@Body</span>() <span style="color:#a6e22e">createCatDto</span>: <span style="color:#66d9ef">CreateCatDto</span>) {
+    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">catsService</span>.<span style="color:#a6e22e">create</span>(<span style="color:#a6e22e">createCatDto</span>);
+  }
+
+  <span style="color:#66d9ef">@Get</span>()
+  <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">findAll</span>()<span style="color:#f92672">:</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">Cat</span><span style="color:#960050;background-color:#1e0010">[]</span>&gt; {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">catsService</span>.<span style="color:#a6e22e">findAll</span>();
+  }
+}
+</code></pre></div><p>If the code is processed by babel then the dependency injection by constructor property cannot be applied since the type information is discarded.</p>
+<p>Just record a funny point.</p>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/hsiaosiyuan0">GitHub</a>
+      
+    </footer>
+  </body>
+</html>
+

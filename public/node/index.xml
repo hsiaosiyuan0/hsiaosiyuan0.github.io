@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nodes on hsiaosiyuan</title>
+    <link>http://example.org/node/</link>
+    <description>Recent content in Nodes on hsiaosiyuan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 Jun 2019 00:00:00 +0800</lastBuildDate><atom:link href="http://example.org/node/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cluster 模块分析</title>
+      <link>http://example.org/node/the-cluster-module/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/node/the-cluster-module/</guid>
+      <description>Cluster 模块分析  Cluster 模块分析  预备工作 发现问题 问题1. work 进程的创建 问题2. listen 方法 问题3. 不退出 问题4. 处理请求    预备工作 分析的是从 node 源码的角度进行的，所以需要先配置源码的调试环境。
+需要准备的内容为:
+ node 源码 CLion  node 源码的获取，通过以下命令行:
+git clone https://github.com/nodejs/node.git # 本文针对的版本 git checkout tags/v11.6.0 获取了 node 源码之后，需要在 CLion 中导入项目，详细可以参考此文 使用 cLion 调试 node.js 源码。
+上文中提到的源码编译指令为:
+make -C out BUILDTYPE=Debug -j 4 -j 4 的意义是同时执行的任务数，一般设定为 CPU 核数，可以通过下面指令获得 CPU 核数:
+[ $(uname) = &amp;#39;Darwin&amp;#39; ] &amp;amp;&amp;amp; sysctl -n hw.</description>
+    </item>
+    
+  </channel>
+</rss>

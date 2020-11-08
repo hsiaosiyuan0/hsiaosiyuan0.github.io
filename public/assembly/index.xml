@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Assemblies on hsiaosiyuan</title>
+    <link>http://example.org/assembly/</link>
+    <description>Recent content in Assemblies on hsiaosiyuan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 Jun 2019 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/assembly/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编语言学习小结</title>
+      <link>http://example.org/assembly/learning-assembly-lang/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/assembly/learning-assembly-lang/</guid>
+      <description>汇编语言学习小结 学习汇编语言书「guide-to-assembly-language-programming-in-linux」的收获:
+ 了解汇编语言的语法 了解 CPU 和 内存的基本结构 栈及其相关操作 了解汇编语言层面如何进行 Procedure 调用，包括传参和返回值和返回点如何处理 了解汇编语言和 C 语言如何相互调用，以及 C 语言是如何编译成汇编语言  汇编语言的语法 汇编语言的语法包括预处理和指令生成两种，预处理部分在汇编的预处理阶段被处理，而指令生成部分则会在编译阶段生成具体的指令。 比如预处理阶段的 macro 和 %define 以及指令生成阶段的 add AX, 1。
+对于指令生成的语法，都是每一行对应一条指令，且语法形式为 opode operand1, operand2, ... 即操作码接操作数的形式。
+了解 CPU 和内存的基本结构 CPU 由各种运算电路以及寄存器组成。运算电路负责实际的运算，而寄存器用于存放参数，临时结果，最终结果。寄存器分为通用寄存器和特定用途寄存器。
+特定用途寄存器又大致分为： 段寄存器，标志寄存器和指令指针寄存器，等。对于 EBP 和 ESP 这两个寄存，有时又被称为特殊通用寄存器，这是因为在进行栈的相关操作时这两个寄存器会有特殊用途。所谓“通用”指的是，该寄存器可以作为计算或者存放临时结果的寄存器，而特殊寄存器则被限定了其用途，比如指令指针寄存器，只可以用于存放接下来的指令的位置。
+之所以 ESP 和 EBP 被称为通用寄存器就是因为，这两个寄存器也是可以在计算时用于存放临时结果的，只不过在栈相关操作时，为了方便将他们的功能基于约定地限定了。
+对于内存的基本结构而言，CPU 并不能够直接访问内存上的数据，而是要通过地址总线，数据总线和控制总线，来指挥内存芯片来读取或者写入内存数据。由于内存以及 CPU 的设计结构限制，会有存在内存上的数据需要进行对齐的要求，如前所述，该要求并不是绝对的。数据对齐一般都是有编译器自动完成的，这在 C 语言中就涉及到数据 padding。
+栈及其相关操作 栈是一个后进先出的结构，并且向低地址方向增长，栈中只会存放 word 和 double words 长度的元素，不会单独存放单个字节。TOS 指向的是栈顶元素的最低字节，栈中元素被 pop 后，只是将 TOS 向高地址方向进行移动，以此达到元素被移出的效果。移出元素的内存中的数据则实在下一次的入栈操作时被覆写。
+了解 Procedure 调用细节 过程调用时的参数可以通过寄存器或者栈进行传递。使用寄存器和栈个有利弊。使用寄存器能获取更高的性能，这是因为减少了内存操作，操作数直接存在于寄存器中了。使用寄存器的弊端就是，寄存器数量是有限的，所以主要还是应该将它们用于计算。使用栈传递的参数的好处就是可以将原本用于传参的寄存器解放出来，用于计算，弊端就是在涉及到具体的计算时，需要将数据从栈中载入寄存器。</description>
+    </item>
+    
+  </channel>
+</rss>

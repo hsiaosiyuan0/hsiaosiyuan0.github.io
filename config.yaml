@@ -1,0 +1,20 @@
+baseURL: "http://example.org/"
+languageCode: "en-us"
+title: "hsiaosiyuan"
+preserveTaxonomyNames: true
+enableEmoji: true
+markup.goldmark.renderer: true
+toc: true
+theme: "hugo-classic"
+
+permalinks:
+  post: "/post/:year/:month/:day/:slug/"
+
+params:
+  dateformatpretty: "2006-01-02"
+  toc: true
+  footer:  "[GitHub](https://github.com/hsiaosiyuan0)"
+  custom_css: ["css/theme-override.css"]
+
+taxonomies:
+  tag: "tags"

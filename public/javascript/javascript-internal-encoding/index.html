@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>Unicode 和 BMP | hsiaosiyuan</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="http://example.org/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="http://example.org/">~/hsiaosiyuan</a>
+      </li>
+      
+
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">Unicode 和 BMP</span></h1>
+
+<h2 class="date">2019/08/04</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h2 id="unicode-和-bmp">Unicode 和 BMP</h2>
+<p>Unicode 通过一个确切的名称以及一个整数 (这个整数被叫做该字符的码位 code point) 来标识不同的字符。比如，字符 <code>©</code> 的名称是 “版权标识 (copyright sign)”、它的 code point 是 U+00A9 &ndash; <code>0xA9</code> (十进制的 <code>169</code>)。</p>
+<p>Unicode 的编码空间被分离成了 17 个平面，每个平面包含 2^16 (十进制 65,536 即十六进制 0xFFFF) 个码位 (code point)。其中的一些码位尚未被分配到字符，还有一些码位作为私有用途，还有一些永久保留、不存放任何字符 (U+D800到U+DFFF)。每个平面中的码位 (code point) 的取值范围在 <code>xy0000</code> ~ <code>xyFFFF</code>，<code>xy</code> 表示的是该码位所属的平面，上面提到编码空间被分离成了 17 个平面，这里的 <code>xy</code> 就是这 17 个平面的编号就的十六进制表示，即 <code>00</code> ~ <code>10</code>。</p>
+<p>第一个平面 (即上面的 <code>xy</code> 为 <code>00</code>) 被称为 <em>基本多语言平面 (Basic Multilingual Plane )</em> 简称 <em>BMP</em>，它所包含的码位范围是 U+0000 ~ U+FFFF，这些都是使用频率最高的字符。</p>
+<p>剩余的十六个平面 (U+100000 ~ U+10FFFF) 被称为 <em>补充平面 (supplementary planes or astral planes)</em>。这里将不继续讨论它们，只要记住字符分为 BMP 字符和 非-BMP (non-BMP) 字符，后者又被称为补充平面。</p>
+<h2 id="ucs-2-和-utf-16-的不同">UCS-2 和 UTF-16 的不同</h2>
+<blockquote>
+<p>Both UCS-2 and UTF-16 are character encodings for Unicode.</p>
+</blockquote>
+<p>其实上面的文字我感觉并不准确，我们来看 UCS-2 的定义和作用：UCS-2 通用双字节字符集 (2-byte Universal Character Set)，提供了一个定长的 (fixed-length) 格式，即简单的将一个 Unicode 码位表示为一个 16 位的编码单元 (16-bit code unit)。一句话概况说就是，它将 BMP 字符集中的每个字符以其码位的 16 位的形式表示，换句话说，它只能表示 BMP 的字符范围。</p>
+<p>我们知道 BMP 的码位范围是 <code>0x000000~0x00FFFF</code>，等价的 UCS-2 编码单元的范围就是 <code>0x0000~0xFFFF</code>，其实也就是省略了高两位的平面标识位。刚好也就整个涵盖了 BMP，并且我们知道了 BMP 中的字符都是最高频的字符，所以就和 UCS-2 名字描述的一样，它是一个通用字符集，所以它更趋向于字符集合，而不是编码方式。</p>
+<p>UTF-16 就不同了，它的全称是 16 位的 unicode 转换格式 (16-bit Unicode Transformation Format)，它作为 UCS-2 的拓展，可以表示 BMP 之外的字符。它提供了变长的方式 (一个或两个 16 位的编码单元来表示一个码位)。通过这样的方式，可以表示全部的 Unicode 字符。</p>
+<p>简单的说就是对于 BMP 字符的码位，UTF-16 使用双字节 (一个编码单元) 来表示它，对于除 BMP 之外的字符的码位，统一使用 4 个字节 (两个编码单元) 来表示它。</p>
+<p>比如， 对于 BMP 字符 U+00A9，在 UCS-2 和 UTF-16 中的表现形式都是两个字节，即 <code>0x00A9</code>。</p>
+<h2 id="代理对-surrogate-pair">代理对 (Surrogate pair)</h2>
+<p>在 UTF-16 编码时，对于 BMP 之外的字符需要使用两个编码单元 (two 16-bit code units) 来表示，比如 <em>U+1D306 tetragram for centre</em> <code>𝌆</code> 被编码成 <code>0xD834 0xDF06</code>。这也被称为是代理对 (surrogate pair)，注意一个代理对只表示一个字符。</p>
+<p>代理对中的第一个编码单元的范围总是在 <code>0xD800</code> 至 <code>0xDBFF</code> 之间，被称为高位代理 (high surrogate) 或者头代理 (lead surrogate)。</p>
+<p>代理对中的第二个编码单元的范围总是在 <code>0xDC00</code> 至 <code>0xDFFF</code> 之间，被称为低位代理 (low surrogate) 或尾代理 (trail surrogate)。</p>
+<p>由于 UCS-2 缺乏这种机制 (代理对)，所以对于以 UTF-16 编码的 <code>𝌆</code> 在其看到是两个独立的字符。</p>
+<h2 id="在码位与代理对之间转换">在码位与代理对之间转换</h2>
+<blockquote>
+<p><a href="http://unicode.org/versions/Unicode3.0.0/ch03.pdf">Section 3.7 of The Unicode Standard 3.0</a> defines the algorithms for converting to and from surrogate pairs.</p>
+</blockquote>
+<p>对于大于 <code>0xFFFF</code> 的码位 <code>C</code> 可以表示为代理对 <code>&lt;H, L&gt;</code> 的形式，其中：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">H</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">floor</span>((<span style="color:#a6e22e">C</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x10000</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">0x400</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">0xD800</span>
+<span style="color:#a6e22e">L</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">C</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">0x10000</span>) <span style="color:#f92672">%</span> <span style="color:#ae81ff">0x400</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0xDC00</span>
+</code></pre></div><p>逆算法:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#a6e22e">C</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">H</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">0xD800</span>) <span style="color:#f92672">*</span> <span style="color:#ae81ff">0x400</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">L</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">0xDC00</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0x10000</span>
+</code></pre></div><p>位操作算法</p>
+<p><a href="http://unicode.org/faq/utf_bom.html#utf16-3">What’s the algorithm to convert from UTF-16 to character codes?</a></p>
+<h2 id="javascrpit-中如何">Javascrpit 中如何</h2>
+<p>简单的说就是标准中规定了引擎可以选择性的在其内部使用 UCS-2 或者 UTF-16，有一点需要注意的就是，标准中对于字符的定义是：</p>
+<pre><code>SourceCharacter ::
+    any Unicode code unit
+</code></pre><blockquote>
+<p>JavaScript treats code units as individual characters, while humans generally think in terms of Unicode characters.</p>
+</blockquote>
+<p>也就是说，JavaScript 内部认为一个编码单元就是一个字符，而通常以人类的角度来说一个字符的指的是 Unicode 中的字符。比如 <code>'𝌆'.length == 2</code> 以及 &lsquo;𝌆&rsquo; == &lsquo;\uD834\uDF06&rsquo;。</p>
+<blockquote>
+<p>You could argue that it resembles UTF-16, except unmatched surrogate halves are allowed, surrogates in the wrong order are allowed, and surrogate halves are exposed as separate characters. I think you’ll agree that it’s easier to think of this behavior as “UCS-2 with surrogates”.</p>
+</blockquote>
+<blockquote>
+<p>Surrogate pairs are only recombined into a single Unicode character when they’re displayed by the browser (during layout). This happens outside of the JavaScript engine. To demonstrate this, you could write out the high surrogate and the low surrogate in separate document.write() calls: document.write('\uD834'); document.write('\uDF06');. This ends up getting rendered as 𝌆 — one glyph.</p>
+</blockquote>
+<p>代理对在整个 JavaScript 内部都被当做是两个 “字符”，之所以们在浏览器中看到 non-BMP 是因为在浏览器渲染部分会对其进行重组。</p>
+<blockquote>
+<p>ECMAScript 6 will support a new kind of escape sequence in strings, namely Unicode code point escapes e.g. \u{1D306}. Additionally, it will define String.fromCodePoint and String#codePointAt, both of which accept code points rather than code units.</p>
+</blockquote>
+<h2 id="nodejs">Nodejs</h2>
+<p>通过在 Nodejs 中测试，我发现在引擎运行时字符还是以其原有的格式存放的，比如字符是 utf8 格式的，那么在内存中就是 utf8 格式的，不会转换成 ucs-2 或者 utf16 进行存放，但是在需要进行 “字符” 操作时，为了保持统一，这里的 “字符” 还是指代的码元，即 16-bit code unit，所以会进行一次转换，这个步骤我认为发生在具体的函数调用时，比如 <code>String.prototype.charCodeAt</code>。</p>
+<p>[参考]</p>
+<ul>
+<li>
+<p><a href="https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae">JavaScript’s internal character encoding: UCS-2 or UTF-16?</a></p>
+</li>
+<li>
+<p><a href="https://stackoverflow.com/questions/2241348/what-is-unicode-utf-8-utf-16">What is Unicode, UTF-8, UTF-16?</a></p>
+</li>
+</ul>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/hsiaosiyuan0">GitHub</a>
+      
+    </footer>
+  </body>
+</html>
+

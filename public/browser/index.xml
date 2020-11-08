@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Browsers on hsiaosiyuan</title>
+    <link>http://example.org/browser/</link>
+    <description>Recent content in Browsers on hsiaosiyuan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 Jun 2019 00:00:00 +0800</lastBuildDate><atom:link href="http://example.org/browser/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>静态页面</title>
+      <link>http://example.org/browser/same-origin/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/browser/same-origin/</guid>
+      <description>静态页面 在浏览器脚本的概念没有出现之前，所有的网页都是静态的。我们知道浏览器的工作模式是：
+ 浏览器向网站服务器发起请求 网站接受浏览器的请求，返回一些字符串（比如一些组成页面的 HTML 字符串） 浏览器接收到网站返回的用于组成页面的字符串后，就可以关闭连接了 浏览器将组成页面的字符串渲染到屏幕上，使得用户可以看到一个可视化的结果  看起来就像下面这样：
+ Client Request +-------------+ +--------+ +------+ | User Agent | +--------------------------------&amp;gt; | | | User +------&amp;gt; | | Server | +--^---+ | (Browser) | &amp;lt;--------------------------------+ | | | +-------+-----+ +--------+ | | Server Response | | | | | +---------v--------+ | | Close Connection | | +---------+--------+ | | | | | +--------v--------+ ^---------+ Render response | +-----------------+ 我们看到，一旦用户代理（浏览器）关闭了和服务器之间的链接之后，客户端和服务器之间将不能继续通信。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Websockets on hsiaosiyuan</title>
+    <link>http://example.org/websocket/</link>
+    <description>Recent content in Websockets on hsiaosiyuan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 Jun 2019 00:00:00 +0800</lastBuildDate><atom:link href="http://example.org/websocket/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>WebSocket 协议 1-4 节</title>
+      <link>http://example.org/websocket/websocket-1-4/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/websocket/websocket-1-4/</guid>
+      <description>此文仅作为 RFC6455 的学习笔记。篇幅太长超过了简书的单篇最大长度，故分为两篇，此篇记录 1~4 节，其余见 WebSocket 协议 5~10 节;
+1.1 背景知识 由于历史原因，在创建一个具有双向通信机制的 web 应用程序时，需要利用到 HTTP 轮询的方式。围绕轮询产生了 “短轮询” 和 “长轮询”。
+短轮询 浏览器赋予了脚本网络通信的编程接口 XMLHttpRequest ，以及定时器接口 setTimeout 。因此，客户端脚本可以每隔一段时间就主动的向服务器发起请求，询问是否有新的信息产生：
+ 客户端向服务器发起一个请求，询问 “有新信息了吗” 服务端接收到客户端的请求，但是此时没有新的信息产生，于是直接回复 “没有”，并关闭链接 客户端知道了没有新的信息产生，那么就暂时什么都不做 间隔 5 秒钟之后，再次从步骤 1 开始循环执行  长轮询 使用短轮询的方式有一个缺点，由于客户端并不知道服务器端何时会产生新的消息，因此它只有每隔一段时间不停的向服务器询问 “有新信息了吗”。而长轮询的工作方式可以是这样：
+ 客户端向服务器发起一个请求，询问 “有新信息了吗” 服务器接收到客户端的请求，此时并没有新的信息产生，不过服务器保持这个链接，像是告诉客户端 “稍等”。于是直到有了新的信息产生，服务端将新的信息返回给客户端。 客户端接收到消息之后显示出来，并再次由步骤 1 开始循环执行  可以看到 “长轮询” 相较于 “短轮询” 可以减少大量无用的请求，并且客户端接收到新消息的时机将会有可能提前。
+继续改进 我们知道 HTTP 协议在开发的时候，并不是为了双向通信程序准备的，起初的 web 的工作方式只是 “请求-返回” 就够了。
+但是由于人们需要提高 web 应用程序的用户体验，以及 web 技术本身的便捷性 - 不需要另外的安装软件，使得浏览器也需要为脚本提供一个双向通信的功能，比如在浏览器中做一个 IM（Instant Message）应用或者游戏。</description>
+    </item>
+    
+    <item>
+      <title>WebSocket 协议 5-6 节</title>
+      <link>http://example.org/websocket/websocket-5-6/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/websocket/websocket-5-6/</guid>
+      <description>第 1~4 节在 WebSocket 协议 1~4 节;
+5. 使用帧去组织数据 5.1 概览 在 WebSocket 协议中，数据的传输使用一连串的帧。为了使得中间件不至于混淆（比如代理服务器）以及为了第 10.3 节将讨论安全原因，客户端必须将要发送到服务端的帧进行掩码，掩码将在第 5.3 节详细讨论。（注意，不管 WebSocket 有没有运行在 TLS 之上，都必须有掩码操作）服务端一旦接收到没有进行掩码的帧的话，必须关闭连接。这种情况下，服务端可以发送一个关闭帧，包含一个状态码 1002（协议错误 protocol error），相关定义在 Section 7.4.1。服务端不必对发送到客户端的任何帧进行掩码。如果客户端接收到了服务端的掩码后的帧，客户端必须关闭连接。在这个情况下，客户端可以向服务器发送关闭帧，包含状态码 1002（协议错误 protocol error），相关定义在 Section 7.4.1。（这些规则可能在将来技术说明中没有严格要求）
+基础帧协议通过操作码（opcode）定义了一个帧类型，一个有效负荷长度，以及特定的位置存放 “扩展数据 Extension data” 和 “应用数据 Application data”，扩展数据和应用数据合起来定义了 “有效负荷数据 Payload data”。某些数位和操作码是保留的，为了将来的使用。
+在客户端和服务端完成了握手之后，以及任意一端发送的关闭帧（在第 5.5.1 节介绍）之前，客户端可以和服务端都可以在任何时间发送数据帧。
+基础帧协议 这一节中将使用 ABNF 详细定义数据传输的格式。（注意，和这文档中的其他 ABNF 不同，这一节中 ABNF 操作的是一组数位。每一组数位的长度将以注释的形式存在。当数据在网络中传输时，最高有效位是在 ABNF 的最左边（大端序））。下面的文本图像可以给出关于帧的一个高层概览。如果下面的文本插图和后的 ABNF 描述发送冲突时，以插图为准。
+ 0 1 2 3 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 +-+-+-+-+-------+-+-------------+-------------------------------+ |F|R|R|R| opcode|M| Payload len | Extended payload length | |I|S|S|S| (4) |A| (7) | (16/64) | |N|V|V|V| |S| | (if payload len==126/127) | | |1|2|3| |K| | | +-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - + | Extended payload length continued, if payload len == 127 | + - - - - - - - - - - - - - - - +-------------------------------+ | |Masking-key, if MASK set to 1 | +-------------------------------+-------------------------------+ | Masking-key (continued) | Payload Data | +-------------------------------- - - - - - - - - - - - - - - - + : Payload Data continued .</description>
+    </item>
+    
+  </channel>
+</rss>

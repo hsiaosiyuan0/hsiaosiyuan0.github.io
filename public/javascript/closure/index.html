@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>闭包 | hsiaosiyuan</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="http://example.org/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="http://example.org/">~/hsiaosiyuan</a>
+      </li>
+      
+
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">闭包</span></h1>
+
+<h2 class="date">2019/07/31</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h1 id="闭包">闭包</h1>
+<p>很多分享都会解释什么是闭包，不得不说大都管中窥豹。比如某 star 1k 的项目中描述</p>
+<blockquote>
+<p>所有函数都是闭包</p>
+</blockquote>
+<p>是不恰当的。但是在有 1k stars 的情况下，居然没有 issue 指出其中的错误。</p>
+<p>首先必须说，闭包就取名和中文翻译而言，在你正在理解了它之后，会发现它恰到好处。如果你还觉得命名很奇怪，那么就说明你并不理解它。</p>
+<p>就如同它的名字描述的一般，闭包表示的是一个封闭的内存空间。每个函数被创建的时候，都有一个与之关联的闭包。在了解闭包的使用场景之前，先看下面一个例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>);
+}
+
+<span style="color:#a6e22e">f</span>();
+</code></pre></div><p>这段代码非常简单。我们知道一旦 <code>f</code> 执行完毕，那么它本次执行的栈上的数据将会被释放，所以每次调用结束后，栈上的 <code>i</code> 都会被及时的释放。</p>
+<p>再来看另一个例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">function</span> () { <span style="color:#75715e">// f1
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>);
+  }
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ff</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>();
+<span style="color:#a6e22e">ff</span>();
+</code></pre></div><p>和第一个例子一样，这段代码同样会打印 <code>0</code>。但是这似乎打破了我们第一个例子的总结，按照第一个例子的说法，<code>f</code> 运行结束后，本次调用的栈上的 <code>i</code> 应该被释放掉了。但是我们随后调用返回的匿名函数，发现并没有报错，这就归功于闭包。</p>
+<p>每个函数被创建的时候，都会有一个与之关联的闭包被同时创建。在新创建的函数内部，如果引用了外部作用域中的变量，那么这些变量都会被添加到该函数的闭包中。</p>
+<p>注意上面代码的注释，为了方便描述，我们将匿名函数取名为 <code>f1</code>。当 <code>f</code> 被调用的时候，<code>f1</code> 被创建，同时与之关联的闭包也被创建。由于 <code>f1</code> 内部引用了位于其作用域之外的、<code>f</code> 作用域中的变量 <code>i</code>，因此 <code>f</code> 作用域中的 <code>i</code> 被拷贝到了 <code>f1</code> 的闭包中。这就解释了，为什么 <code>f</code> 执行完成之后，调用 <code>f1</code> 依然可以打印 <code>0</code>。</p>
+<p>现在来看一下第三个例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+  <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f1</span>() { 
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>);
+  }
+  <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">f1</span>;
+}
+
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ff</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>();
+<span style="color:#a6e22e">ff</span>();
+</code></pre></div><p>我们会发现打印 <code>1</code>。好像又与第二个例子的结论有些冲突，<code>f</code> 中的 <code>i</code> 不是被拷贝到了 <code>f1</code> 的闭包中吗？为什么不是打印 <code>0</code> 而是打印 <code>1</code> 呢？</p>
+<p>这是因为，我们还没有介绍发生拷贝的时机。如果新创建的函数，引用了外部作用域的变量，并且该变量为活动的，那么并不急于将该变量的内容拷贝到闭包中，而是将该变量所指向的内存单元的地址保存于闭包中。比如我们这里，只是先将 <code>i</code> 所绑定到的内存地址保存于闭包中，等到 <code>i</code> 为非活动状态时，才会进行拷贝。也就是这里，当 <code>f</code> 即将运行结束时，<code>i</code> 的将变为非活动状态，那么需要将其内容拷贝到引用它的闭包中，也就是这里的 <code>f1</code> 的闭包中。一旦内容被拷贝到闭包中，除了与之关联的函数对象之外，再也没有其他方式可以访问到其中的内容。</p>
+<p>顺便介绍一下，那么闭包中占用的内存何时才会被释放呢？答案就是当与它关联的函数对象被释放的时候。比如我们接着上面的例子运行：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ff</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>
+</code></pre></div><p>我们将引用 <code>f1</code> 的变量 <code>ff</code> 赋值为 <code>null</code>，这样就没有任何变量引用 <code>f1</code> 了，所以 <code>f1</code> 成为了垃圾，会在未来的某个时间点(具体要看 GC 的实现以及运行情况)，由垃圾回收器进行所占内存回收。</p>
+<p>上面的例子，其实就是下面的例子的简化版：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [];
+  <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ff</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>)
+    };
+    <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">ff</span>);
+  }
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">a</span>;
+}
+
+<span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">f1</span>, <span style="color:#a6e22e">f2</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>();
+<span style="color:#a6e22e">f1</span>();
+<span style="color:#a6e22e">f2</span>();
+</code></pre></div><p>这里新创建的两个函数都会打印 <code>2</code>，想必这个例子大家都很熟悉了，就不再赘述了。只是有一个问题需要注意，既然上面提到了说，新创建的函数引用的外部作用域上的变量内容、最终都会拷贝到该函数的闭包中，那么上面的例子中，<code>i</code> 是不是被拷贝了两次？</p>
+<p>再来看一个例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [];
+  <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ff</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>)
+    };
+    <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">ff</span>);
+  }
+  <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>(<span style="color:#66d9ef">function</span> () {
+    <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>;
+  });
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">a</span>;
+}
+
+<span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">f1</span>, <span style="color:#a6e22e">f2</span>, <span style="color:#a6e22e">f3</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>();
+<span style="color:#a6e22e">f1</span>();
+<span style="color:#a6e22e">f3</span>();
+<span style="color:#a6e22e">f2</span>();
+</code></pre></div><p>这个例子会打印什么？答案是 <code>2</code> 和 <code>3</code>。这是因为闭包的另一个机制，同一个变量被引用它的多个闭包所共享。我们在 <code>for</code> 循环内部创建了两个函数，在循环外部创建了一个函数，这三个函数的都引用了 <code>f</code> 中的 <code>i</code>，因而 <code>i</code> 被这三个函数的闭包所共享，也就是说在 <code>i</code> 离开自己所属的作用域时(<code>f</code> 退出前)，将只会发生一次拷贝，并将新创建的三个函数的闭包中的 <code>i</code> 的对应的指针设定为那一份拷贝的内存地址即可。对于这一个共享的拷贝地址，除了这三个闭包之外，没有其他方式可以访问到它。</p>
+<p>必须再次强调的是，被引用的变量拷贝到闭包中的时机发生在、被引用的变量离开自己所属的作用域时，即状态为非活动时。考虑下面的例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>() {
+  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [];
+  <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ff</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>)
+    };
+    <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">ff</span>);
+  }
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">a</span>;
+}
+
+<span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">f1</span>, <span style="color:#a6e22e">f2</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>();
+<span style="color:#a6e22e">f1</span>();
+<span style="color:#a6e22e">f2</span>();
+</code></pre></div><p>我们知道 ES6 中引入了 <code>let</code> 关键字，由它声明的变量所属块级作用域。在上面的例子中，我们在 <code>for</code> 循环体的初始化部分使用了 <code>let</code>，这样一来 <code>i</code> 的作用域被设定为了该循环的块级作用域内。不过另一个细节是，循环体中的 <code>i</code> ，也就是 <code>ff</code> 中引用的 <code>i</code>，在每次迭代中都会进行重新绑定，换句话说循环体中的 <code>i</code> 的作用域是每一次的迭代。因此在循环体中，当每次迭代的 <code>i</code> 离开作用域时，它的状态变为非活动的，因此它的内容被拷贝到引用它的闭包中。</p>
+<p>闭包常常会和 <a href="https://developer.mozilla.org/en-US/docs/Glossary/IIFE">IIFE</a> 一起使用，比如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#f92672">=</span> [];
+<span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+  <span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">push</span>((<span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">i</span>) { <span style="color:#75715e">// f1, i1
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">function</span> () { <span style="color:#75715e">// f2
+</span><span style="color:#75715e"></span>      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>) <span style="color:#75715e">// i2
+</span><span style="color:#75715e"></span>    }
+  })(<span style="color:#a6e22e">i</span>)); <span style="color:#75715e">// i3
+</span><span style="color:#75715e"></span>};
+
+<span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">f1</span>, <span style="color:#a6e22e">f2</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">a</span>;
+<span style="color:#a6e22e">f1</span>();
+<span style="color:#a6e22e">f2</span>();
+</code></pre></div><p>在上面的例子中，让人迷惑的除了闭包的部分之外，就是 <code>i1</code>，<code>i2</code> 和 <code>i3</code> 了。</p>
+<ul>
+<li><code>i1</code> 是 <code>f1</code> 的形参</li>
+<li><code>i2</code> 是 <code>f2</code> 中对外层作用域中的变量的引用</li>
+<li><code>i3</code> 是全局的变量 <code>i</code>，IIFE 执行时 <code>i</code> 对应的值将被作为实参来调用 <code>f1</code></li>
+<li>当 <code>f1</code> 被调用时，也就是 IIFE 执行阶段，它内部创建了一个新的函数 <code>f2</code>，同时也创建了 <code>f2</code> 对应的闭包</li>
+<li>由于 <code>f2</code> 中引用了外层作用域中的 <code>i</code>，即 <code>f1</code> 执行期间的 <code>i</code>，且 <code>i</code> 为活动内容，所以 <code>f2</code> 的闭包中添加一条 Key 为 <code>i</code>，Value 为指向 <code>f1</code> 中活动的 <code>i</code> 绑定到的内存单元的地址</li>
+<li>当 IIFE 执行完毕，即 <code>f1</code> 要退出的时候，其栈上活动对象 <code>i</code> 就会离开作用域，因此需要将 <code>i</code> 拷贝到引用它的闭包中。</li>
+</ul>
+<p>到目前为止，我们看到的例子都引用的直接外层作用域中的变量，那么我们再来看一个例子：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>(<span style="color:#a6e22e">x</span>) { <span style="color:#75715e">// f1
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">y</span>) { <span style="color:#75715e">// f2
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">z</span>) { <span style="color:#75715e">// f3
+</span><span style="color:#75715e"></span>      <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">z</span>)
+    }
+  }
+}
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">xy</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>(<span style="color:#ae81ff">1</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">xyz</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">xy</span>(<span style="color:#ae81ff">2</span>);
+<span style="color:#a6e22e">xyz</span>(<span style="color:#ae81ff">3</span>);
+</code></pre></div><p>为了方便描述，我们分别标记了 <code>f1</code>，<code>f2</code>，<code>f3</code>。我们在 <code>f3</code> 内部，引用了 <code>x</code> 和 <code>y</code>，并且 <code>x</code> 并不是 <code>f3</code> 的直接外部作用域。那么这个闭包的构建过程时怎样的？</p>
+<p>在 JS 中，函数也是以对象的形式存在的，如果将与函数关联的闭包想象成函数对象的一个类型为 Map&lt;string, Value&gt; 的属性也不过份，比如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ts" data-lang="ts"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">CLOSURE</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Symbol</span>(<span style="color:#e6db74">&#39;closure&#39;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">FUN_BODY</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Symbol</span>(<span style="color:#e6db74">&#39;fun-body&#39;</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">FUN_PARAMS</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Symbol</span>(<span style="color:#e6db74">&#39;fun-params&#39;</span>);
+
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">funObj</span> <span style="color:#f92672">=</span> {
+  [<span style="color:#a6e22e">FUN_PARAMS</span>]<span style="color:#f92672">:</span> [<span style="color:#75715e">/* parameters list */</span>],
+  [<span style="color:#a6e22e">FUN_BODY</span>]<span style="color:#f92672">:</span> [<span style="color:#75715e">/* instructions */</span>],
+  [<span style="color:#a6e22e">CLOSURE</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Map</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Value</span>&gt;(), <span style="color:#75715e">// Value 可以被多个 closure 共享
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>即使在引擎的实现阶段，因为性能或者实现差异不采用这样的设计，但本质上与这个结构含义是一致的。为了能在运行阶段创建函数对象，在编译阶段就需要收集到必要的信息：</p>
+<ul>
+<li>形参列表</li>
+<li>函数体</li>
+<li>引用的外部变量</li>
+</ul>
+<p>比如在编译 <code>f3</code> 的阶段，我们发现它内部引用了外部的 <code>x</code> 和 <code>y</code>，由于 <code>x</code> 不是直接存在于父及作用域 <code>f2</code> 中的，为了使得未来使用 <code>f2</code> 创建 <code>f3</code> 的时候，仍能够找到 <code>x</code> 的绑定，我们需要将 <code>x</code> 加入到 <code>f2</code> 的闭包中。所以在编译阶段，我们会在 <code>f2</code> 的信息中标注它内部引用了外部变量 <code>x</code>。这样在创建 <code>f2</code> 的时候，<code>x</code> 就会被拷贝到它的闭包中了，等到使用它再创建 <code>f3</code> 的时候，<code>f3</code> 中的 <code>x</code> 也就有了着落。</p>
+<p>最后来一个拓展练习：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">f</span>(<span style="color:#a6e22e">x</span>) { 
+  <span style="color:#66d9ef">return</span> [
+    <span style="color:#66d9ef">function</span> () { <span style="color:#a6e22e">x</span><span style="color:#f92672">++</span> }, 
+    <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">y</span>) { 
+      <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">z</span>) { 
+        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">z</span>)
+      }
+    }
+  ]
+}
+
+<span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">f1</span>, <span style="color:#a6e22e">xy</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">f</span>(<span style="color:#ae81ff">1</span>);
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">xyz</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">xy</span>(<span style="color:#ae81ff">2</span>);
+<span style="color:#a6e22e">f1</span>();
+<span style="color:#a6e22e">xyz</span>(<span style="color:#ae81ff">3</span>);
+</code></pre></div><p>如果想要了解跟多引擎层面实现闭包的细节，可以参考我的另外的项目，<a href="https://github.com/hsiaosiyuan0/naive">Naive - 使用 Rust 编写的 JS 引擎</a></p>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/hsiaosiyuan0">GitHub</a>
+      
+    </footer>
+  </body>
+</html>
+

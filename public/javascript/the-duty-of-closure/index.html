@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>闭包的作用 | hsiaosiyuan</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
+    <link rel="stylesheet" href="http://example.org/css/theme-override.css">
+    <header>
+
+  <nav>
+    <ul>
+      
+      
+      <li class="pull-left ">
+        <a href="http://example.org/">~/hsiaosiyuan</a>
+      </li>
+      
+
+      
+
+    </ul>
+  </nav>
+</header>
+
+  </head>
+
+  <body>
+    <br/>
+
+<div class="article-meta">
+<h1><span class="title">闭包的作用</span></h1>
+
+<h2 class="date">2019/08/06</h2>
+<p class="terms">
+  
+  
+  
+  
+  
+</p>
+</div>
+
+
+<div class="content-wrapper">
+  <main>
+    <h2 id="闭包的作用">闭包的作用</h2>
+<p>这里我们将主要关注闭包的作用。至于到底什么是闭包，可以参考 <a href="%E9%97%AD%E5%8C%85.md">闭包</a>。</p>
+<p>如果被问到「闭包有什么作用？」想必有同学首先会想到「模拟私有变量」，又或者「在回调中有时会用到」，又或者最接近正确答案的「用于捕获变量」等等诸如此类。</p>
+<p>这些回答显然都是正确的，不过它们并不是「闭包的作用」，而是闭包的一些具体的使用场景。其实如果被问到「闭包的作用」，那么这个问题本身就模棱两可，问一个东西的作用时，需要限定它的适用场景，把它放到一个前置环境下，再问它的作用。好比我问你平口起子的作用，你如果回答用它来在课桌上划三八线，我觉得也未尝不可。</p>
+<p>而如果什么都不限定的问一句「平口起子的作用是什么」，那么我们从「平口起子最初是为什么被制造的」这个点来回来，才算是答其所问了。同样的，如果被问到「闭包有什么作用」，那么回答为什么需要闭包，才是答其所问，而不是闭包都能干什么。</p>
+<p>当明白了问题之后，就已经成功了一大步。</p>
+<h2 id="作用域">作用域</h2>
+<p>首先我们知道编程语言中有一个「作用域」的概念，那么为什么是作用域呢？作用域就是程序中的「一段范围」在这个范围之内，某些变量是有效的。那么为什么要提出这个概念呢？没有作用域就不能编程吗？当然不是，没有作用域也是可以编程的，我们知道机器语言就没有作用域的概念，我曾经见过有前辈直接使用机器码编写出音乐播放器。</p>
+<p>那么既然没有作用域也能编程，为什么要引入这个概念呢？这是因为高级编程语言中要尽量的提供丰富地表达程序的能力，因此提出了变量名的概念，而编程中的词汇是相对匮乏的，毕竟编程是一定程度上的对现实抽象的内容。想象一下，如果程序中对于同一个变量名只能使用一次，那么必定是一个噩梦，比如我们在写循环的时候经常使用 <code>i</code>，这下好了，程序中只能出现一个 <code>i</code>，其余都得是 <code>i1 i2 ... iN</code> 这样了。</p>
+<p>有了作用域之后，我们在每个作用域中都能使用 <code>i</code> 了，这样就使得大家的词汇量得到了解放，也一定程序上使得程序表达更加简洁清晰，否则因为是程序中第 100 个循环就使用变量 <code>i100</code> 多少会让人感到有点傻。</p>
+<h2 id="一段范围">一段范围</h2>
+<p>注意我们在介绍作用域中提到的：作用域就是程序中的「一段范围」在这个范围之内，某些变量是有效的。这个一段范围，在现有的编程语言实现中具有两种不同的解释：</p>
+<ol>
+<li>静态作用域，又称为词法作用域</li>
+<li>动态作用域</li>
+</ol>
+<h3 id="静态作用域">静态作用域</h3>
+<p>在具有静态作用域的语言中，它们对「一段范围」的解释是，代码中的一段范围。换句话说，变量的作用域是直接体现在代码中的、即静态的；在解析阶段就可以确定的、即词法的。静态作用域的好处就是，通过阅读代码，我们和解析程序就能够确定一个变量的作用域，当然就很方便理解了。</p>
+<h3 id="动态作用域">动态作用域</h3>
+<p>在那些使用动态作用域的语言中，它们对「一段范围」的解释是，程序执行中的某个时间点。换句话说，变量的作用域是又程序运行阶段的行为确定的，是不可预测的，因此在人肉确定变量的作用域时会花费一些精力。</p>
+<h3 id="静态作用域的例子">静态作用域的例子：</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">// 一段用于演示静态作用域的 C 语言程序
+</span><span style="color:#75715e"></span><span style="color:#75715e">#include</span><span style="color:#75715e">&lt;stdio.h&gt; </span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>; 
+  
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">f</span>() 
+{ 
+   <span style="color:#66d9ef">return</span> x; 
+} 
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">g</span>() 
+{ 
+   <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>; 
+   <span style="color:#66d9ef">return</span> f(); 
+} 
+  
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() 
+{ 
+  printf(<span style="color:#e6db74">&#34;%d&#34;</span>, g()); 
+  printf(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>); 
+  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>; 
+} 
+</code></pre></div><p>结果打印 <code>10</code></p>
+<p>我们在 <code>g</code> 函数中调用了 <code>f</code>，我们知道 <code>f</code> 中的 <code>x</code> 就是全局作用域下的 <code>x</code>，因此即使在 <code>g</code> 中我们定义了局部变量 <code>x</code>，仍然不会影响到 <code>f</code> 中的 <code>x</code> 的绑定关系。</p>
+<h3 id="动态作用域的例子">动态作用域的例子：</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>; 
+  
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">f</span>() 
+{ 
+   <span style="color:#66d9ef">return</span> x; 
+} 
+  
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">g</span>() 
+{ 
+   <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>; 
+   <span style="color:#66d9ef">return</span> f(); 
+} 
+  
+main() 
+{ 
+  printf(g()); 
+}
+</code></pre></div><p>结果打印 <code>20</code>，注意这个程序并不是 C 程序了只是用来显示动态作用域的程序。</p>
+<p>在动态作用域的语言中，如何确定变量的绑定关系取决于当前调用的作用域。当我们在调用 <code>g</code> 的之后，我们在其作用域下定义了 <code>x</code>，于是在 <code>f</code> 中，其内部的 <code>x</code> 将引用到当前调用的作用域下的 <code>x</code>，也就是 <code>g</code> 中当前的 <code>x</code>。</p>
+<h2 id="闭包的概念的缘起">闭包的概念的缘起</h2>
+<p>既然 C 语言也是词法作用域的，那么为什么 C 语言中没有闭包的概念呢？这是因为在严格意义上来说，在 C 语言中函数并不是一等公民，也就是说你不能够像创建其他数据类型的实例一样、在运行阶段动态的创建一个函数、并将这个函数在程序中来回传递。当然利用汇编或者非 POSIX 中的 <code>JUMP</code> 类指令或者 API，能够模拟出动态创建函数的功能，但是在语言层面上，是没有直接的支持的。</p>
+<p>回到 JS 中，函数是一等公民，我们可以像创建普通类型的变量一样创建一个函数类型的变量，比如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> () {
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">x</span>
+}
+</code></pre></div><p>在 C 语言中，我们从语言直接提供的语义层面压根做不到上面的功能，而在 JS 中做到了，随之而生的就需要如何对 <code>x</code> 给出合理的解释。</p>
+<p>由谁来向谁解释呢？由对语言负责的组织、即标准委员会来像使用语言的人进行解释。为了延续程序其他部分的词法作用域的特质，动态创建的函数部分也维持这个语义，才能保证语言的连贯性和整体性（当然也有同时提供两种作用域的语言，比如 Perl）。为了达到这个目的，就引入了闭包的概念，之所以是引入，而不是创造，是因为闭包也是前人的研究成果，当然前辈研究出闭包的目的也是为了支持在词法作用域下把函数当成一等公民来使用。</p>
+<h2 id="小结">小结</h2>
+<p>说了这么多，对于问题「闭包的作用」，其答案就是「支持在词法作用域下将函数当做一等公民来使用」，没错，就是它的发明者当初发明它的目的。和「起子的作用就是拧螺丝」是一个道理。当然本文还是从理解问题开始，到作用域、到最终引出闭包的作用这样一个循序渐进的过程来进行讲解。相信会比直接给出答案「支持在词法作用域下将函数当做一等公民来使用」这样有利于大家进行理解吧。</p>
+
+    <a href="/"> >> Home</a>
+  </main>
+</div>
+    <footer>
+      
+<script>
+(function() {
+  function center_el(tagName) {
+    var tags = document.getElementsByTagName(tagName), i, tag;
+    for (i = 0; i < tags.length; i++) {
+      tag = tags[i];
+      var parent = tag.parentElement;
+      
+      if (parent.childNodes.length === 1) {
+        
+        if (parent.nodeName === 'A') {
+          parent = parent.parentElement;
+          if (parent.childNodes.length != 1) continue;
+        }
+        if (parent.nodeName === 'P') parent.style.textAlign = 'center';
+      }
+    }
+  }
+  var tagNames = ['img', 'embed', 'object'];
+  for (var i = 0; i < tagNames.length; i++) {
+    center_el(tagNames[i]);
+  }
+})();
+</script>
+
+      
+      <hr/>
+      <a href="https://github.com/hsiaosiyuan0">GitHub</a>
+      
+    </footer>
+  </body>
+</html>
+

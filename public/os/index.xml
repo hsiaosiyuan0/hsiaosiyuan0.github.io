@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Os on hsiaosiyuan</title>
+    <link>http://example.org/os/</link>
+    <description>Recent content in Os on hsiaosiyuan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 17 Jun 2019 00:00:00 +0800</lastBuildDate><atom:link href="http://example.org/os/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>大小端序</title>
+      <link>http://example.org/os/endian/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/os/endian/</guid>
+      <description>大端模式，是指数据的高字节保存在内存的低地址中，而数据的低字节保存在内存的高地址中，这样的存储模式有点儿类似于把数据当作字符串顺序处理：地址由小向大增加，而数据从高位往低位放；
+  小端模式，是指数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中，这种存储模式将地址的高低和数据位权有效地结合起来，高地址部分权值高，低地址部分权值低，和我们的逻辑方法一致。
+ 比如现在有一块四个字节的内存，并且地址是从左往右递增的。为了方便，都置为 0
+1000:1000 00 00 00 00 现有一个十六进制数 0x12345678，这个十六进制数刚好可以使用上面的那块内存去存放，因为它们都是 32bits。
+大端序 如果是大端序，内存表现将会是这样
+1000:1000 12 34 56 78 可以发现，12 是原十六进制数 0x12345678的高位，而这个 12 放在上面那块内存地址的最低单元中（因为前面说了，这块内存地址是从左往右递增的，所以左边是相对低位，右边是相对高位）。这就是这段话的意思
+ 大端模式，是指数据的高字节保存在内存的低地址中，而数据的低字节保存在内存的高地址中
+ 小端序 如果是小端序，内存表现是这样的
+1000:1000 78 56 34 12 可以发现，78 是原十六进制数 0x12345678的低位，而此时它也放在了最低的内存单元中，这就是这段话的意思
+ 小端模式，是指数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中
+ 另外，可以发现，大小端序对字节内容是没有影响的，12还是 12 并没有变成 21
+另外，对于类似下面情形，一般为内存或者文件 dump 工具的输出内容，通常的阅读顺序是，从左往右、从上到下:
+0AEC:0000 CD 20 FF 9F 00 9A EE FE-1D F0 4F 03 50 05 8A 03 0AEC:0010 50 05 17 03 50 05 16 04-01 01 01 00 02 FF FF FF 0AEC:0020 FF FF FF FF FF FF FF FF-FF FF FF FF 06 05 4E 01 0AEC:0030 10 0A 14 00 18 00 EC 0A-FF FF FF FF 00 00 00 00 0AEC:0040 05 00 00 00 00 00 00 00-00 00 00 00 00 00 00 00 0AEC:0050 CD 21 CB 00 00 00 00 00-00 00 00 00 00 20 20 20 0AEC:0060 20 20 20 20 20 20 20 20-00 00 00 00 00 20 20 20 0AEC:0070 20 20 20 20 20 20 20 20-00 00 00 00 00 00 00 00 8086 端序 如何知道当前的 8086 是大端序还是小端序，可以使用下面的汇编代码测试</description>
+    </item>
+    
+    <item>
+      <title>字符集与字符编码</title>
+      <link>http://example.org/os/charset/</link>
+      <pubDate>Mon, 17 Jun 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/os/charset/</guid>
+      <description>之前已经了解过一些 Unicode 和 UTF-8 之前的关系，见 UTF-8 编码及检查其完整性.md。
+今天在看 ICU 文档的时候，又再一次看到 codepage 这个参数，比如 u_fopen，于是想了解一下 code page 和 character set、character encoding 之间的关系。
+代码页「Code Page」，也被称为 字符编码「Character Encoding」。维基百科上还解释称代码页也被称为内码，见，初一看确认让人感觉云里雾里的，不排除中文翻译的问题。内码表示的是操作系统或者应用程序内部使用的编码，简称为「内码」。相信有人会和我一样，最初会以为代码页只的是很多编码格式的集合，单其实不是，一个代码页对应一个字符编码格式。
+字符集「Character Set」，这里的集合「Set」表示的是字符与指代它们的数字之间的对应关系的集合，比如：
+a_character_set = { &amp;#39;a&amp;#39;: 1, &amp;#39;b&amp;#39;: 2 } 那么字符集与字符编码有什么不同吗？区别就在于，编码引入了转换处理的过程。我们拿 Unicode 和 UTF-8 来举例。Unicode 就是字符集，我们通常可以使用 UInt32 来表示一个字符对应的 Unicode 中的数字，就好比上面的例子。而 UTF-8 被称为字符编码的原因，就是因为它包含了将原本需要 UInt32 即 4 个字节表示的字符，处理成需要 1~4 个不等的字符来表示的形式，这其中的转换就是编码的工作含义。我们甚至可以将 Character Set 理解为最简单的 Character Encoding。
+如果我们打开浏览器控制台检查「Inspect」一个请求的话，会发现在 Response Headers 中有：
+Content-Type: text/html; charset=UTF-8 我们发现 UTF-8 是作为 charset 的值，为什么这里不是 char-encoding 呢？这是因为 HTTP 标准制定诞生在 Unicode 标准之前，那时都是使用 Character Set 的形式，而在 Unicode 系列标准出现后，为了保证兼容性 HTTP 标准保留了 charset 的使用。</description>
+    </item>
+    
+    <item>
+      <title>魔数 0x7c00</title>
+      <link>http://example.org/os/0x7c00/</link>
+      <pubDate>Sat, 09 Mar 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/os/0x7c00/</guid>
+      <description>魔数 0x7c00 在涉及到计算机系统引导部分的内容时，经常会看到这个魔数(maigc number) 0x7c00。
+找到一篇文章讲述这个魔数的来龙去脉 Why BIOS loads MBR into 0x7C00 in x86 ，简单地小结下文中的内容:
+  0x7c00 这个魔数和 CPU 没有直接关系，并不属于 CPU 手册中的规定内容
+  它第一次出现在 IBM PC 5150 ROM BIOS INT 19h handler，就是 IBM PC 5150 基础输入输出系统中的第19个中断处理句柄中
+  之所以在 CPU 手册中没有任何关于 0x7c00 的细节，是因为它完全是属于 BIOS 的规格参数。
+  来自 IBM PC 5150 开发团队的解释是：
+ 他们在设计系统时以内存最小为 32KiB 为目标 他们希望在 32KiB 之内流出更多的空间给 OS 来完成自身的引导 8086/8088 使用 0x0-0x3FF 来存放中断矢量，紧随其后的是 BIOS 的数据段 引导扇区(boot sector) 是 512字节，并且引导引导程序的栈大小为 512字节 所以 BIOS 将引导程序载入到 0x7c00 位置，引导程序将使用 32KiB 的最后 1024B 的内容  在 OS 载入完成后，引导扇区在内存中占据的内容将不再被使用，因此 OS 和应用程序可是使用这块内存。在 OS 载入后，内存中的情形类似:</description>
+    </item>
+    
+    <item>
+      <title>为什么需要检查 UTF-8 编码</title>
+      <link>http://example.org/os/utf8-encoding/</link>
+      <pubDate>Thu, 07 Mar 2019 00:00:00 +0800</pubDate>
+      
+      <guid>http://example.org/os/utf8-encoding/</guid>
+      <description>为什么需要检查 UTF-8 编码 根据 WebSocket 协议的要求 5.6 数据帧，如果 Frame 的 Opcode 是 0x1 的话，则表示这是一个文本帧，即其 “Application Data” 是使用 UTF-8 编码的字符串。不过由于消息也可以使用多个 Frame 进行分片传输，所以在验证文本消息的编码时，需要收集到消息的所有 Frames 后，提取所有的 Frame 中的 “Application Data” 组成一个大的 “Application Data”，然后验证这个大的 “Application Data” 中的字节是不是合法的 UTF-8 编码。
+既然协议中要求了文本消息必须使用 UTF-8 编码，那么反过来，验证编码是否是 UTF-8就可以一定程度上确定消息的完整性。
+Unicode 简单的说 Unicode 就是一种字符的编码方式，此编码方式一般使用两个字节（UCS-2）去表示一个字符，比如“汉”这个中文字符，其 unicode 编码的十六进制表示就是 0x6c49。
+UTF-8 UTF-8 的全称是 8-bit Unicode Transformation Format 中文就是 “8 位的 unicode 转换格式”。UTF-8 是具体的 Unicode 实现方式中的一种，套用 wiki 上的一段话：
+ 但是在实际传输过程中，由于不同系统平台的设计不一定一致，以及出于节省空间的目的，对Unicode编码的实现方式有所不同。Unicode的实现方式称为Unicode转换格式（Unicode Transformation Format，简称为UTF）
+ UTF-8 的编码方式  UTF-8使用一至六个字节为每个字符编码（尽管如此，2003年11月UTF-8被RFC 3629重新规范，只能使用原来Unicode定义的区域，U+0000到U+10FFFF，也就是说最多四个字节）</description>
+    </item>
+    
+  </channel>
+</rss>

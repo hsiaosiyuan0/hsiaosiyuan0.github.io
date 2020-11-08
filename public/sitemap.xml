@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://example.org/</loc>
+    <lastmod>2020-08-20T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/typescript/decorator/</loc>
+    <lastmod>2020-08-20T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/typescript/</loc>
+    <lastmod>2020-08-20T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/v8/debug-v8-in-vscode/</loc>
+    <lastmod>2020-08-20T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/v8/</loc>
+    <lastmod>2020-08-20T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/rust/lifetime/</loc>
+    <lastmod>2020-08-19T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/rust/</loc>
+    <lastmod>2020-08-19T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/static-analysis/</loc>
+    <lastmod>2020-08-04T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/static-analysis/ternjs/</loc>
+    <lastmod>2020-08-04T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/oop/ioc/</loc>
+    <lastmod>2019-08-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/oop/</loc>
+    <lastmod>2019-08-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/javascript/</loc>
+    <lastmod>2019-08-06T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/javascript/the-duty-of-closure/</loc>
+    <lastmod>2019-08-06T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/javascript/generator-function/</loc>
+    <lastmod>2019-08-04T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/javascript/javascript-internal-encoding/</loc>
+    <lastmod>2019-08-04T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/javascript/closure/</loc>
+    <lastmod>2019-07-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/javascript/the-cost-of-json-parsing/</loc>
+    <lastmod>2019-06-26T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/assembly/</loc>
+    <lastmod>2019-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/assembly/learning-assembly-lang/</loc>
+    <lastmod>2019-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/browser/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/node/the-cluster-module/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/cpp/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/node/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/os/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/work/parsing-in-practice/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/php/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/cpp/the-as-if-rule/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/websocket/websocket-1-4/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/websocket/websocket-5-6/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/websocket/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/work/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/php/why-php-is-not-good-for-long-time-running/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/os/endian/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/os/charset/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/browser/same-origin/</loc>
+    <lastmod>2019-06-17T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/blockchain/</loc>
+    <lastmod>2019-06-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/blockchain/crypto-conditions/</loc>
+    <lastmod>2019-06-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/blockchain/practical-byzantine-fault-tolerance/</loc>
+    <lastmod>2019-06-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/crypto/</loc>
+    <lastmod>2019-06-13T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/crypto/brief-crypto/</loc>
+    <lastmod>2019-06-13T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/os/0x7c00/</loc>
+    <lastmod>2019-03-09T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/os/utf8-encoding/</loc>
+    <lastmod>2019-03-07T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tags/</loc>
+  </url>
+  
+</urlset>
