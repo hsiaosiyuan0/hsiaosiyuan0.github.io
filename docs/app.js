@@ -1,0 +1,2 @@
+((typeof(window)!=='undefined'?window:global)["webpackChunkgadget_template_default"] = (typeof(window)!=='undefined'?window:global)["webpackChunkgadget_template_default"] || []).push([["app"],{},
+0,[["./node_modules/gadget.js/salver/app/index.tsx","foundation","lib"]]]);

@@ -1,0 +1,171 @@
+<!DOCTYPE html><html><head><title>汇编语言学习小结</title><meta charSet="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1, user-scalable=no, viewport-fit=cover"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.5.0/themes/prism-vsc-dark-plus.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/toolbar/prism-toolbar.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-numbers/prism-line-numbers.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-highlight/prism-line-highlight.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@0.3.1/iconfont/material-icons.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@0.3.1/css/material-icons.min.css"/><link rel="stylesheet" href="/outlet__outlets_default_tsx.css"/><link rel="stylesheet" href="/pages/post.css"/></head><body><a href="https://github.com/hsiaosiyuan0/hsiaosiyuan0.github.io" style="position:fixed;top:0;right:0;border:0;width:150px;height:150px;z-index:3000"><img style="position:absolute;top:0;right:0;border:0" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"/></a><div id="__gadget__"><div><div class="_3k0uOgdSRfNa0MZs6QS7ku"><div class="_1G63502GZaEXBXykcWz6cX">The hard ways</div></div><div class="Z_a6ax5LrTSVASNRR2aN6"><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>v8</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/v8/debug-v8-in-vscode.html"><i class=""></i><span>debug-v8-in-vscode</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/v8/common-data-types.html"><i class=""></i><span>v8 常见数据类型</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>deno</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/deno/native-plugin.html"><i class=""></i><span>deno native plugin 内部实现机制</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>crypto</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/crypto/brief-crypto.html"><i class=""></i><span>加密算法调研</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>nodejs</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/Cluster 模块分析.html"><i class=""></i><span>Cluster 模块分析</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/build-from-source.html"><i class=""></i><span>build-from-source</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/node-addon.html"><i class=""></i><span>node-addon</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/common-snippet.html"><i class=""></i><span>common-snippet</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/heap-snapshot.html"><i class=""></i><span>heap-snapshot</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>websocket</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/websocket/WebSocket 协议 1~4 节.html"><i class=""></i><span>WebSocket 协议 1~4 节</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/websocket/WebSocket 协议 5~10 节.html"><i class=""></i><span>WebSocket 协议 5~10 节</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>assembly</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/assembly/汇编语言学习小结.html"><i class=""></i><span>汇编语言学习小结</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>typescript</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/typescript/decorator.html"><i class=""></i><span>Decorator in babel and tsc</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>rust</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/rust/lifetime.html"><i class=""></i><span>Lifetime</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>oop</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/oop/ioc.html"><i class=""></i><span>midway 分析</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>php</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/php/为什么 PHP 不适合长时间运行.html"><i class=""></i><span>为什么 PHP 不适合长时间运行</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>blockchain</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/blockchain/crypto-conditions 简述.html"><i class=""></i><span>crypto-conditions 简述</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/blockchain/实用拜占庭容错简介.html"><i class=""></i><span>实用拜占庭容错简介</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>browser</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/browser/浏览器异步加载和同源策略.html"><i class=""></i><span>浏览器异步加载和同源策略</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>cpp</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/cpp/the-as-if-rule.html"><i class=""></i><span>The as-if rule</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>work</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/work/parsing-in-practice.html"><i class=""></i><span>Parsing in practice</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>os</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/大小端序.html"><i class=""></i><span>大小端序</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/UTF-8 编码及检查其完整性.html"><i class=""></i><span>UTF-8 编码及检查其完整性</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/魔数0x7c00.html"><i class=""></i><span>魔数 0x7c00</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/字符集和字符编码.html"><i class=""></i><span>字符集和字符编码</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>javascript</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/generator function.html"><i class=""></i><span>Generator Function</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/解析 JSON 的成本.html"><i class=""></i><span>解析 JSON 的成本</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/Javascript 内部的字符编码.html"><i class=""></i><span>Javascript 内部的字符编码</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/闭包的作用.html"><i class=""></i><span>闭包的作用</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/闭包是什么.html"><i class=""></i><span>闭包是什么</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>static-analysis</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/static-analysis/ternjs.html"><i class=""></i><span>使用 Rust 重写 ternjs</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>react</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/react/build-from-source.html"><i class=""></i><span>build-from-source</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/react/bootstrap.html"><i class=""></i><span>bootstrap</span></a><ul></ul></div></li></ul></div></div><div class="rWpFqfkPbEcRx8xnnjlEm line-numbers"><div><div><h1 id="汇编语言学习小结">汇编语言学习小结</h1>
+<p>学习汇编语言书「guide-to-assembly-language-programming-in-linux」的收获:</p>
+<ol>
+<li>了解汇编语言的语法</li>
+<li>了解 CPU 和 内存的基本结构</li>
+<li>栈及其相关操作</li>
+<li>了解汇编语言层面如何进行 Procedure 调用，包括传参和返回值和返回点如何处理</li>
+<li>了解汇编语言和 C 语言如何相互调用，以及 C 语言是如何编译成汇编语言</li>
+</ol>
+<h2 id="汇编语言的语法">汇编语言的语法</h2>
+<p>汇编语言的语法包括预处理和指令生成两种，预处理部分在汇编的预处理阶段被处理，而指令生成部分则会在编译阶段生成具体的指令。
+比如预处理阶段的 <code>macro</code> 和 <code>%define</code> 以及指令生成阶段的 <code>add AX, 1</code>。</p>
+<p>对于指令生成的语法，都是每一行对应一条指令，且语法形式为 <code>opode operand1, operand2, ...</code> 即操作码接操作数的形式。</p>
+<h2 id="了解CPU和内存的基本结构">了解 CPU 和内存的基本结构</h2>
+<p>CPU 由各种运算电路以及寄存器组成。运算电路负责实际的运算，而寄存器用于存放参数，临时结果，最终结果。寄存器分为通用寄存器和特定用途寄存器。</p>
+<p>特定用途寄存器又大致分为： 段寄存器，标志寄存器和指令指针寄存器，等。对于 EBP 和 ESP 这两个寄存，有时又被称为特殊通用寄存器，这是因为在进行栈的相关操作时这两个寄存器会有特殊用途。所谓“通用”指的是，该寄存器可以作为计算或者存放临时结果的寄存器，而特殊寄存器则被限定了其用途，比如指令指针寄存器，只可以用于存放接下来的指令的位置。</p>
+<p>之所以 ESP 和 EBP 被称为通用寄存器就是因为，这两个寄存器也是可以在计算时用于存放临时结果的，只不过在栈相关操作时，为了方便将他们的功能基于约定地限定了。</p>
+<p>对于内存的基本结构而言，CPU 并不能够直接访问内存上的数据，而是要通过地址总线，数据总线和控制总线，来指挥内存芯片来读取或者写入内存数据。由于内存以及 CPU 的设计结构限制，会有存在内存上的数据需要进行对齐的要求，如前所述，该要求并不是绝对的。数据对齐一般都是有编译器自动完成的，这在 C 语言中就涉及到数据 padding。</p>
+<h2 id="栈及其相关操作">栈及其相关操作</h2>
+<p>栈是一个后进先出的结构，并且向低地址方向增长，栈中只会存放 word 和 double words 长度的元素，不会单独存放单个字节。TOS 指向的是栈顶元素的最低字节，栈中元素被 pop 后，只是将 TOS 向高地址方向进行移动，以此达到元素被移出的效果。移出元素的内存中的数据则实在下一次的入栈操作时被覆写。</p>
+<h2 id="了解Procedure调用细节">了解 Procedure 调用细节</h2>
+<p>过程调用时的参数可以通过寄存器或者栈进行传递。使用寄存器和栈个有利弊。使用寄存器能获取更高的性能，这是因为减少了内存操作，操作数直接存在于寄存器中了。使用寄存器的弊端就是，寄存器数量是有限的，所以主要还是应该将它们用于计算。使用栈传递的参数的好处就是可以将原本用于传参的寄存器解放出来，用于计算，弊端就是在涉及到具体的计算时，需要将数据从栈中载入寄存器。</p>
+<p>参数的释放，可以由调用者或者被调用者来释放。在参数长度固定的情况下，由被调用者进行参数的释放，比较符合模块化的设计思路。当参数长度不固定时，则只能有调用者来进行参数的释放。</p>
+<p>在过程内部，在需要使用寄存器时，首先需要想将其进行压栈备份，然后在过程执行完毕后，进行出栈恢复。</p>
+<p>call 指令的操作数并不是过程的相对代码段基地址的偏移量，而是相对被调用过程的第一条指令想对于 call 指令的下一条指令的相对偏移量，比如：</p>
+<pre><code class="language-nasm">%include &quot;io.mac&quot;
+.DATA
+prompt_msg1  db   &quot;Please input the first number: &quot;,0
+prompt_msg2  db   &quot;Please input the second number: &quot;,0
+sum_msg      db   &quot;The sum is &quot;,0
+
+.CODE
+      .STARTUP
+      PutStr  prompt_msg1    ; request first number
+      GetInt  CX             ; CX = first number
+
+      PutStr  prompt_msg2    ; request second number
+      GetInt  DX             ; DX = second number
+
+      call    sum            ; returns sum in AX
+      PutStr  sum_msg        ; display sum
+      PutInt  AX
+      nwln
+done:
+      .EXIT
+
+;-----------------------------------------------------------
+; Procedure sum receives two integers in CX and DX.
+; The sum of the two integers is returned in AX.
+;-----------------------------------------------------------
+sum:
+      mov     AX,CX          ; sum = first number
+      add     AX,DX          ; sum = sum + second number
+      ret
+</code></pre>
+<p>上面代码中的 <code>call sum</code> 执行过程如下:</p>
+<ol>
+<li><code>call sum</code> 指令被读取，此时 EIP 寄存器已经为 <code>PutStr  sum_msg</code> 相对代码段基地址的偏移量了，假设 <code>call sum</code> 的地址为 <code>x</code>，则此时 EIP 的内容为 <code>x+1</code>。</li>
+<li><code>call sum</code> 的操作数为 <code>sum</code> 第一条指令的地址 <code>mov AX，CX</code> 相对于 <code>PutStr  sum_msg</code> 的相对偏移量。假设 <code>mov AX，CX</code> 地址为 y，此时 call 的操作数为 <code>y - (x + 1)</code>。因此，call 指令执行完成后，即对 EIP 中的地址进行调整，使得 EIP 中的地址变为了 <code>sum</code> 第一条命令的地址，即 <code>y = (y - (x + 1) + (x + 1))</code>。</li>
+</ol>
+<p>除了修改 EIP 的内容达到指令跳转的功能外，call 指令还会将当前(修改前)的 EIP 内容压入栈中，因此在被调用过程的内部，可以使用 ret 指令进行返回。有一点需要注意的时，在执行 ret 指令时，ESP 必须指向栈上的记录返回地址的元素，这在由被调用的过程释放参数的情况下需要注意，可以使用 ret 的操作数来完成释放并返回的效果:</p>
+<pre><code class="language-nasm">ret     optional-value
+; 类似
+EIP=SS:ESP
+ESP=ESP + optional-value
+</code></pre>
+<p>局部变量的处理，通过使用 enter 和 leave 指令来完成:</p>
+<p>enter 指令的格式为:</p>
+<pre><code class="language-nasm">enter   bytes,level
+
+</code></pre>
+<p>level 用于高级语言中表示栈的嵌套层次</p>
+<pre><code class="language-nasm">enter   XX,0
+; 等价于
+push    EBP 
+mov     EBP,ESP
+sub     ESP,XX
+</code></pre>
+<p>注意上面的 <code>sub ESP,XX</code>，前面提到栈是往低地址进行增长的，这里的减就是这个意思。</p>
+<p>leave 指令的执行类似:</p>
+<pre><code class="language-nasm">mov     ESP,EBP
+pop     EBP
+</code></pre>
+<p>注意这里是将 EBP 赋值给了 ESP，而 EBP 的内容是在进入被调用过程后立即保存的 ESP 的值。</p>
+<p>一般的过程调用模板类似，当然这是由被调用函数释放参数的过程:</p>
+<pre><code class="language-nasm">proc-name:
+    enter   XX,0
+    ;procedure body
+    leave
+    ret     YY
+</code></pre>
+<p>如果过程需要使用到局部变量，那么 XX 将是一个非零的值。YY 目的是释放传入的参数。</p>
+<p>再补充一下 call 与 jmp 的区别：</p>
+<ul>
+<li>jmp 指令只会跳转到指定的位置</li>
+<li>call 指令除了会进行跳转之外，还会将将钱 EIP 寄存器的内容压入栈中</li>
+</ul>
+<p>这里分别是 call 和 jmp 的手册: <a href="https://c9x.me/x86/html/file_module_x86_id_26.html">call</a>， <a href="https://c9x.me/x86/html/file_module_x86_id_147.html">jmp</a></p>
+<p>可以看到，上文的描述并不是完全的准确，call 和 jmp 一样，根据跳转的距离分为 short, near，far。在 short 和 near(部分) 情况下，使用的相对位移，其他情况使用的是绝对地址。</p>
+<h2 id="和C语言相互调用">和 C 语言相互调用</h2>
+<p>本书的 C 编译成汇编的例子在实际操作中可能因为 gcc 版本的差异，导致汇编结果不同。而且汇编的结果显示:</p>
+<p>C 代码:</p>
+<pre><code class="language-c">int test(int x, int y, int z) {
+    return x + y + z;
+}
+
+int main(void) {
+    int x = 25, y = 70;
+    int value;
+    value = test(x, y, 5);
+}
+</code></pre>
+<p>的汇编结果为，使用 <code>gcc -S -masm=intel test.c</code>:</p>
+<pre><code class="language-nasm">	.file	&quot;test.c&quot;
+	.intel_syntax noprefix
+	.text
+	.globl	test
+	.type	test, @function
+test:
+.LFB0:
+	.cfi_startproc
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register 6
+	mov	DWORD PTR -4[rbp], edi
+	mov	DWORD PTR -8[rbp], esi
+	mov	DWORD PTR -12[rbp], edx
+	mov	edx, DWORD PTR -4[rbp]
+	mov	eax, DWORD PTR -8[rbp]
+	add	edx, eax
+	mov	eax, DWORD PTR -12[rbp]
+	add	eax, edx
+	pop	rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	test, .-test
+	.globl	main
+	.type	main, @function
+main:
+.LFB1:
+	.cfi_startproc
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register 6
+	sub	rsp, 16
+	mov	DWORD PTR -12[rbp], 25
+	mov	DWORD PTR -8[rbp], 70
+	mov	ecx, DWORD PTR -8[rbp]
+	mov	eax, DWORD PTR -12[rbp]
+	mov	edx, 5
+	mov	esi, ecx
+	mov	edi, eax
+	call	test
+	mov	DWORD PTR -4[rbp], eax
+	mov	eax, 0
+	leave
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE1:
+	.size	main, .-main
+	.ident	&quot;GCC: (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0&quot;
+	.section	.note.GNU-stack,&quot;&quot;,@progbits
+</code></pre>
+<p>可以看到并没有使用栈进行传参，而是使用的寄存器，所以问题在就在如果代码是 C 和汇编进行的混编，那么汇编的部分如何知道 C 语言使用的是哪几个寄存器进行的传参？后续看到的再进行补充</p></div></div></div><div class="_3a4jt6lr4yLRJnQge009wv"><ul><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#汇编语言的语法">汇编语言的语法</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#了解CPU和内存的基本结构">了解 CPU 和内存的基本结构</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#栈及其相关操作">栈及其相关操作</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#了解Procedure调用细节">了解 Procedure 调用细节</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#和C语言相互调用">和 C 语言相互调用</a></span></div><ul></ul></div></li></ul></div><div class="_1UY_ItV2UTWKutKs5b7NKg">Made with <a target="_blank" href="https://github.com/hsiaosiyuan0/gadget">gadget</a></div></div></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-core.min.js" data-manual="true"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-markup.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-clike.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-json.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-javascript.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-jsx.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-typescript.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-tsx.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-bash.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-python.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-xml-doc.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-docker.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-rust.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-nasm.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-c.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-cpp.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/toolbar/prism-toolbar.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-numbers/prism-line-numbers.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-highlight/prism-line-highlight.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/show-language/prism-show-language.min.js"></script><script src="https://cdn.jsdelivr.net/gh/cferdinandi/gumshoe@5.1.1/dist/gumshoe.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react@16.14.0/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@16.14.0/umd/react-dom.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react@16.14.0/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@16.14.0/umd/react-dom.production.min.js"></script><script>window["__gadget__"]={"initialProps":{"data":{"post":{"filename":"汇编语言学习小结","rawMeta":{"title":"汇编语言学习小结"},"content":"# 汇编语言学习小结\n\n学习汇编语言书「guide-to-assembly-language-programming-in-linux」的收获:\n\n1. 了解汇编语言的语法\n2. 了解 CPU 和 内存的基本结构\n3. 栈及其相关操作\n4. 了解汇编语言层面如何进行 Procedure 调用，包括传参和返回值和返回点如何处理\n5. 了解汇编语言和 C 语言如何相互调用，以及 C 语言是如何编译成汇编语言\n\n## 汇编语言的语法\n\n汇编语言的语法包括预处理和指令生成两种，预处理部分在汇编的预处理阶段被处理，而指令生成部分则会在编译阶段生成具体的指令。\n比如预处理阶段的 `macro` 和 `%define` 以及指令生成阶段的 `add AX, 1`。\n\n对于指令生成的语法，都是每一行对应一条指令，且语法形式为 `opode operand1, operand2, ...` 即操作码接操作数的形式。\n\n## 了解 CPU 和内存的基本结构\n\nCPU 由各种运算电路以及寄存器组成。运算电路负责实际的运算，而寄存器用于存放参数，临时结果，最终结果。寄存器分为通用寄存器和特定用途寄存器。\n\n特定用途寄存器又大致分为： 段寄存器，标志寄存器和指令指针寄存器，等。对于 EBP 和 ESP 这两个寄存，有时又被称为特殊通用寄存器，这是因为在进行栈的相关操作时这两个寄存器会有特殊用途。所谓“通用”指的是，该寄存器可以作为计算或者存放临时结果的寄存器，而特殊寄存器则被限定了其用途，比如指令指针寄存器，只可以用于存放接下来的指令的位置。\n\n之所以 ESP 和 EBP 被称为通用寄存器就是因为，这两个寄存器也是可以在计算时用于存放临时结果的，只不过在栈相关操作时，为了方便将他们的功能基于约定地限定了。\n\n对于内存的基本结构而言，CPU 并不能够直接访问内存上的数据，而是要通过地址总线，数据总线和控制总线，来指挥内存芯片来读取或者写入内存数据。由于内存以及 CPU 的设计结构限制，会有存在内存上的数据需要进行对齐的要求，如前所述，该要求并不是绝对的。数据对齐一般都是有编译器自动完成的，这在 C 语言中就涉及到数据 padding。\n\n## 栈及其相关操作\n\n栈是一个后进先出的结构，并且向低地址方向增长，栈中只会存放 word 和 double words 长度的元素，不会单独存放单个字节。TOS 指向的是栈顶元素的最低字节，栈中元素被 pop 后，只是将 TOS 向高地址方向进行移动，以此达到元素被移出的效果。移出元素的内存中的数据则实在下一次的入栈操作时被覆写。\n\n## 了解 Procedure 调用细节\n\n过程调用时的参数可以通过寄存器或者栈进行传递。使用寄存器和栈个有利弊。使用寄存器能获取更高的性能，这是因为减少了内存操作，操作数直接存在于寄存器中了。使用寄存器的弊端就是，寄存器数量是有限的，所以主要还是应该将它们用于计算。使用栈传递的参数的好处就是可以将原本用于传参的寄存器解放出来，用于计算，弊端就是在涉及到具体的计算时，需要将数据从栈中载入寄存器。\n\n参数的释放，可以由调用者或者被调用者来释放。在参数长度固定的情况下，由被调用者进行参数的释放，比较符合模块化的设计思路。当参数长度不固定时，则只能有调用者来进行参数的释放。\n\n在过程内部，在需要使用寄存器时，首先需要想将其进行压栈备份，然后在过程执行完毕后，进行出栈恢复。\n\ncall 指令的操作数并不是过程的相对代码段基地址的偏移量，而是相对被调用过程的第一条指令想对于 call 指令的下一条指令的相对偏移量，比如：\n\n```nasm\n%include \"io.mac\"\n.DATA\nprompt_msg1  db   \"Please input the first number: \",0\nprompt_msg2  db   \"Please input the second number: \",0\nsum_msg      db   \"The sum is \",0\n\n.CODE\n      .STARTUP\n      PutStr  prompt_msg1    ; request first number\n      GetInt  CX             ; CX = first number\n\n      PutStr  prompt_msg2    ; request second number\n      GetInt  DX             ; DX = second number\n\n      call    sum            ; returns sum in AX\n      PutStr  sum_msg        ; display sum\n      PutInt  AX\n      nwln\ndone:\n      .EXIT\n\n;-----------------------------------------------------------\n; Procedure sum receives two integers in CX and DX.\n; The sum of the two integers is returned in AX.\n;-----------------------------------------------------------\nsum:\n      mov     AX,CX          ; sum = first number\n      add     AX,DX          ; sum = sum + second number\n      ret\n```\n\n上面代码中的 `call sum` 执行过程如下:\n\n1. `call sum` 指令被读取，此时 EIP 寄存器已经为 `PutStr  sum_msg` 相对代码段基地址的偏移量了，假设 `call sum` 的地址为 `x`，则此时 EIP 的内容为 `x+1`。\n2. `call sum` 的操作数为 `sum` 第一条指令的地址 `mov AX，CX` 相对于 `PutStr  sum_msg` 的相对偏移量。假设 `mov AX，CX` 地址为 y，此时 call 的操作数为 `y - (x + 1)`。因此，call 指令执行完成后，即对 EIP 中的地址进行调整，使得 EIP 中的地址变为了 `sum` 第一条命令的地址，即 `y = (y - (x + 1) + (x + 1))`。\n\n除了修改 EIP 的内容达到指令跳转的功能外，call 指令还会将当前(修改前)的 EIP 内容压入栈中，因此在被调用过程的内部，可以使用 ret 指令进行返回。有一点需要注意的时，在执行 ret 指令时，ESP 必须指向栈上的记录返回地址的元素，这在由被调用的过程释放参数的情况下需要注意，可以使用 ret 的操作数来完成释放并返回的效果:\n\n```nasm\nret     optional-value\n; 类似\nEIP=SS:ESP\nESP=ESP + optional-value\n```\n\n局部变量的处理，通过使用 enter 和 leave 指令来完成:\n\nenter 指令的格式为:\n\n```nasm\nenter   bytes,level\n\n```\n\nlevel 用于高级语言中表示栈的嵌套层次\n\n\n```nasm\nenter   XX,0\n; 等价于\npush    EBP \nmov     EBP,ESP\nsub     ESP,XX\n```\n\n注意上面的 `sub ESP,XX`，前面提到栈是往低地址进行增长的，这里的减就是这个意思。\n\n\nleave 指令的执行类似:\n\n```nasm\nmov     ESP,EBP\npop     EBP\n```\n\n注意这里是将 EBP 赋值给了 ESP，而 EBP 的内容是在进入被调用过程后立即保存的 ESP 的值。\n\n一般的过程调用模板类似，当然这是由被调用函数释放参数的过程:\n\n```nasm\nproc-name:\n    enter   XX,0\n    ;procedure body\n    leave\n    ret     YY\n```\n\n如果过程需要使用到局部变量，那么 XX 将是一个非零的值。YY 目的是释放传入的参数。\n\n再补充一下 call 与 jmp 的区别：\n\n* jmp 指令只会跳转到指定的位置\n* call 指令除了会进行跳转之外，还会将将钱 EIP 寄存器的内容压入栈中\n\n这里分别是 call 和 jmp 的手册: [call](https://c9x.me/x86/html/file_module_x86_id_26.html)， [jmp](https://c9x.me/x86/html/file_module_x86_id_147.html)\n\n可以看到，上文的描述并不是完全的准确，call 和 jmp 一样，根据跳转的距离分为 short, near，far。在 short 和 near(部分) 情况下，使用的相对位移，其他情况使用的是绝对地址。\n\n## 和 C 语言相互调用\n\n本书的 C 编译成汇编的例子在实际操作中可能因为 gcc 版本的差异，导致汇编结果不同。而且汇编的结果显示:\n\nC 代码:\n\n```c\nint test(int x, int y, int z) {\n    return x + y + z;\n}\n\nint main(void) {\n    int x = 25, y = 70;\n    int value;\n    value = test(x, y, 5);\n}\n```\n\n的汇编结果为，使用 `gcc -S -masm=intel test.c`:\n\n```nasm\n\t.file\t\"test.c\"\n\t.intel_syntax noprefix\n\t.text\n\t.globl\ttest\n\t.type\ttest, @function\ntest:\n.LFB0:\n\t.cfi_startproc\n\tpush\trbp\n\t.cfi_def_cfa_offset 16\n\t.cfi_offset 6, -16\n\tmov\trbp, rsp\n\t.cfi_def_cfa_register 6\n\tmov\tDWORD PTR -4[rbp], edi\n\tmov\tDWORD PTR -8[rbp], esi\n\tmov\tDWORD PTR -12[rbp], edx\n\tmov\tedx, DWORD PTR -4[rbp]\n\tmov\teax, DWORD PTR -8[rbp]\n\tadd\tedx, eax\n\tmov\teax, DWORD PTR -12[rbp]\n\tadd\teax, edx\n\tpop\trbp\n\t.cfi_def_cfa 7, 8\n\tret\n\t.cfi_endproc\n.LFE0:\n\t.size\ttest, .-test\n\t.globl\tmain\n\t.type\tmain, @function\nmain:\n.LFB1:\n\t.cfi_startproc\n\tpush\trbp\n\t.cfi_def_cfa_offset 16\n\t.cfi_offset 6, -16\n\tmov\trbp, rsp\n\t.cfi_def_cfa_register 6\n\tsub\trsp, 16\n\tmov\tDWORD PTR -12[rbp], 25\n\tmov\tDWORD PTR -8[rbp], 70\n\tmov\tecx, DWORD PTR -8[rbp]\n\tmov\teax, DWORD PTR -12[rbp]\n\tmov\tedx, 5\n\tmov\tesi, ecx\n\tmov\tedi, eax\n\tcall\ttest\n\tmov\tDWORD PTR -4[rbp], eax\n\tmov\teax, 0\n\tleave\n\t.cfi_def_cfa 7, 8\n\tret\n\t.cfi_endproc\n.LFE1:\n\t.size\tmain, .-main\n\t.ident\t\"GCC: (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0\"\n\t.section\t.note.GNU-stack,\"\",@progbits\n```\n\n可以看到并没有使用栈进行传参，而是使用的寄存器，所以问题在就在如果代码是 C 和汇编进行的混编，那么汇编的部分如何知道 C 语言使用的是哪几个寄存器进行的传参？后续看到的再进行补充","slug":"/assembly/汇编语言学习小结","toc":[{"name":"汇编语言的语法","depth":2,"anchor":"#汇编语言的语法","children":[]},{"name":"了解 CPU 和内存的基本结构","depth":2,"anchor":"#了解CPU和内存的基本结构","children":[]},{"name":"栈及其相关操作","depth":2,"anchor":"#栈及其相关操作","children":[]},{"name":"了解 Procedure 调用细节","depth":2,"anchor":"#了解Procedure调用细节","children":[]},{"name":"和 C 语言相互调用","depth":2,"anchor":"#和C语言相互调用","children":[]}],"keywords":[],"mtime":1615393171076},"catalog":[{"name":"v8","url":"/post/v8","children":[{"name":"debug-v8-in-vscode","url":"/post/v8/debug-v8-in-vscode.html","children":[]},{"name":"v8 常见数据类型","url":"/post/v8/common-data-types.html","children":[]}]},{"name":"deno","url":"/post/deno","children":[{"name":"deno native plugin 内部实现机制","url":"/post/deno/native-plugin.html","children":[]}]},{"name":"crypto","url":"/post/crypto","children":[{"name":"加密算法调研","url":"/post/crypto/brief-crypto.html","children":[]}]},{"name":"nodejs","url":"/post/nodejs","children":[{"name":"Cluster 模块分析","url":"/post/nodejs/Cluster 模块分析.html","children":[]},{"name":"build-from-source","url":"/post/nodejs/build-from-source.html","children":[]},{"name":"node-addon","url":"/post/nodejs/node-addon.html","children":[]},{"name":"common-snippet","url":"/post/nodejs/common-snippet.html","children":[]},{"name":"heap-snapshot","url":"/post/nodejs/heap-snapshot.html","children":[]}]},{"name":"websocket","url":"/post/websocket","children":[{"name":"WebSocket 协议 1~4 节","url":"/post/websocket/WebSocket 协议 1~4 节.html","children":[]},{"name":"WebSocket 协议 5~10 节","url":"/post/websocket/WebSocket 协议 5~10 节.html","children":[]}]},{"name":"assembly","url":"/post/assembly","children":[{"name":"汇编语言学习小结","url":"/post/assembly/汇编语言学习小结.html","children":[]}]},{"name":"typescript","url":"/post/typescript","children":[{"name":"Decorator in babel and tsc","url":"/post/typescript/decorator.html","children":[]}]},{"name":"rust","url":"/post/rust","children":[{"name":"Lifetime","url":"/post/rust/lifetime.html","children":[]}]},{"name":"oop","url":"/post/oop","children":[{"name":"midway 分析","url":"/post/oop/ioc.html","children":[]}]},{"name":"php","url":"/post/php","children":[{"name":"为什么 PHP 不适合长时间运行","url":"/post/php/为什么 PHP 不适合长时间运行.html","children":[]}]},{"name":"blockchain","url":"/post/blockchain","children":[{"name":"crypto-conditions 简述","url":"/post/blockchain/crypto-conditions 简述.html","children":[]},{"name":"实用拜占庭容错简介","url":"/post/blockchain/实用拜占庭容错简介.html","children":[]}]},{"name":"browser","url":"/post/browser","children":[{"name":"浏览器异步加载和同源策略","url":"/post/browser/浏览器异步加载和同源策略.html","children":[]}]},{"name":"cpp","url":"/post/cpp","children":[{"name":"The as-if rule","url":"/post/cpp/the-as-if-rule.html","children":[]}]},{"name":"work","url":"/post/work","children":[{"name":"Parsing in practice","url":"/post/work/parsing-in-practice.html","children":[]}]},{"name":"os","url":"/post/os","children":[{"name":"大小端序","url":"/post/os/大小端序.html","children":[]},{"name":"UTF-8 编码及检查其完整性","url":"/post/os/UTF-8 编码及检查其完整性.html","children":[]},{"name":"魔数 0x7c00","url":"/post/os/魔数0x7c00.html","children":[]},{"name":"字符集和字符编码","url":"/post/os/字符集和字符编码.html","children":[]}]},{"name":"javascript","url":"/post/javascript","children":[{"name":"Generator Function","url":"/post/javascript/generator function.html","children":[]},{"name":"解析 JSON 的成本","url":"/post/javascript/解析 JSON 的成本.html","children":[]},{"name":"Javascript 内部的字符编码","url":"/post/javascript/Javascript 内部的字符编码.html","children":[]},{"name":"闭包的作用","url":"/post/javascript/闭包的作用.html","children":[]},{"name":"闭包是什么","url":"/post/javascript/闭包是什么.html","children":[]}]},{"name":"static-analysis","url":"/post/static-analysis","children":[{"name":"使用 Rust 重写 ternjs","url":"/post/static-analysis/ternjs.html","children":[]}]},{"name":"react","url":"/post/react","children":[{"name":"build-from-source","url":"/post/react/build-from-source.html","children":[]},{"name":"bootstrap","url":"/post/react/bootstrap.html","children":[]}]}],"title":"The hard ways"}},"currentRoute":{"pattern":"/post","href":{"pathname":"/post"}},"pageModules":{"/index":["/pages/index.js"],"/post":["/pages/post.css","/pages/post.js"],"/post/*":["/pages/post.css","/pages/post.js"]},"router":{"basename":"/","hash":false,"routes":["/index","/post","/post/*"]}};</script><script crossorigin="anonymous" src="/app.js"></script><script crossorigin="anonymous" src="/foundation.js"></script><script crossorigin="anonymous" src="/lib.js"></script><script crossorigin="anonymous" src="/shared-pages_post_tsx.js"></script><script crossorigin="anonymous" src="/pages/post.js"></script></body></html>

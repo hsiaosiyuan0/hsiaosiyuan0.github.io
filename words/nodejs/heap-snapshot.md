@@ -1,4 +1,4 @@
-## v8 Heapsnapshot 文件解析
+# v8 Heapsnapshot 文件解析
 
 在 node 中可以通过 [v8.getHeapSnapshot](https://nodejs.org/api/v8.html#v8_v8_getheapsnapshot) 来获取应用当前的堆快照信息，该调用会生成一份 `.heapsnapshot` 文件，官方并没有对该文件的内容有一个详细的解释，本文将主要对该文件内容进行解析，并演示了一个了解文件内容后可以做的有趣的事情
 

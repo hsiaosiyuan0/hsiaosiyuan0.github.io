@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "typing": "gadget typing",
-    "build": "gadget print"
+    "build": "export BUILD_DIST=docs && gadget print"
   },
   "keywords": [],
   "author": "hsiaosiyuan0@outlook.com",

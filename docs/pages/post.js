@@ -1,0 +1,2 @@
+((typeof(window)!=='undefined'?window:global)["webpackChunkgadget_template_default"] = (typeof(window)!=='undefined'?window:global)["webpackChunkgadget_template_default"] || []).push([["pages/post"],{},
+0,[["./pages/post.tsx","foundation","lib","shared-pages_post_tsx"]]]);

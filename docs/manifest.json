@@ -1,0 +1,29 @@
+{
+  "base": {
+    "app": [
+      "app.js"
+    ],
+    "foundation": [
+      "foundation.js"
+    ],
+    "lib": [
+      "lib.js"
+    ],
+    "shared": [
+      "shared-pages_post_tsx.js"
+    ]
+  },
+  "pages": {
+    "/index": [
+      "pages/index.js"
+    ],
+    "/post": [
+      "pages/post.css",
+      "pages/post.js"
+    ]
+  },
+  "pageOutletMap": {
+    "/post": "outlet__outlets_default_tsx",
+    "/index": "outlet__outlets_default_tsx"
+  }
+}
