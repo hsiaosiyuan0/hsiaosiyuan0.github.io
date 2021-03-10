@@ -12,6 +12,6 @@
   "author": "hsiaosiyuan0@outlook.com",
   "license": "MIT",
   "dependencies": {
-    "gadget.js": "0.0.16"
+    "gadget.js": "0.0.18"
   }
 }

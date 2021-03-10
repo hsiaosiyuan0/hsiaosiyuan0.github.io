@@ -79,6 +79,39 @@ function bail(err) {
 
 /***/ }),
 
+/***/ "./node_modules/ccount/index.js":
+/*!**************************************!*\
+  !*** ./node_modules/ccount/index.js ***!
+  \**************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = ccount
+
+function ccount(source, character) {
+  var value = String(source)
+  var count = 0
+  var index
+
+  if (typeof character !== 'string') {
+    throw new Error('Expected character')
+  }
+
+  index = value.indexOf(character)
+
+  while (index !== -1) {
+    count++
+    index = value.indexOf(character, index + character.length)
+  }
+
+  return count
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/comma-separated-tokens/index.js":
 /*!******************************************************!*\
   !*** ./node_modules/comma-separated-tokens/index.js ***!
@@ -138,6 +171,28 @@ function stringify(values, options) {
 
   return values.join(right + comma + left).trim()
 }
+
+
+/***/ }),
+
+/***/ "./node_modules/escape-string-regexp/index.js":
+/*!****************************************************!*\
+  !*** ./node_modules/escape-string-regexp/index.js ***!
+  \****************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
+
+module.exports = function (str) {
+	if (typeof str !== 'string') {
+		throw new TypeError('Expected a string');
+	}
+
+	return str.replace(matchOperatorsRe, '\\$&');
+};
 
 
 /***/ }),
@@ -1130,6 +1185,197 @@ function normalise(identifier) {
 
 /***/ }),
 
+/***/ "./node_modules/mdast-util-find-and-replace/index.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/mdast-util-find-and-replace/index.js ***!
+  \***********************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+module.exports = findAndReplace
+
+var visit = __webpack_require__(/*! unist-util-visit-parents */ "./node_modules/unist-util-visit-parents/index.js")
+var convert = __webpack_require__(/*! unist-util-is/convert */ "./node_modules/unist-util-is/convert.js")
+var escape = __webpack_require__(/*! escape-string-regexp */ "./node_modules/escape-string-regexp/index.js")
+
+var splice = [].splice
+
+function findAndReplace(tree, find, replace, options) {
+  var settings
+  var schema
+
+  if (typeof find === 'string' || (find && typeof find.exec === 'function')) {
+    schema = [[find, replace]]
+  } else {
+    schema = find
+    options = replace
+  }
+
+  settings = options || {}
+
+  search(tree, settings, handlerFactory(toPairs(schema)))
+
+  return tree
+
+  function handlerFactory(pairs) {
+    var pair = pairs[0]
+
+    return handler
+
+    function handler(node, parent) {
+      var find = pair[0]
+      var replace = pair[1]
+      var nodes = []
+      var start = 0
+      var index = parent.children.indexOf(node)
+      var position
+      var match
+      var subhandler
+      var value
+
+      find.lastIndex = 0
+
+      match = find.exec(node.value)
+
+      while (match) {
+        position = match.index
+        value = replace.apply(
+          null,
+          [].concat(match, {index: match.index, input: match.input})
+        )
+
+        if (value !== false) {
+          if (start !== position) {
+            nodes.push({type: 'text', value: node.value.slice(start, position)})
+          }
+
+          if (typeof value === 'string' && value.length > 0) {
+            value = {type: 'text', value: value}
+          }
+
+          if (value) {
+            nodes = [].concat(nodes, value)
+          }
+
+          start = position + match[0].length
+        }
+
+        if (!find.global) {
+          break
+        }
+
+        match = find.exec(node.value)
+      }
+
+      if (position === undefined) {
+        nodes = [node]
+        index--
+      } else {
+        if (start < node.value.length) {
+          nodes.push({type: 'text', value: node.value.slice(start)})
+        }
+
+        nodes.unshift(index, 1)
+        splice.apply(parent.children, nodes)
+      }
+
+      if (pairs.length > 1) {
+        subhandler = handlerFactory(pairs.slice(1))
+        position = -1
+
+        while (++position < nodes.length) {
+          node = nodes[position]
+
+          if (node.type === 'text') {
+            subhandler(node, parent)
+          } else {
+            search(node, settings, subhandler)
+          }
+        }
+      }
+
+      return index + nodes.length + 1
+    }
+  }
+}
+
+function search(tree, settings, handler) {
+  var ignored = convert(settings.ignore || [])
+  var result = []
+
+  visit(tree, 'text', visitor)
+
+  return result
+
+  function visitor(node, parents) {
+    var index = -1
+    var parent
+    var grandparent
+
+    while (++index < parents.length) {
+      parent = parents[index]
+
+      if (
+        ignored(
+          parent,
+          grandparent ? grandparent.children.indexOf(parent) : undefined,
+          grandparent
+        )
+      ) {
+        return
+      }
+
+      grandparent = parent
+    }
+
+    return handler(node, grandparent)
+  }
+}
+
+function toPairs(schema) {
+  var result = []
+  var key
+  var index
+
+  if (typeof schema !== 'object') {
+    throw new Error('Expected array or object as schema')
+  }
+
+  if ('length' in schema) {
+    index = -1
+
+    while (++index < schema.length) {
+      result.push([
+        toExpression(schema[index][0]),
+        toFunction(schema[index][1])
+      ])
+    }
+  } else {
+    for (key in schema) {
+      result.push([toExpression(key), toFunction(schema[key])])
+    }
+  }
+
+  return result
+}
+
+function toExpression(find) {
+  return typeof find === 'string' ? new RegExp(escape(find), 'g') : find
+}
+
+function toFunction(replace) {
+  return typeof replace === 'function' ? replace : returner
+
+  function returner() {
+    return replace
+  }
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/mdast-util-from-markdown/dist/index.js":
 /*!*************************************************************!*\
   !*** ./node_modules/mdast-util-from-markdown/dist/index.js ***!
@@ -1172,6 +1418,7 @@ function compiler(options) {
   var settings = options || {}
   var config = configure(
     {
+      transforms: [],
       canContainEols: [
         'emphasis',
         'fragment',
@@ -1284,7 +1531,8 @@ function compiler(options) {
   return compile
 
   function compile(events) {
-    var stack = [{type: 'root', children: []}]
+    var tree = {type: 'root', children: []}
+    var stack = [tree]
     var tokenStack = []
     var listStack = []
     var index = -1
@@ -1346,7 +1594,7 @@ function compiler(options) {
     }
 
     // Figure out `root` position.
-    stack[0].position = {
+    tree.position = {
       start: point(
         events.length ? events[0][1].start : {line: 1, column: 1, offset: 0}
       ),
@@ -1358,7 +1606,12 @@ function compiler(options) {
       )
     }
 
-    return stack[0]
+    index = -1
+    while (++index < config.transforms.length) {
+      tree = config.transforms[index](tree) || tree
+    }
+
+    return tree
   }
 
   function prepareList(events, start, length) {
@@ -1946,7 +2199,7 @@ function extension(config, extension) {
   for (key in extension) {
     left = own.call(config, key) ? config[key] : (config[key] = {})
 
-    if (key === 'canContainEols') {
+    if (key === 'canContainEols' || key === 'transforms') {
       config[key] = [].concat(left, extension[key])
     } else {
       Object.assign(left, extension[key])
@@ -1975,8 +2228,14 @@ module.exports = __webpack_require__(/*! ./dist */ "./node_modules/mdast-util-fr
 /*!***********************************************************************!*\
   !*** ./node_modules/mdast-util-gfm-autolink-literal/from-markdown.js ***!
   \***********************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+var ccount = __webpack_require__(/*! ccount */ "./node_modules/ccount/index.js")
+var findAndReplace = __webpack_require__(/*! mdast-util-find-and-replace */ "./node_modules/mdast-util-find-and-replace/index.js")
+var unicodePunctuation = __webpack_require__(/*! micromark/dist/character/unicode-punctuation */ "./node_modules/micromark/dist/character/unicode-punctuation.js")
+var unicodeWhitespace = __webpack_require__(/*! micromark/dist/character/unicode-whitespace */ "./node_modules/micromark/dist/character/unicode-whitespace.js")
+
+exports.transforms = [transformGfmAutolinkLiterals]
 exports.enter = {
   literalAutolink: enterLiteralAutolink,
   literalAutolinkEmail: enterLiteralAutolinkValue,
@@ -2015,6 +2274,120 @@ function exitLiteralAutolink(token) {
   this.exit(token)
 }
 
+function transformGfmAutolinkLiterals(tree) {
+  findAndReplace(
+    tree,
+    [
+      [/(https?:\/\/|www(?=\.))([-.\w]+)([^ \t\r\n]*)/i, findUrl],
+      [/([-.\w+]+)@([-\w]+(?:\.[-\w]+)+)/, findEmail]
+    ],
+    {ignore: ['link', 'linkReference']}
+  )
+}
+
+function findUrl($0, protocol, domain, path, match) {
+  var prefix = ''
+  var parts
+  var result
+
+  // Not an expected previous character.
+  if (!previous(match)) {
+    return false
+  }
+
+  // Treat `www` as part of the domain.
+  if (/^w/i.test(protocol)) {
+    domain = protocol + domain
+    protocol = ''
+    prefix = 'http://'
+  }
+
+  if (!isCorrectDomain(domain)) {
+    return false
+  }
+
+  parts = splitUrl(domain + path)
+
+  if (!parts[0]) return false
+
+  result = {
+    type: 'link',
+    title: null,
+    url: prefix + protocol + parts[0],
+    children: [{type: 'text', value: protocol + parts[0]}]
+  }
+
+  if (parts[1]) {
+    result = [result, {type: 'text', value: parts[1]}]
+  }
+
+  return result
+}
+
+function findEmail($0, atext, label, match) {
+  // Not an expected previous character.
+  if (!previous(match, true) || /[_-]$/.test(label)) {
+    return false
+  }
+
+  return {
+    type: 'link',
+    title: null,
+    url: 'mailto:' + atext + '@' + label,
+    children: [{type: 'text', value: atext + '@' + label}]
+  }
+}
+
+function isCorrectDomain(domain) {
+  var parts = domain.split('.')
+
+  if (
+    parts.length < 2 ||
+    (parts[parts.length - 1] &&
+      (/_/.test(parts[parts.length - 1]) ||
+        !/[a-zA-Z\d]/.test(parts[parts.length - 1]))) ||
+    (parts[parts.length - 2] &&
+      (/_/.test(parts[parts.length - 2]) ||
+        !/[a-zA-Z\d]/.test(parts[parts.length - 2])))
+  ) {
+    return false
+  }
+
+  return true
+}
+
+function splitUrl(url) {
+  var trail = /[!"&'),.:;<>?\]}]+$/.exec(url)
+  var closingParenIndex
+  var openingParens
+  var closingParens
+
+  if (trail) {
+    url = url.slice(0, trail.index)
+    trail = trail[0]
+    closingParenIndex = trail.indexOf(')')
+    openingParens = ccount(url, '(')
+    closingParens = ccount(url, ')')
+
+    while (closingParenIndex !== -1 && openingParens > closingParens) {
+      url += trail.slice(0, closingParenIndex + 1)
+      trail = trail.slice(closingParenIndex + 1)
+      closingParenIndex = trail.indexOf(')')
+      closingParens++
+    }
+  }
+
+  return [url, trail]
+}
+
+function previous(match, email) {
+  var code = match.input.charCodeAt(match.index - 1)
+  return (
+    (code !== code || unicodeWhitespace(code) || unicodePunctuation(code)) &&
+    (!email || code !== 47)
+  )
+}
+
 
 /***/ }),
 
@@ -2025,7 +2398,7 @@ function exitLiteralAutolink(token) {
 /***/ ((__unused_webpack_module, exports) => {
 
 var inConstruct = 'phrasing'
-var notInConstruct = ['autolink', 'link', 'image']
+var notInConstruct = ['autolink', 'link', 'image', 'label']
 
 exports.unsafe = [
   {
@@ -2277,7 +2650,7 @@ function toMarkdown(options) {
     var value = defaultInlineCode(node, parent, context)
 
     if (context.stack.indexOf('tableCell') !== -1) {
-      value = value.replace(/\|/, '\\$&')
+      value = value.replace(/\|/g, '\\$&')
     }
 
     return value
@@ -2400,7 +2773,7 @@ module.exports = configure([
 ])
 
 function configure(extensions) {
-  var config = {canContainEols: []}
+  var config = {transforms: [], canContainEols: []}
   var length = extensions.length
   var index = -1
 
@@ -2420,7 +2793,7 @@ function extension(config, extension) {
     left = own.call(config, key) ? config[key] : (config[key] = {})
     right = extension[key]
 
-    if (key === 'canContainEols') {
+    if (key === 'canContainEols' || key === 'transforms') {
       config[key] = [].concat(left, right)
     } else {
       Object.assign(left, right)
@@ -2657,14 +3030,23 @@ var u = __webpack_require__(/*! unist-builder */ "./node_modules/unist-builder/i
 
 function code(h, node) {
   var value = node.value ? node.value + '\n' : ''
+  // To do: next major, use `node.lang` w/o regex, the splitting’s been going
+  // on for years in remark now.
   var lang = node.lang && node.lang.match(/^[^ \t]+(?=[ \t]|$)/)
   var props = {}
+  var code
 
   if (lang) {
     props.className = ['language-' + lang]
   }
 
-  return h(node.position, 'pre', [h(node, 'code', props, [u('text', value)])])
+  code = h(node, 'code', props, [u('text', value)])
+
+  if (node.meta) {
+    code.data = {meta: node.meta}
+  }
+
+  return h(node.position, 'pre', [code])
 }
 
 
@@ -3681,15 +4063,21 @@ function configure(base, extension) {
 /*!***********************************************************************!*\
   !*** ./node_modules/mdast-util-to-markdown/lib/handle/inline-code.js ***!
   \***********************************************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = inlineCode
 inlineCode.peek = inlineCodePeek
 
-function inlineCode(node) {
+var patternCompile = __webpack_require__(/*! ../util/pattern-compile */ "./node_modules/mdast-util-to-markdown/lib/util/pattern-compile.js")
+
+function inlineCode(node, parent, context) {
   var value = node.value || ''
   var sequence = '`'
-  var pad = ''
+  var index = -1
+  var pattern
+  var expression
+  var match
+  var position
 
   // If there is a single grave accent on its own in the code, use a fence of
   // two.
@@ -3705,10 +4093,42 @@ function inlineCode(node) {
     (/[ \r\n`]/.test(value.charAt(0)) ||
       /[ \r\n`]/.test(value.charAt(value.length - 1)))
   ) {
-    pad = ' '
+    value = ' ' + value + ' '
   }
 
-  return sequence + pad + value + pad + sequence
+  // We have a potential problem: certain characters after eols could result in
+  // blocks being seen.
+  // For example, if someone injected the string `'\n# b'`, then that would
+  // result in an ATX heading.
+  // We can’t escape characters in `inlineCode`, but because eols are
+  // transformed to spaces when going from markdown to HTML anyway, we can swap
+  // them out.
+  while (++index < context.unsafe.length) {
+    pattern = context.unsafe[index]
+
+    // Only look for `atBreak`s.
+    // Btw: note that `atBreak` patterns will always start the regex at LF or
+    // CR.
+    if (!pattern.atBreak) continue
+
+    expression = patternCompile(pattern)
+
+    while ((match = expression.exec(value))) {
+      position = match.index
+
+      // Support CRLF (patterns only look for one of the characters).
+      if (
+        value.charCodeAt(position) === 10 /* `\n` */ &&
+        value.charCodeAt(position - 1) === 13 /* `\r` */
+      ) {
+        position--
+      }
+
+      value = value.slice(0, position) + ' ' + value.slice(match.index + 1)
+    }
+  }
+
+  return sequence + value + sequence
 }
 
 function inlineCodePeek() {
@@ -3919,12 +4339,31 @@ function phrasing(parent, context, safeOptions) {
       after = safeOptions.after
     }
 
+    // In some cases, html (text) can be found in phrasing right after an eol.
+    // When we’d serialize that, in most cases that would be seen as html
+    // (flow).
+    // As we can’t escape or so to prevent it from happening, we take a somewhat
+    // reasonable approach: replace that eol with a space.
+    // See: <https://github.com/syntax-tree/mdast-util-to-markdown/issues/15>
+    if (
+      results.length > 0 &&
+      (before === '\r' || before === '\n') &&
+      child.type === 'html'
+    ) {
+      results[results.length - 1] = results[results.length - 1].replace(
+        /(\r?\n|\r)$/,
+        ' '
+      )
+      before = ' '
+    }
+
     results.push(
       context.handle(child, parent, context, {
         before: before,
         after: after
       })
     )
+
     before = results[results.length - 1].slice(-1)
   }
 
@@ -3964,6 +4403,41 @@ function indentLines(value, map) {
   function one(value) {
     result.push(map(value, line, !value))
   }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/mdast-util-to-markdown/lib/util/pattern-compile.js":
+/*!*************************************************************************!*\
+  !*** ./node_modules/mdast-util-to-markdown/lib/util/pattern-compile.js ***!
+  \*************************************************************************/
+/***/ ((module) => {
+
+module.exports = patternCompile
+
+function patternCompile(pattern) {
+  var before
+  var after
+
+  if (!pattern._compiled) {
+    before = pattern.before ? '(?:' + pattern.before + ')' : ''
+    after = pattern.after ? '(?:' + pattern.after + ')' : ''
+
+    if (pattern.atBreak) {
+      before = '[\\r\\n][\\t ]*' + before
+    }
+
+    pattern._compiled = new RegExp(
+      (before ? '(' + before + ')' : '') +
+        (/[|\\{}()[\]^$+*?.-]/.test(pattern.character) ? '\\' : '') +
+        pattern.character +
+        (after || ''),
+      'g'
+    )
+  }
+
+  return pattern._compiled
 }
 
 
@@ -4142,18 +4616,19 @@ var markdownLineEnding = __webpack_require__(/*! micromark/dist/character/markdo
 var unicodePunctuation = __webpack_require__(/*! micromark/dist/character/unicode-punctuation */ "./node_modules/micromark/dist/character/unicode-punctuation.js")
 var unicodeWhitespace = __webpack_require__(/*! micromark/dist/character/unicode-whitespace */ "./node_modules/micromark/dist/character/unicode-whitespace.js")
 
-var www = {tokenize: tokenizeWww}
-var http = {tokenize: tokenizeHttp}
-var domain = {tokenize: tokenizeDomain}
-var path = {tokenize: tokenizePath}
-var punctuation = {tokenize: tokenizePunctuation}
-var domainPunctuation = {tokenize: tokenizeDomainPunctuation}
-var paren = {tokenize: tokenizeParen}
-var namedCharacterReference = {tokenize: tokenizeNamedCharacterReference}
+var www = {tokenize: tokenizeWww, partial: true}
+var domain = {tokenize: tokenizeDomain, partial: true}
+var path = {tokenize: tokenizePath, partial: true}
+var punctuation = {tokenize: tokenizePunctuation, partial: true}
+var paren = {tokenize: tokenizeParen, partial: true}
+var namedCharacterReference = {
+  tokenize: tokenizeNamedCharacterReference,
+  partial: true
+}
 
-var wwwAutolink = {tokenize: tokenizeWwwAutolink, previous: previous}
-var httpAutolink = {tokenize: tokenizeHttpAutolink, previous: previous}
-var emailAutolink = {tokenize: tokenizeEmailAutolink, previous: previous}
+var wwwAutolink = {tokenize: tokenizeWwwAutolink, previous: previousWww}
+var httpAutolink = {tokenize: tokenizeHttpAutolink, previous: previousHttp}
+var emailAutolink = {tokenize: tokenizeEmailAutolink, previous: previousEmail}
 
 var text = {}
 
@@ -4196,7 +4671,11 @@ function tokenizeEmailAutolink(effects, ok, nok) {
 
   function start(code) {
     /* istanbul ignore next - hooks. */
-    if (!gfmAtext(code) || !previous(self.previous)) {
+    if (
+      !gfmAtext(code) ||
+      !previousEmail(self.previous) ||
+      previous(self.events)
+    ) {
       return nok(code)
     }
 
@@ -4281,12 +4760,19 @@ function tokenizeWwwAutolink(effects, ok, nok) {
 
   function start(code) {
     /* istanbul ignore next - hooks. */
-    if ((code !== 87 && code - 32 !== 87) || !previous(self.previous)) {
+    if (
+      (code !== 87 && code - 32 !== 87) ||
+      !previousWww(self.previous) ||
+      previous(self.events)
+    ) {
       return nok(code)
     }
 
     effects.enter('literalAutolink')
     effects.enter('literalAutolinkWww')
+    // For `www.` we check instead of attempt, because when it matches, GH
+    // treats it as part of a domain (yes, it says a valid domain must come
+    // after `www.`, but that’s not how it’s implemented by them).
     return effects.check(
       www,
       effects.attempt(domain, effects.attempt(path, done), nok),
@@ -4308,31 +4794,16 @@ function tokenizeHttpAutolink(effects, ok, nok) {
 
   function start(code) {
     /* istanbul ignore next - hooks. */
-    if ((code !== 72 && code - 32 !== 72) || !previous(self.previous)) {
+    if (
+      (code !== 72 && code - 32 !== 72) ||
+      !previousHttp(self.previous) ||
+      previous(self.events)
+    ) {
       return nok(code)
     }
 
     effects.enter('literalAutolink')
     effects.enter('literalAutolinkHttp')
-    return effects.check(
-      http,
-      effects.attempt(domain, effects.attempt(path, done), nok),
-      nok
-    )(code)
-  }
-
-  function done(code) {
-    effects.exit('literalAutolinkHttp')
-    effects.exit('literalAutolink')
-    return ok(code)
-  }
-}
-
-function tokenizeHttp(effects, ok, nok) {
-  return start
-
-  function start(code) {
-    // Assume a `h`.
     effects.consume(code)
     return t1
   }
@@ -4412,7 +4883,13 @@ function tokenizeHttp(effects, ok, nok) {
       unicodeWhitespace(code) ||
       unicodePunctuation(code)
       ? nok(code)
-      : ok(code)
+      : effects.attempt(domain, effects.attempt(path, done), nok)(code)
+  }
+
+  function done(code) {
+    effects.exit('literalAutolinkHttp')
+    effects.exit('literalAutolink')
+    return ok(code)
   }
 }
 
@@ -4461,22 +4938,12 @@ function tokenizeWww(effects, ok, nok) {
 }
 
 function tokenizeDomain(effects, ok, nok) {
-  var opened
   var hasUnderscoreInLastSegment
   var hasUnderscoreInLastLastSegment
 
   return domain
 
   function domain(code) {
-    if (
-      // `/`
-      code === 47 ||
-      asciiControl(code) ||
-      unicodeWhitespace(code)
-    ) {
-      return done(code)
-    }
-
     // `&`
     if (code === 38) {
       return effects.check(
@@ -4486,19 +4953,23 @@ function tokenizeDomain(effects, ok, nok) {
       )(code)
     }
 
-    if (
-      // `.`
-      code === 46 ||
-      trailingPunctuation(code)
-    ) {
-      return effects.check(
-        domainPunctuation,
-        done,
-        punctuationContinuation
-      )(code)
+    if (code === 46 /* `.` */ || code === 95 /* `_` */) {
+      return effects.check(punctuation, done, punctuationContinuation)(code)
     }
 
-    open()
+    // GH documents that only alphanumerics (other than `-`, `.`, and `_`) can
+    // occur, which sounds like ASCII only, but they also support `www.點看.com`,
+    // so that’s Unicode.
+    // Instead of some new production for Unicode alphanumerics, markdown
+    // already has that for Unicode punctuation and whitespace, so use those.
+    if (
+      asciiControl(code) ||
+      unicodeWhitespace(code) ||
+      (code !== 45 /* `-` */ && unicodePunctuation(code))
+    ) {
+      return done(code)
+    }
+
     effects.consume(code)
     return domain
   }
@@ -4508,7 +4979,6 @@ function tokenizeDomain(effects, ok, nok) {
     if (code === 46) {
       hasUnderscoreInLastLastSegment = hasUnderscoreInLastSegment
       hasUnderscoreInLastSegment = undefined
-      open()
       effects.consume(code)
       return domain
     }
@@ -4516,25 +4986,12 @@ function tokenizeDomain(effects, ok, nok) {
     // `_`
     if (code === 95) hasUnderscoreInLastSegment = true
 
-    open()
     effects.consume(code)
     return domain
   }
 
-  function open() {
-    if (!opened) {
-      effects.enter('literalAutolinkDomain')
-      opened = true
-    }
-  }
-
   function done(code) {
-    if (
-      opened &&
-      !hasUnderscoreInLastLastSegment &&
-      !hasUnderscoreInLastSegment
-    ) {
-      effects.exit('literalAutolinkDomain')
+    if (!hasUnderscoreInLastLastSegment && !hasUnderscoreInLastSegment) {
       return ok(code)
     }
 
@@ -4545,24 +5002,14 @@ function tokenizeDomain(effects, ok, nok) {
 function tokenizePath(effects, ok) {
   var balance = 0
 
-  return start
-
-  function start(code) {
-    // `/`
-    return code === 47 ? atPathStart(code) : ok(code)
-  }
-
-  function atPathStart(code) {
-    effects.enter('literalAutolinkPath')
-    return inPath(code)
-  }
+  return inPath
 
   function inPath(code) {
     // `&`
     if (code === 38) {
       return effects.check(
         namedCharacterReference,
-        atPathEnd,
+        ok,
         continuedPunctuation
       )(code)
     }
@@ -4578,11 +5025,11 @@ function tokenizePath(effects, ok) {
     }
 
     if (pathEnd(code)) {
-      return atPathEnd(code)
+      return ok(code)
     }
 
     if (trailingPunctuation(code)) {
-      return effects.check(punctuation, atPathEnd, continuedPunctuation)(code)
+      return effects.check(punctuation, ok, continuedPunctuation)(code)
     }
 
     effects.consume(code)
@@ -4596,12 +5043,7 @@ function tokenizePath(effects, ok) {
 
   function parenAtPathEnd(code) {
     balance--
-    return balance < 0 ? atPathEnd(code) : continuedPunctuation(code)
-  }
-
-  function atPathEnd(code) {
-    effects.exit('literalAutolinkPath')
-    return ok(code)
+    return balance < 0 ? ok(code) : continuedPunctuation(code)
   }
 }
 
@@ -4610,7 +5052,6 @@ function tokenizeNamedCharacterReference(effects, ok, nok) {
 
   function start(code) {
     // Assume an ampersand.
-    effects.enter('literalAutolinkCharacterReferenceNamed')
     effects.consume(code)
     return inside
   }
@@ -4633,7 +5074,6 @@ function tokenizeNamedCharacterReference(effects, ok, nok) {
   function after(code) {
     // If the named character reference is followed by the end of the path, it’s
     // not continued punctuation.
-    effects.exit('literalAutolinkCharacterReferenceNamed')
     return pathEnd(code) ? ok(code) : nok(code)
   }
 }
@@ -4643,7 +5083,6 @@ function tokenizeParen(effects, ok, nok) {
 
   function start(code) {
     // Assume a right paren.
-    effects.enter('literalAutolinkParen')
     effects.consume(code)
     return after
   }
@@ -4651,7 +5090,6 @@ function tokenizeParen(effects, ok, nok) {
   function after(code) {
     // If the punctuation marker is followed by the end of the path, it’s not
     // continued punctuation.
-    effects.exit('literalAutolinkParen')
     return pathEnd(code) ||
       // `)`
       code === 41
@@ -4664,25 +5102,6 @@ function tokenizePunctuation(effects, ok, nok) {
   return start
 
   function start(code) {
-    effects.enter('literalAutolinkPunctuation')
-    // Always a valid trailing punctuation marker.
-    effects.consume(code)
-    return after
-  }
-
-  function after(code) {
-    // If the punctuation marker is followed by the end of the path, it’s not
-    // continued punctuation.
-    effects.exit('literalAutolinkPunctuation')
-    return pathEnd(code) ? ok(code) : nok(code)
-  }
-}
-
-function tokenizeDomainPunctuation(effects, ok, nok) {
-  return start
-
-  function start(code) {
-    effects.enter('literalAutolinkPunctuation')
     // Always a valid trailing punctuation marker.
     effects.consume(code)
     return after
@@ -4697,7 +5116,6 @@ function tokenizeDomainPunctuation(effects, ok, nok) {
 
     // If the punctuation marker is followed by the end of the path, it’s not
     // continued punctuation.
-    effects.exit('literalAutolinkPunctuation')
     return pathEnd(code) ? ok(code) : nok(code)
   }
 }
@@ -4748,35 +5166,46 @@ function pathEnd(code) {
 
 function gfmAtext(code) {
   return (
-    // `+`
-    code === 43 ||
-    // `-`
-    code === 45 ||
-    // `.`
-    code === 46 ||
-    // `_`
-    code === 95 ||
+    code === 43 /* `+` */ ||
+    code === 45 /* `-` */ ||
+    code === 46 /* `.` */ ||
+    code === 95 /* `_` */ ||
     asciiAlphanumeric(code)
   )
 }
 
-function previous(code) {
+function previousWww(code) {
   return (
-    // EOF.
     code === null ||
-    // CR, LF, CRLF, HT, VS.
     code < 0 ||
-    // Space.
-    code === 32 ||
-    // `(`
-    code === 40 ||
-    // `*`
-    code === 42 ||
-    // `_`.
-    code === 95 ||
-    // `~`
-    code === 126
+    code === 32 /* ` ` */ ||
+    code === 40 /* `(` */ ||
+    code === 42 /* `*` */ ||
+    code === 95 /* `_` */ ||
+    code === 126 /* `~` */
   )
+}
+
+function previousHttp(code) {
+  return code === null || !asciiAlpha(code)
+}
+
+function previousEmail(code) {
+  return code !== 47 /* `/` */ && previousHttp(code)
+}
+
+function previous(events) {
+  var index = events.length
+
+  while (index--) {
+    if (
+      (events[index][1].type === 'labelLink' ||
+        events[index][1].type === 'labelImage') &&
+      !events[index][1]._balanced
+    ) {
+      return true
+    }
+  }
 }
 
 
@@ -5035,9 +5464,12 @@ function resolveTable(events, context) {
 
     if (
       events[index][0] === 'exit' &&
-      (token.type === 'tableCellDivider' || token.type === 'tableRow') &&
       cellStart &&
-      cellStart + 1 < index
+      cellStart + 1 < index &&
+      (token.type === 'tableCellDivider' ||
+        (token.type === 'tableRow' &&
+          (cellStart + 3 < index ||
+            events[cellStart][1].type !== 'whitespace')))
     ) {
       cell = {
         type: inDelimiterRow
@@ -5873,8 +6305,8 @@ module.exports = markdownSpace
 "use strict";
 
 
-var regexCheck = __webpack_require__(/*! ../util/regex-check.js */ "./node_modules/micromark/dist/util/regex-check.js")
 var unicodePunctuationRegex = __webpack_require__(/*! ../constant/unicode-punctuation-regex.js */ "./node_modules/micromark/dist/constant/unicode-punctuation-regex.js")
+var regexCheck = __webpack_require__(/*! ../util/regex-check.js */ "./node_modules/micromark/dist/util/regex-check.js")
 
 // In fact adds to the bundle size.
 
@@ -6115,9 +6547,9 @@ var labelEnd = __webpack_require__(/*! ./tokenize/label-end.js */ "./node_module
 var labelStartImage = __webpack_require__(/*! ./tokenize/label-start-image.js */ "./node_modules/micromark/dist/tokenize/label-start-image.js")
 var labelStartLink = __webpack_require__(/*! ./tokenize/label-start-link.js */ "./node_modules/micromark/dist/tokenize/label-start-link.js")
 var lineEnding = __webpack_require__(/*! ./tokenize/line-ending.js */ "./node_modules/micromark/dist/tokenize/line-ending.js")
-var thematicBreak = __webpack_require__(/*! ./tokenize/thematic-break.js */ "./node_modules/micromark/dist/tokenize/thematic-break.js")
 var list = __webpack_require__(/*! ./tokenize/list.js */ "./node_modules/micromark/dist/tokenize/list.js")
 var setextUnderline = __webpack_require__(/*! ./tokenize/setext-underline.js */ "./node_modules/micromark/dist/tokenize/setext-underline.js")
+var thematicBreak = __webpack_require__(/*! ./tokenize/thematic-break.js */ "./node_modules/micromark/dist/tokenize/thematic-break.js")
 
 var document = {
   42: list,
@@ -6563,9 +6995,9 @@ exports.tokenize = tokenize
 
 Object.defineProperty(exports, "__esModule", ({value: true}))
 
+var content = __webpack_require__(/*! ../tokenize/content.js */ "./node_modules/micromark/dist/tokenize/content.js")
 var factorySpace = __webpack_require__(/*! ../tokenize/factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 var partialBlankLine = __webpack_require__(/*! ../tokenize/partial-blank-line.js */ "./node_modules/micromark/dist/tokenize/partial-blank-line.js")
-var content = __webpack_require__(/*! ../tokenize/content.js */ "./node_modules/micromark/dist/tokenize/content.js")
 
 var tokenize = initializeFlow
 
@@ -6844,13 +7276,13 @@ exports.text = text
 "use strict";
 
 
-var miniflat = __webpack_require__(/*! ./util/miniflat.js */ "./node_modules/micromark/dist/util/miniflat.js")
 var content = __webpack_require__(/*! ./initialize/content.js */ "./node_modules/micromark/dist/initialize/content.js")
 var document = __webpack_require__(/*! ./initialize/document.js */ "./node_modules/micromark/dist/initialize/document.js")
 var flow = __webpack_require__(/*! ./initialize/flow.js */ "./node_modules/micromark/dist/initialize/flow.js")
 var text = __webpack_require__(/*! ./initialize/text.js */ "./node_modules/micromark/dist/initialize/text.js")
 var combineExtensions = __webpack_require__(/*! ./util/combine-extensions.js */ "./node_modules/micromark/dist/util/combine-extensions.js")
 var createTokenizer = __webpack_require__(/*! ./util/create-tokenizer.js */ "./node_modules/micromark/dist/util/create-tokenizer.js")
+var miniflat = __webpack_require__(/*! ./util/miniflat.js */ "./node_modules/micromark/dist/util/miniflat.js")
 var constructs = __webpack_require__(/*! ./constructs.js */ "./node_modules/micromark/dist/constructs.js")
 
 function parse(options) {
@@ -7013,12 +7445,12 @@ module.exports = preprocess
 "use strict";
 
 
-var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
 var chunkedPush = __webpack_require__(/*! ../util/chunked-push.js */ "./node_modules/micromark/dist/util/chunked-push.js")
-var shallow = __webpack_require__(/*! ../util/shallow.js */ "./node_modules/micromark/dist/util/shallow.js")
-var resolveAll = __webpack_require__(/*! ../util/resolve-all.js */ "./node_modules/micromark/dist/util/resolve-all.js")
+var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
 var classifyCharacter = __webpack_require__(/*! ../util/classify-character.js */ "./node_modules/micromark/dist/util/classify-character.js")
 var movePoint = __webpack_require__(/*! ../util/move-point.js */ "./node_modules/micromark/dist/util/move-point.js")
+var resolveAll = __webpack_require__(/*! ../util/resolve-all.js */ "./node_modules/micromark/dist/util/resolve-all.js")
+var shallow = __webpack_require__(/*! ../util/shallow.js */ "./node_modules/micromark/dist/util/shallow.js")
 
 var attention = {
   name: 'attention',
@@ -7210,8 +7642,8 @@ module.exports = attention
 "use strict";
 
 
-var asciiAlphanumeric = __webpack_require__(/*! ../character/ascii-alphanumeric.js */ "./node_modules/micromark/dist/character/ascii-alphanumeric.js")
 var asciiAlpha = __webpack_require__(/*! ../character/ascii-alpha.js */ "./node_modules/micromark/dist/character/ascii-alpha.js")
+var asciiAlphanumeric = __webpack_require__(/*! ../character/ascii-alphanumeric.js */ "./node_modules/micromark/dist/character/ascii-alphanumeric.js")
 var asciiAtext = __webpack_require__(/*! ../character/ascii-atext.js */ "./node_modules/micromark/dist/character/ascii-atext.js")
 var asciiControl = __webpack_require__(/*! ../character/ascii-control.js */ "./node_modules/micromark/dist/character/ascii-control.js")
 
@@ -7575,9 +8007,9 @@ module.exports = characterReference
 
 
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
-var prefixSize = __webpack_require__(/*! ../util/prefix-size.js */ "./node_modules/micromark/dist/util/prefix-size.js")
 var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
+var prefixSize = __webpack_require__(/*! ../util/prefix-size.js */ "./node_modules/micromark/dist/util/prefix-size.js")
+var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 
 var codeFenced = {
   name: 'codeFenced',
@@ -7761,10 +8193,10 @@ module.exports = codeFenced
 "use strict";
 
 
-var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
+var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
 var prefixSize = __webpack_require__(/*! ../util/prefix-size.js */ "./node_modules/micromark/dist/util/prefix-size.js")
+var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 
 var codeIndented = {
   name: 'codeIndented',
@@ -8018,9 +8450,9 @@ module.exports = codeText
 
 
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 var prefixSize = __webpack_require__(/*! ../util/prefix-size.js */ "./node_modules/micromark/dist/util/prefix-size.js")
 var subtokenize = __webpack_require__(/*! ../util/subtokenize.js */ "./node_modules/micromark/dist/util/subtokenize.js")
+var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 
 // No name because it must not be turned off.
 var content = {
@@ -8127,12 +8559,12 @@ module.exports = content
 "use strict";
 
 
-var normalizeIdentifier = __webpack_require__(/*! ../util/normalize-identifier.js */ "./node_modules/micromark/dist/util/normalize-identifier.js")
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
+var normalizeIdentifier = __webpack_require__(/*! ../util/normalize-identifier.js */ "./node_modules/micromark/dist/util/normalize-identifier.js")
 var factoryDestination = __webpack_require__(/*! ./factory-destination.js */ "./node_modules/micromark/dist/tokenize/factory-destination.js")
 var factoryLabel = __webpack_require__(/*! ./factory-label.js */ "./node_modules/micromark/dist/tokenize/factory-label.js")
+var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 var factoryWhitespace = __webpack_require__(/*! ./factory-whitespace.js */ "./node_modules/micromark/dist/tokenize/factory-whitespace.js")
 var factoryTitle = __webpack_require__(/*! ./factory-title.js */ "./node_modules/micromark/dist/tokenize/factory-title.js")
 
@@ -8253,9 +8685,9 @@ module.exports = definition
 "use strict";
 
 
-var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
 var asciiControl = __webpack_require__(/*! ../character/ascii-control.js */ "./node_modules/micromark/dist/character/ascii-control.js")
+var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
+var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
 
 // eslint-disable-next-line max-params
 function destinationFactory(
@@ -8283,7 +8715,7 @@ function destinationFactory(
       return destinationEnclosedBefore
     }
 
-    if (asciiControl(code)) {
+    if (asciiControl(code) || code === 41) {
       return nok(code)
     }
 
@@ -8706,11 +9138,11 @@ module.exports = hardBreakEscape
 "use strict";
 
 
-var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var markdownSpace = __webpack_require__(/*! ../character/markdown-space.js */ "./node_modules/micromark/dist/character/markdown-space.js")
-var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
+var markdownSpace = __webpack_require__(/*! ../character/markdown-space.js */ "./node_modules/micromark/dist/character/markdown-space.js")
+var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
+var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 
 var headingAtx = {
   name: 'headingAtx',
@@ -8846,15 +9278,15 @@ module.exports = headingAtx
 "use strict";
 
 
-var fromCharCode = __webpack_require__(/*! ../constant/from-char-code.js */ "./node_modules/micromark/dist/constant/from-char-code.js")
+var asciiAlpha = __webpack_require__(/*! ../character/ascii-alpha.js */ "./node_modules/micromark/dist/character/ascii-alpha.js")
 var asciiAlphanumeric = __webpack_require__(/*! ../character/ascii-alphanumeric.js */ "./node_modules/micromark/dist/character/ascii-alphanumeric.js")
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var markdownSpace = __webpack_require__(/*! ../character/markdown-space.js */ "./node_modules/micromark/dist/character/markdown-space.js")
-var partialBlankLine = __webpack_require__(/*! ./partial-blank-line.js */ "./node_modules/micromark/dist/tokenize/partial-blank-line.js")
 var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
-var asciiAlpha = __webpack_require__(/*! ../character/ascii-alpha.js */ "./node_modules/micromark/dist/character/ascii-alpha.js")
+var markdownSpace = __webpack_require__(/*! ../character/markdown-space.js */ "./node_modules/micromark/dist/character/markdown-space.js")
+var fromCharCode = __webpack_require__(/*! ../constant/from-char-code.js */ "./node_modules/micromark/dist/constant/from-char-code.js")
 var htmlBlockNames = __webpack_require__(/*! ../constant/html-block-names.js */ "./node_modules/micromark/dist/constant/html-block-names.js")
 var htmlRawNames = __webpack_require__(/*! ../constant/html-raw-names.js */ "./node_modules/micromark/dist/constant/html-raw-names.js")
+var partialBlankLine = __webpack_require__(/*! ./partial-blank-line.js */ "./node_modules/micromark/dist/tokenize/partial-blank-line.js")
 
 var htmlFlow = {
   name: 'htmlFlow',
@@ -9343,12 +9775,12 @@ module.exports = htmlFlow
 "use strict";
 
 
+var asciiAlpha = __webpack_require__(/*! ../character/ascii-alpha.js */ "./node_modules/micromark/dist/character/ascii-alpha.js")
 var asciiAlphanumeric = __webpack_require__(/*! ../character/ascii-alphanumeric.js */ "./node_modules/micromark/dist/character/ascii-alphanumeric.js")
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
+var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
 var markdownSpace = __webpack_require__(/*! ../character/markdown-space.js */ "./node_modules/micromark/dist/character/markdown-space.js")
 var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
-var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
-var asciiAlpha = __webpack_require__(/*! ../character/ascii-alpha.js */ "./node_modules/micromark/dist/character/ascii-alpha.js")
 
 var htmlText = {
   name: 'htmlText',
@@ -9789,16 +10221,16 @@ module.exports = htmlText
 "use strict";
 
 
-var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
-var chunkedPush = __webpack_require__(/*! ../util/chunked-push.js */ "./node_modules/micromark/dist/util/chunked-push.js")
-var normalizeIdentifier = __webpack_require__(/*! ../util/normalize-identifier.js */ "./node_modules/micromark/dist/util/normalize-identifier.js")
-var shallow = __webpack_require__(/*! ../util/shallow.js */ "./node_modules/micromark/dist/util/shallow.js")
-var resolveAll = __webpack_require__(/*! ../util/resolve-all.js */ "./node_modules/micromark/dist/util/resolve-all.js")
 var markdownLineEndingOrSpace = __webpack_require__(/*! ../character/markdown-line-ending-or-space.js */ "./node_modules/micromark/dist/character/markdown-line-ending-or-space.js")
+var chunkedPush = __webpack_require__(/*! ../util/chunked-push.js */ "./node_modules/micromark/dist/util/chunked-push.js")
+var chunkedSplice = __webpack_require__(/*! ../util/chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
+var normalizeIdentifier = __webpack_require__(/*! ../util/normalize-identifier.js */ "./node_modules/micromark/dist/util/normalize-identifier.js")
+var resolveAll = __webpack_require__(/*! ../util/resolve-all.js */ "./node_modules/micromark/dist/util/resolve-all.js")
+var shallow = __webpack_require__(/*! ../util/shallow.js */ "./node_modules/micromark/dist/util/shallow.js")
 var factoryDestination = __webpack_require__(/*! ./factory-destination.js */ "./node_modules/micromark/dist/tokenize/factory-destination.js")
 var factoryLabel = __webpack_require__(/*! ./factory-label.js */ "./node_modules/micromark/dist/tokenize/factory-label.js")
-var factoryWhitespace = __webpack_require__(/*! ./factory-whitespace.js */ "./node_modules/micromark/dist/tokenize/factory-whitespace.js")
 var factoryTitle = __webpack_require__(/*! ./factory-title.js */ "./node_modules/micromark/dist/tokenize/factory-title.js")
+var factoryWhitespace = __webpack_require__(/*! ./factory-whitespace.js */ "./node_modules/micromark/dist/tokenize/factory-whitespace.js")
 
 var labelEnd = {
   name: 'labelEnd',
@@ -10265,12 +10697,12 @@ module.exports = lineEnding
 "use strict";
 
 
+var asciiDigit = __webpack_require__(/*! ../character/ascii-digit.js */ "./node_modules/micromark/dist/character/ascii-digit.js")
 var markdownSpace = __webpack_require__(/*! ../character/markdown-space.js */ "./node_modules/micromark/dist/character/markdown-space.js")
+var prefixSize = __webpack_require__(/*! ../util/prefix-size.js */ "./node_modules/micromark/dist/util/prefix-size.js")
+var sizeChunks = __webpack_require__(/*! ../util/size-chunks.js */ "./node_modules/micromark/dist/util/size-chunks.js")
 var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 var partialBlankLine = __webpack_require__(/*! ./partial-blank-line.js */ "./node_modules/micromark/dist/tokenize/partial-blank-line.js")
-var sizeChunks = __webpack_require__(/*! ../util/size-chunks.js */ "./node_modules/micromark/dist/util/size-chunks.js")
-var prefixSize = __webpack_require__(/*! ../util/prefix-size.js */ "./node_modules/micromark/dist/util/prefix-size.js")
-var asciiDigit = __webpack_require__(/*! ../character/ascii-digit.js */ "./node_modules/micromark/dist/character/ascii-digit.js")
 var thematicBreak = __webpack_require__(/*! ./thematic-break.js */ "./node_modules/micromark/dist/tokenize/thematic-break.js")
 
 var list = {
@@ -10399,8 +10831,15 @@ function tokenizeListContinuation(effects, ok, nok) {
   function onBlank(code) {
     self.containerState.furtherBlankLines =
       self.containerState.furtherBlankLines ||
-      self.containerState.initialBlankLine
-    return ok(code)
+      self.containerState.initialBlankLine // We have a blank line.
+    // Still, try to consume at most the items size.
+
+    return factorySpace(
+      effects,
+      ok,
+      'listItemIndent',
+      self.containerState.size + 1
+    )(code)
   }
 
   function notBlank(code) {
@@ -10514,8 +10953,8 @@ module.exports = partialBlankLine
 
 
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 var shallow = __webpack_require__(/*! ../util/shallow.js */ "./node_modules/micromark/dist/util/shallow.js")
+var factorySpace = __webpack_require__(/*! ./factory-space.js */ "./node_modules/micromark/dist/tokenize/factory-space.js")
 
 var setextUnderline = {
   name: 'setextUnderline',
@@ -10876,13 +11315,13 @@ module.exports = combineExtensions
 
 
 var assign = __webpack_require__(/*! ../constant/assign.js */ "./node_modules/micromark/dist/constant/assign.js")
-var chunkedSplice = __webpack_require__(/*! ./chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
-var chunkedPush = __webpack_require__(/*! ./chunked-push.js */ "./node_modules/micromark/dist/util/chunked-push.js")
-var miniflat = __webpack_require__(/*! ./miniflat.js */ "./node_modules/micromark/dist/util/miniflat.js")
 var markdownLineEnding = __webpack_require__(/*! ../character/markdown-line-ending.js */ "./node_modules/micromark/dist/character/markdown-line-ending.js")
-var shallow = __webpack_require__(/*! ./shallow.js */ "./node_modules/micromark/dist/util/shallow.js")
+var chunkedPush = __webpack_require__(/*! ./chunked-push.js */ "./node_modules/micromark/dist/util/chunked-push.js")
+var chunkedSplice = __webpack_require__(/*! ./chunked-splice.js */ "./node_modules/micromark/dist/util/chunked-splice.js")
+var miniflat = __webpack_require__(/*! ./miniflat.js */ "./node_modules/micromark/dist/util/miniflat.js")
 var resolveAll = __webpack_require__(/*! ./resolve-all.js */ "./node_modules/micromark/dist/util/resolve-all.js")
 var serializeChunks = __webpack_require__(/*! ./serialize-chunks.js */ "./node_modules/micromark/dist/util/serialize-chunks.js")
+var shallow = __webpack_require__(/*! ./shallow.js */ "./node_modules/micromark/dist/util/shallow.js")
 var sliceChunks = __webpack_require__(/*! ./slice-chunks.js */ "./node_modules/micromark/dist/util/slice-chunks.js")
 
 // Create a tokenizer.
@@ -13259,15 +13698,12 @@ var tableCellStyle = __webpack_require__(/*! @mapbox/hast-util-table-cell-style 
 
 module.exports = rehypeReact
 
-var has = {}.hasOwnProperty
+var own = {}.hasOwnProperty
 
 // Add a React compiler.
 function rehypeReact(options) {
   var settings = options || {}
   var createElement = settings.createElement
-  var Fragment = settings.Fragment
-  var components = settings.components || {}
-  var passNode = settings.passNode
 
   this.Compiler = compiler
 
@@ -13276,16 +13712,13 @@ function rehypeReact(options) {
 
     if (node.type === 'root') {
       // Invert <https://github.com/syntax-tree/hast-to-hyperscript/blob/d227372/index.js#L46-L56>.
-      if (
+      result =
         result.type === 'div' &&
         (node.children.length !== 1 || node.children[0].type !== 'element')
-      ) {
-        result = result.props.children
-      } else {
-        result = [result]
-      }
+          ? result.props.children
+          : [result]
 
-      return createElement(Fragment || 'div', {}, result)
+      return createElement(settings.Fragment || 'div', {}, result)
     }
 
     return result
@@ -13294,9 +13727,11 @@ function rehypeReact(options) {
   // Wrap `createElement` to pass components in.
   function h(name, props, children) {
     var component = name
-    if (has.call(components, name)) {
-      component = components[name]
-      if (passNode) {
+
+    if (settings.components && own.call(settings.components, name)) {
+      component = settings.components[name]
+
+      if (settings.passNode) {
         props.node = this
       }
     }
@@ -13803,9 +14238,9 @@ function pipelineParse(p, ctx) {
 function pipelineRun(p, ctx, next) {
   p.run(ctx.tree, ctx.file, done)
 
-  function done(err, tree, file) {
-    if (err) {
-      next(err)
+  function done(error, tree, file) {
+    if (error) {
+      next(error)
     } else {
       ctx.tree = tree
       ctx.file = file
@@ -13816,14 +14251,13 @@ function pipelineRun(p, ctx, next) {
 
 function pipelineStringify(p, ctx) {
   var result = p.stringify(ctx.tree, ctx.file)
-  var file = ctx.file
 
   if (result === undefined || result === null) {
     // Empty.
   } else if (typeof result === 'string' || buffer(result)) {
-    file.contents = result
+    ctx.file.contents = result
   } else {
-    file.result = result
+    ctx.file.result = result
   }
 }
 
@@ -13832,8 +14266,8 @@ function unified() {
   var attachers = []
   var transformers = trough()
   var namespace = {}
-  var frozen = false
   var freezeIndex = -1
+  var frozen
 
   // Data management.
   processor.data = data
@@ -13859,10 +14293,9 @@ function unified() {
   // Create a new processor based on the processor in the current scope.
   function processor() {
     var destination = unified()
-    var length = attachers.length
     var index = -1
 
-    while (++index < length) {
+    while (++index < attachers.length) {
       destination.use.apply(null, attachers[index])
     }
 
@@ -13880,8 +14313,6 @@ function unified() {
   // In essence, always invoke this when exporting a processor.
   function freeze() {
     var values
-    var plugin
-    var options
     var transformer
 
     if (frozen) {
@@ -13890,19 +14321,16 @@ function unified() {
 
     while (++freezeIndex < attachers.length) {
       values = attachers[freezeIndex]
-      plugin = values[0]
-      options = values[1]
-      transformer = null
 
-      if (options === false) {
+      if (values[1] === false) {
         continue
       }
 
-      if (options === true) {
+      if (values[1] === true) {
         values[1] = undefined
       }
 
-      transformer = plugin.apply(processor, values.slice(1))
+      transformer = values[0].apply(processor, values.slice(1))
 
       if (typeof transformer === 'function') {
         transformers.use(transformer)
@@ -13922,9 +14350,7 @@ function unified() {
       // Set `key`.
       if (arguments.length === 2) {
         assertUnfrozen('data', frozen)
-
         namespace[key] = value
-
         return processor
       }
 
@@ -13998,16 +14424,12 @@ function unified() {
     }
 
     function addList(plugins) {
-      var length
-      var index
+      var index = -1
 
       if (plugins === null || plugins === undefined) {
         // Empty.
       } else if (typeof plugins === 'object' && 'length' in plugins) {
-        length = plugins.length
-        index = -1
-
-        while (++index < length) {
+        while (++index < plugins.length) {
           add(plugins[index])
         }
       } else {
@@ -14020,7 +14442,7 @@ function unified() {
 
       if (entry) {
         if (plain(entry[1]) && plain(value)) {
-          value = extend(entry[1], value)
+          value = extend(true, entry[1], value)
         }
 
         entry[1] = value
@@ -14031,15 +14453,11 @@ function unified() {
   }
 
   function find(plugin) {
-    var length = attachers.length
     var index = -1
-    var entry
 
-    while (++index < length) {
-      entry = attachers[index]
-
-      if (entry[0] === plugin) {
-        return entry
+    while (++index < attachers.length) {
+      if (attachers[index][0] === plugin) {
+        return attachers[index]
       }
     }
   }
@@ -14081,10 +14499,10 @@ function unified() {
     function executor(resolve, reject) {
       transformers.run(node, vfile(file), done)
 
-      function done(err, tree, file) {
+      function done(error, tree, file) {
         tree = tree || node
-        if (err) {
-          reject(err)
+        if (error) {
+          reject(error)
         } else if (resolve) {
           resolve(tree)
         } else {
@@ -14097,8 +14515,8 @@ function unified() {
   // Run transforms on a unist node representation of a file (in string or
   // vfile representation), sync.
   function runSync(node, file) {
-    var complete = false
     var result
+    var complete
 
     run(node, file, done)
 
@@ -14106,10 +14524,10 @@ function unified() {
 
     return result
 
-    function done(err, tree) {
+    function done(error, tree) {
       complete = true
-      bail(err)
       result = tree
+      bail(error)
     }
   }
 
@@ -14151,9 +14569,9 @@ function unified() {
 
       pipeline.run(processor, {file: file}, done)
 
-      function done(err) {
-        if (err) {
-          reject(err)
+      function done(error) {
+        if (error) {
+          reject(error)
         } else if (resolve) {
           resolve(file)
         } else {
@@ -14165,8 +14583,8 @@ function unified() {
 
   // Process the given document (in string or vfile representation), sync.
   function processSync(doc) {
-    var complete = false
     var file
+    var complete
 
     freeze()
     assertParser('processSync', processor.Parser)
@@ -14179,9 +14597,9 @@ function unified() {
 
     return file
 
-    function done(err) {
+    function done(error) {
       complete = true
-      bail(err)
+      bail(error)
     }
   }
 }
@@ -15622,7 +16040,7 @@ var App = /*#__PURE__*/function (_Component) {
                 props = {};
                 pattern = route.pattern;
                 pattern = pattern.startsWith("/") ? pattern.slice(1) : pattern;
-                pattern = "/_data/" + pattern;
+                pattern = "/data/" + pattern;
                 _context.next = 12;
                 return fetch("".concat((0,_util__WEBPACK_IMPORTED_MODULE_14__.hrefToUrl)({
                   pathname: pattern

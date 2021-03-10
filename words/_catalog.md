@@ -17,7 +17,7 @@
   - [build-from-source](/nodejs/build-from-source.md)
   - [node-addon](/nodejs/node-addon.md)
   - [common-snippet](/nodejs/common-snippet.md)
-  - [heap-snapshot](/nodejs/heap-snapshot.md)
+  - [v8 Heapsnapshot 文件解析](/nodejs/heap-snapshot.md)
 
 - [websocket](/websocket)
 
