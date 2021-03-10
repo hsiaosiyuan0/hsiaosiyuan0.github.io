@@ -1,0 +1,17 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "typing": "gadget typing",
+    "build": "gadget print"
+  },
+  "keywords": [],
+  "author": "hsiaosiyuan0@outlook.com",
+  "license": "MIT",
+  "dependencies": {
+    "gadget.js": "0.0.16"
+  }
+}
