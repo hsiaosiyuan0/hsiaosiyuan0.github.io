@@ -26,31 +26,7 @@ yarn build react/index,react/jsx,react-dom/index,scheduler --type=umd_dev --watc
 
 ## 创建演示项目
 
-我们直接在 React 源码更目录下创建文件 `demo/index.html`
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <script src="../build/node_modules/react/umd/react.development.js"></script>
-  <script
-    src="../build/node_modules/react-dom/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-</head>
-<body>
-<div id="app"></div>
-<script type="text/babel">
-  const Hello = function (props) {
-    return <div onClick={() => {
-      alert(1)
-    }}>Hello workd</div>;
-  }
-
-  ReactDOM.render(<Hello/>, document.getElementById('app'));
-</script>
-</body>
-</html>
-```
+我们直接在 React 源码更目录下创建文件 [demo/index.html](https://gist.githubusercontent.com/hsiaosiyuan0/6f2883183fdfe550f311504eafef2fef/raw/30a2008b4f00f42edec64c4de115d7738f924099/index.html)
 
 我们可以直接在 WebStorm 内置的 Web Server 打开该文件：
 
