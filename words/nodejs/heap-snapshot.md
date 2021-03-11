@@ -148,10 +148,10 @@ nodes 中的每一个 Node 的序列化方法是：[HeapSnapshotJSONSerializer::
 - edge_count，就是从该对象出去的边的条数，也就是子对象的数量
 - trace_node_id，可以暂时不去考虑，只有在同时使用 `node --track-heap-objects` 启动应用的情况下，该内容才不会为 `0`。它可以结合 `trace_tree` 和 `trace_function_infos` 一起知道对象是在什么调用栈下被创建的，换句话说就是知道经过一系列什么调用创了该对象。文本不会讨论这部分内容，或许会在以后的章节中展开
 
-trace_tree 中的 node 属性对应 snapshot.meta.trace_node_fields
-trace_node_id 对应 trace_tree 中的 node id 即 snapshot.meta.trace_node_fields['id']
-snapshot.meta.trace_node_fields['function_info_index'] 对应 trace_function_infos 的索引
-trace_function_info_fields['function_id'] 对应 nodes 中的 id 属性
+- trace_tree 中的 node 属性对应 snapshot.meta.trace_node_fields
+- trace_node_id 对应 trace_tree 中的 node id 即 snapshot.meta.trace_node_fields['id']
+- snapshot.meta.trace_node_fields['function_info_index'] 对应 trace_function_infos 的索引
+- trace_function_info_fields['function_id'] 对应 nodes 中的 id 属性
 
 ### edges
 
