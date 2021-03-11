@@ -863,6 +863,11 @@ div.code-toolbar > .toolbar .toolbar-item {
   margin-left: 8px;
 }
 
+code,
+a {
+  word-break: break-all;
+}
+
 code[class*="language-"],
 pre[class*="language-"] {
   font-family: "Roboto Mono", monospace !important;

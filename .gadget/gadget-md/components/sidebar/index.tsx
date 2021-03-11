@@ -62,9 +62,9 @@ export function Node(data: NodeData) {
   );
 }
 
-export function Sidebar(props: { data: NodeData[] }) {
+export function Sidebar(props: { className?: string; data: NodeData[] }) {
   return (
-    <div className={styles.sidebar}>
+    <div className={[styles.sidebar, props.className].join(" ")}>
       {props.data.map((data, i) => (
         <Node key={i} {...data} />
       ))}

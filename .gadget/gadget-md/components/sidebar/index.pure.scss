@@ -1,5 +1,5 @@
 .sidebar {
-  width: 15vw;
+  width: 100%;
   position: fixed;
   top: 65px;
   bottom: 0;
@@ -86,11 +86,5 @@
         transform: rotate(0);
       }
     }
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  .sidebar {
-    display: none;
   }
 }

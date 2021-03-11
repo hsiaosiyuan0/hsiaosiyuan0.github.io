@@ -18,7 +18,6 @@ export const outlet = "@/outlets/default.tsx";
 var processor = unified()
   .use(markdown)
   .use(Heading)
-  // .use(Alert)
   .use(gfm)
   .use(remark2rehype)
   .use(rehype2react, { createElement: React.createElement });
@@ -37,7 +36,7 @@ export default function PostView(props: {
   return (
     <div>
       <Header title={title} />
-      <Sidebar data={catalog}></Sidebar>
+      <Sidebar className={styles.sidebar} data={catalog}></Sidebar>
       <div className={[styles.post, "line-numbers"].join(" ")}>
         <Head>
           <title>{post.rawMeta.title}</title>

@@ -89,6 +89,7 @@
   h1 {
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica,
       STKaiti, SimSun, serif;
+    line-height: 1.1;
   }
 }
 
@@ -97,8 +98,16 @@
   padding: 10px 0;
 }
 
+.sidebar {
+  width: 15vw;
+}
+
 @media only screen and (max-width: 600px) {
   .post {
     width: 90vw;
+  }
+
+  .sidebar {
+    display: none;
   }
 }

@@ -65,6 +65,9 @@ export function Header(props: HeaderProps) {
       <LoadingBar color="#2998ff" ref={bar} shadow={true} />
       <div className={styles.header}>
         <div className={styles.title}>{props.title}</div>
+        <div className={styles.sitemap}>
+          <a href="/sitemap.html">all</a>
+        </div>
       </div>
     </>
   );
