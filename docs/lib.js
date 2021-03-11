@@ -17345,16 +17345,24 @@ _defineProperty(Html, "doctype", "<!DOCTYPE html>");
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Link": () => (/* reexport safe */ _link__WEBPACK_IMPORTED_MODULE_0__.Link),
-/* harmony export */   "unifyHref": () => (/* reexport safe */ _link__WEBPACK_IMPORTED_MODULE_0__.unifyHref),
-/* harmony export */   "Html": () => (/* reexport safe */ _html__WEBPACK_IMPORTED_MODULE_1__.Html),
-/* harmony export */   "Scripts": () => (/* reexport safe */ _html__WEBPACK_IMPORTED_MODULE_1__.Scripts),
-/* harmony export */   "Styles": () => (/* reexport safe */ _html__WEBPACK_IMPORTED_MODULE_1__.Styles),
-/* harmony export */   "Head": () => (/* reexport safe */ _head__WEBPACK_IMPORTED_MODULE_2__.Head)
+/* harmony export */   "Link": () => (/* reexport safe */ _link__WEBPACK_IMPORTED_MODULE_2__.Link),
+/* harmony export */   "unifyHref": () => (/* reexport safe */ _link__WEBPACK_IMPORTED_MODULE_2__.unifyHref),
+/* harmony export */   "Html": () => (/* reexport safe */ _html__WEBPACK_IMPORTED_MODULE_3__.Html),
+/* harmony export */   "Scripts": () => (/* reexport safe */ _html__WEBPACK_IMPORTED_MODULE_3__.Scripts),
+/* harmony export */   "Styles": () => (/* reexport safe */ _html__WEBPACK_IMPORTED_MODULE_3__.Styles),
+/* harmony export */   "Head": () => (/* reexport safe */ _head__WEBPACK_IMPORTED_MODULE_4__.Head),
+/* harmony export */   "EventBus": () => (/* reexport module object */ _shared_evt_bus__WEBPACK_IMPORTED_MODULE_0__),
+/* harmony export */   "EventAfterRouteChanged": () => (/* reexport safe */ _app__WEBPACK_IMPORTED_MODULE_1__.EventAfterRouteChanged),
+/* harmony export */   "EventBeforeRouteChanged": () => (/* reexport safe */ _app__WEBPACK_IMPORTED_MODULE_1__.EventBeforeRouteChanged)
 /* harmony export */ });
-/* harmony import */ var _link__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./link */ "./node_modules/gadget.js/salver/link/index.tsx");
-/* harmony import */ var _html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./html */ "./node_modules/gadget.js/salver/html/index.tsx");
-/* harmony import */ var _head__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./head */ "./node_modules/gadget.js/salver/head/index.ts");
+/* harmony import */ var _shared_evt_bus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/evt-bus */ "./node_modules/gadget.js/shared/evt-bus.ts");
+/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app */ "./node_modules/gadget.js/salver/app/index.tsx");
+/* harmony import */ var _link__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./link */ "./node_modules/gadget.js/salver/link/index.tsx");
+/* harmony import */ var _html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./html */ "./node_modules/gadget.js/salver/html/index.tsx");
+/* harmony import */ var _head__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./head */ "./node_modules/gadget.js/salver/head/index.ts");
+
+
+
 
 
 

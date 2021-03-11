@@ -679,6 +679,11 @@ div.code-toolbar > .toolbar .toolbar-item {
   margin-left: 8px;
 }
 
+code,
+a {
+  word-break: break-all;
+}
+
 code[class*=language-],
 pre[class*=language-] {
   font-family: "Roboto Mono", monospace !important;
@@ -687,6 +692,12 @@ pre[class*=language-] {
 code[class*=language-] {
   font-size: 14px !important;
   background: transparent !important;
+}
+
+@media only screen and (max-width: 600px) {
+  #fork-me {
+    display: none;
+  }
 }
 
 /*# sourceMappingURL=outlet__outlets_default_tsx.css.map*/

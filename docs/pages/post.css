@@ -1,5 +1,4 @@
 ._3k0uOgdSRfNa0MZs6QS7ku {
-  pointer-events: none;
   position: fixed;
   top: 0;
   width: 100%;
@@ -9,14 +8,18 @@
   z-index: 1000;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 ._3k0uOgdSRfNa0MZs6QS7ku ._1G63502GZaEXBXykcWz6cX {
   font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
   font-size: 25px;
   padding-left: 20px;
 }
+._3k0uOgdSRfNa0MZs6QS7ku ._3HRY5_KLp8kngNq9437Zqi {
+  padding-right: 20px;
+}
 .Z_a6ax5LrTSVASNRR2aN6 {
-  width: 15vw;
+  width: 100%;
   position: fixed;
   top: 65px;
   bottom: 0;
@@ -119,6 +122,12 @@
   display: flex;
   align-items: center;
 }
+
+@media only screen and (max-width: 600px) {
+  ._3a4jt6lr4yLRJnQge009wv {
+    display: none;
+  }
+}
 .rWpFqfkPbEcRx8xnnjlEm {
   font-size: 16px;
   padding: 1% 2% 2% 2%;
@@ -194,11 +203,26 @@
 }
 .rWpFqfkPbEcRx8xnnjlEm h1 {
   font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+  line-height: 1.1;
 }
 
 ._1UY_ItV2UTWKutKs5b7NKg {
   text-align: center;
   padding: 10px 0;
+}
+
+._11dH37BK8JkWofQgbOzM4L {
+  width: 15vw;
+}
+
+@media only screen and (max-width: 600px) {
+  .rWpFqfkPbEcRx8xnnjlEm {
+    width: 90vw;
+  }
+
+  ._11dH37BK8JkWofQgbOzM4L {
+    display: none;
+  }
 }
 
 /*# sourceMappingURL=post.css.map*/

@@ -88,6 +88,7 @@ var MobileHtml = /*#__PURE__*/function (_Html) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(gadget_js__WEBPACK_IMPORTED_MODULE_2__.Styles, {
         list: styles
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("body", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("a", {
+        id: "fork-me",
         href: "https://github.com/hsiaosiyuan0/hsiaosiyuan0.github.io",
         style: {
           position: "fixed",
