@@ -1,0 +1,96 @@
+.sidebar {
+  width: 15vw;
+  position: fixed;
+  top: 65px;
+  bottom: 0;
+  background: #fff;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  font-size: 13px;
+  color: #202124;
+  padding: 20px 0;
+  box-sizing: border-box;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #fff;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 20px;
+    border: 2px solid transparent;
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding-left: 0;
+  }
+
+  a {
+    color: #202124;
+    min-width: 24px;
+
+    &:hover {
+      color: #1a73e8;
+    }
+  }
+
+  .node {
+    ::selection {
+      background: transparent;
+    }
+
+    .title {
+      display: flex;
+      min-height: 24px;
+      align-items: center;
+      box-sizing: border-box;
+      width: calc(100% - 8px);
+      cursor: pointer;
+
+      &:hover {
+        border-radius: 0 12px 12px 0;
+        background: rgb(241, 243, 244);
+      }
+
+      &.active {
+        color: #1a73e8;
+        font-weight: 400;
+        border-radius: 0 12px 12px 0;
+        background: rgb(232, 240, 254);
+      }
+    }
+
+    & > ul {
+      display: none;
+    }
+
+    & > .title {
+      i {
+        min-width: 24px;
+        transform: rotate(-90deg);
+        transition: all ease-in-out 0.35s;
+      }
+    }
+
+    &.open > ul {
+      display: block;
+    }
+
+    &.open > .title {
+      i {
+        transform: rotate(0);
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .sidebar {
+    display: none;
+  }
+}

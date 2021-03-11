@@ -1,0 +1,50 @@
+.toc {
+  width: 268px;
+  position: fixed;
+  top: 89px;
+  left: calc(50vw + 49vw / 2 + 24px);
+  font-size: 13px;
+  color: #202124;
+  border-left: 5px solid rgb(3, 155, 229);
+  line-height: 24px;
+  box-sizing: border-box;
+  max-height: 80vh;
+  overflow: auto;
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding-left: 15px;
+  }
+
+  a {
+    color: #202124;
+    text-decoration: none;
+
+    &:hover {
+      color: #1a73e8;
+    }
+  }
+
+  li.active {
+    & > div > div {
+      a {
+        color: rgb(24, 90, 188);
+        font-weight: 400;
+      }
+    }
+  }
+
+  .node {
+    .title {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .toc {
+    display: none;
+  }
+}
