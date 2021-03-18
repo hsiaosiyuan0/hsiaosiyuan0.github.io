@@ -18,6 +18,7 @@
   - [node-addon](/nodejs/node-addon.md)
   - [common-snippet](/nodejs/common-snippet.md)
   - [v8 Heapsnapshot 文件解析](/nodejs/heap-snapshot.md)
+  - [Libuv 之 - 只看这篇是不够的](/nodejs/libuv.md)
 
 - [websocket](/websocket)
 

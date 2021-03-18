@@ -1,0 +1,268 @@
+<!DOCTYPE html><html><head><title>Libuv 之 - 只看这篇是不够的</title><meta charSet="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1, user-scalable=no, viewport-fit=cover"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1.5.0/themes/prism-vsc-dark-plus.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/toolbar/prism-toolbar.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-numbers/prism-line-numbers.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-highlight/prism-line-highlight.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@0.3.1/iconfont/material-icons.css"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@0.3.1/css/material-icons.min.css"/><link rel="stylesheet" href="/outlet__outlets_default_tsx.css"/><link rel="stylesheet" href="/pages/post.css"/></head><body><a id="fork-me" href="https://github.com/hsiaosiyuan0/hsiaosiyuan0.github.io" style="position:fixed;top:0;right:0;border:0;width:150px;height:150px;z-index:3000"><img style="position:absolute;top:0;right:0;border:0" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"/></a><div id="__gadget__"><div><div class="" style="position:fixed;top:0;left:0;height:2px;background:transparent;z-index:99999999999;width:100%"><div style="height:100%;background:#2998ff;transition:all 500ms ease;width:0%"><div style="box-shadow:0 0 10px #2998ff, 0 0 10px #2998ff;width:5%;opacity:1;position:absolute;height:100%;transition:all 500ms ease;transform:rotate(3deg) translate(0px, -4px);left:-10rem"></div></div></div><div class="_3k0uOgdSRfNa0MZs6QS7ku"><div class="_1G63502GZaEXBXykcWz6cX">The hard ways</div><div class="_3HRY5_KLp8kngNq9437Zqi"><a href="/sitemap.html">all</a></div></div><div class="Z_a6ax5LrTSVASNRR2aN6 _11dH37BK8JkWofQgbOzM4L"><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>v8</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/v8/debug-v8-in-vscode.html"><i class=""></i><span>debug-v8-in-vscode</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/v8/common-data-types.html"><i class=""></i><span>v8 常见数据类型</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>deno</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/deno/native-plugin.html"><i class=""></i><span>deno native plugin 内部实现机制</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>crypto</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/crypto/brief-crypto.html"><i class=""></i><span>加密算法调研</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>nodejs</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/Cluster 模块分析.html"><i class=""></i><span>Cluster 模块分析</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/build-from-source.html"><i class=""></i><span>build-from-source</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/node-addon.html"><i class=""></i><span>node-addon</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/common-snippet.html"><i class=""></i><span>common-snippet</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/heap-snapshot.html"><i class=""></i><span>v8 Heapsnapshot 文件解析</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/nodejs/libuv.html"><i class=""></i><span>Libuv 之 - 只看这篇是不够的</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>websocket</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/websocket/WebSocket 协议 1~4 节.html"><i class=""></i><span>WebSocket 协议 1~4 节</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/websocket/WebSocket 协议 5~10 节.html"><i class=""></i><span>WebSocket 协议 5~10 节</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>assembly</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/assembly/汇编语言学习小结.html"><i class=""></i><span>汇编语言学习小结</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>typescript</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/typescript/decorator.html"><i class=""></i><span>Decorator in babel and tsc</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>rust</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/rust/lifetime.html"><i class=""></i><span>Lifetime</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>oop</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/oop/ioc.html"><i class=""></i><span>midway 分析</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>php</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/php/为什么 PHP 不适合长时间运行.html"><i class=""></i><span>为什么 PHP 不适合长时间运行</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>blockchain</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/blockchain/crypto-conditions 简述.html"><i class=""></i><span>crypto-conditions 简述</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/blockchain/实用拜占庭容错简介.html"><i class=""></i><span>实用拜占庭容错简介</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>browser</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/browser/浏览器异步加载和同源策略.html"><i class=""></i><span>浏览器异步加载和同源策略</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>cpp</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/cpp/the-as-if-rule.html"><i class=""></i><span>The as-if rule</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>work</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/work/parsing-in-practice.html"><i class=""></i><span>Parsing in practice</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>os</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/大小端序.html"><i class=""></i><span>大小端序</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/UTF-8 编码及检查其完整性.html"><i class=""></i><span>UTF-8 编码及检查其完整性</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/魔数0x7c00.html"><i class=""></i><span>魔数 0x7c00</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/os/字符集和字符编码.html"><i class=""></i><span>字符集和字符编码</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>javascript</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/generator function.html"><i class=""></i><span>Generator Function</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/解析 JSON 的成本.html"><i class=""></i><span>解析 JSON 的成本</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/Javascript 内部的字符编码.html"><i class=""></i><span>Javascript 内部的字符编码</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/闭包的作用.html"><i class=""></i><span>闭包的作用</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/javascript/闭包是什么.html"><i class=""></i><span>闭包是什么</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>static-analysis</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/static-analysis/ternjs.html"><i class=""></i><span>使用 Rust 重写 ternjs</span></a><ul></ul></div></li></ul></div><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><div class="_15sI_H5F3ci3xYIfWDB4vZ"><i class="mi mi-arrow-drop-down"></i><span>react</span></div><ul><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/react/build-from-source.html"><i class=""></i><span>build-from-source</span></a><ul></ul></div></li><li><div class="_3quX88R9lR5BSdfAKHIoaF _1lO9qEBu6kafjPHlc111Kf"><a class="_15sI_H5F3ci3xYIfWDB4vZ" style="padding-left:15px" href="/post/react/bootstrap.html"><i class=""></i><span>bootstrap</span></a><ul></ul></div></li></ul></div></div><div class="rWpFqfkPbEcRx8xnnjlEm line-numbers"><div><div><h1 id="Libuv之-只看这篇是不够的">Libuv 之 - 只看这篇是不够的</h1>
+<h2 id="Linux">Linux</h2>
+<blockquote>
+<p>As an asynchronous event-driven JavaScript runtime, Node.js is designed to build <strong>scalable network applications</strong></p>
+<p><a href="https://nodejs.org/en/about/#about-node-js">About Node.js</a></p>
+</blockquote>
+<p>Node.js 立志可以构建一个具有伸缩性的网络应用程序，目前的服务端环境主要还是 Linux，所以接下来将以 libuv 的 Linux 实现作为分析的切入点</p>
+<h2 id="epoll">epoll</h2>
+<p>epoll 是由 Linux 内核提供的一个系统调用（system call），我们的应用程序可以通过它，告诉系统帮助我们同时监控多个文件描述符，当这其中的一个或者多个文件描述符的 I/O 可操作状态改变时，我们的应用程序会接收到来自系统的事件提示（event notification）</p>
+<h3 id="事件循环">事件循环</h3>
+<p>我们通过一小段伪代码来演示使用 epoll 时的核心步骤：</p>
+<pre><code class="language-cpp">// 创建 epoll 实例
+int epfd = epoll_create(MAX_EVENTS);
+// 像 epoll 实例中添加需要监听的文件描述符
+epoll_ctl_add(epfd, listen_sock, EPOLLIN | EPOLLOUT | EPOLLET);
+
+while(1) {
+  // 等待来自 epoll 的通知，通知会在其中的文件描述符状态改变时
+  // 由系统通知应用。通知的形式如下：
+  //
+  // epoll_wait 调用不会立即返回，系统会在其中的文件描述符状态发生
+  // 变化时返回
+  //
+  // nfds 表示发生变化的文件描述符数量
+  // events 会保存当前的事件，它的数量就是 nfds
+  int nfds = epoll_wait(epfd, events, MAX_EVENTS, -1);
+
+  // 遍历 events，对事件作出符合应用预期的响应
+  for (int i = 0; i &lt; nfds; i++) { 
+    // consume events[i]
+  }
+}
+</code></pre>
+<blockquote>
+<p>完整例子见 <a href="https://github.com/going-merry0/epoll-echo-server">epoll-echo-server</a></p>
+</blockquote>
+<p>上面的代码可以大致概括为下图：</p>
+<p><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938926095/59a4/fb8a/04fb/12af868c3b037ed48b518a77a2b9e400.png" alt=""/></p>
+<p>如此一来，也出现了「事件循环」的概念，libuv 中的事件循环实现，深受它的影响</p>
+<p>说道 epoll，不得不提它的两种触发模式：水平触发（Level-triggered）、边缘触发（Edge-triggered）。因为它们关系到 epoll 的事件触发机制，且名字取得有些晦涩</p>
+<h3 id="水平触发">水平触发</h3>
+<p>这两个术语都源自电子学领域，我们从它们的原始含义开始理解</p>
+<p>首先是水平触发：</p>
+<p><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938371959/5f61/4e18/99a7/0ebb4668b4fc7cc3ba0dca5610f5dfa2.png" alt=""/></p>
+<blockquote>
+<p><a href="https://electricalbaba.com/edge-triggering-and-level-triggering/">Electrical Concepts</a></p>
+</blockquote>
+<p>上图是表示电压变化的时序图，VH 表示电压的峰值，VL 表示电话的谷值。水平触发的含义是，随着时间的变化，只要电压处于峰值，系统就会激活对应的电路（触发）</p>
+<h3 id="边缘触发">边缘触发</h3>
+<p><img src="https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938387141/a1a4/0aed/23ba/d0effdb9b3210269dc488f89c9a16a87.png" alt=""/></p>
+<blockquote>
+<p><a href="https://electricalbaba.com/edge-triggering-and-level-triggering/">Electrical Concepts</a></p>
+</blockquote>
+<p>上图依然是表示电压变化的时序图，不过激活电路（触发）的条件是电压的<strong>改变</strong>，即电压由 VH -&gt; VL、VL -&gt; VH，在图中通过<strong>边</strong>来表示这个变化，即 Rising edge 和 Falling edge</p>
+<p>我们可以大致理解它们的形式与差别，再结合下面的 epoll 中的表现进行理解</p>
+<h3 id="在epoll中">在 epoll 中</h3>
+<p>回到 epoll 中，作为原始含义的衍生，它们当然还是具有类似电子学领域中的含义</p>
+<p>我们通过一个例子来理解，比如我们有一个 fd 表示刚建立的客户端连接，随后客户端给我们发送了 5 bytes 的内容，</p>
+<p>如果是水平触发：</p>
+<ul>
+<li>我们的应用会被系统唤醒，因为 fd 此时状态变为了可读</li>
+<li>我们从系统的缓冲区中读取 1 byte 的内容，并做了一些业务操作</li>
+<li>进入到新的一次事件循环，等待系统下一次唤醒</li>
+<li>系统继续唤醒我们的应用，因为缓冲区还有未读取的 4 bytes 内容</li>
+</ul>
+<p>如果是边缘触发：</p>
+<ul>
+<li>我们的应用会被系统唤醒，因为 fd 此时状态变为了可读</li>
+<li>我们从系统的缓冲区中读取 1 byte 的内容，并做了一些业务操作</li>
+<li>进入到新的一次事件循环，等待系统下一次唤醒</li>
+<li>此时系统并不会唤醒我们的应用，直到下一次客户端发送了一些内容，比如发送了 2 bytes</li>
+<li>系统唤醒我们的应用，此时缓冲区有 6 bytes = (4 + 2) bytes</li>
+</ul>
+<p>我们很难将水平触发、边缘触发的字面意思与上面的行为联系起来，好在我们已经预先了解过它们在电子学领域的含义</p>
+<p>水平触发，因为已经是可读状态，所以它会一直触发，直到我们读完缓冲区，且系统缓冲区没有新的客户端发送的内容；边缘触发对应的是<strong>状态的变化</strong>，每次有新的客户端发送内容，都会设置可读状态，因此只会在这个时机触发</p>
+<p>水平触发是 epoll 默认的触发模式，并且 libuv 中使用的也是水平触发。在了解了水平触发和边缘触发的区别后，我们其实就可以猜测 libuv 使用水平触发而不是边缘触发背后的考量：</p>
+<p>如果是边缘触发，虽然在 epoll 的固有能力上，我们不被要求一次读取完缓冲区的内容（可以等到下一次客户端发送内容时继续读取），但是实际业务中，客户端此时很可能在等待我们的响应（可以结合 HTTP 协议理解），而我们还在等待客户端的下一次写入，因此会陷入死锁的逻辑。所以一次读取完缓冲区的内容几乎就成了边缘触发模式下的必选方式，这就不可避免的造成其他回调的等待时间变长，让 CPU 时间分配在各个回调之间显得不够均匀</p>
+<h3 id="局限性">局限性</h3>
+<p>epoll 并不能够作用在所有的 IO 操作上，比如文件的读写操作，就无法享受到 epoll 的便利性</p>
+<p>所以 libuv 的工作可以大致概括为：</p>
+<ul>
+<li>将各种操作系统上的类似 epoll 的系统调用（比如 Unix 上的 kqueue 和 Windows 上的 IOCP）抽象出统一的 API（内部 API）</li>
+<li>对于可以利用系统调用的 IO 操作，优先使用统一后的 API</li>
+<li>对于不支持或者支持度不够的 IO 操作，使用线程池（Thread pool）的方式模拟出异步 API</li>
+<li>最后，将上面的细节封装在内部，对外提供统一的 API</li>
+</ul>
+<h2 id="libuv">libuv</h2>
+<p>除去兼容性方面的工作，单以 Linux 平台来看，libuv 主要工作就是两部分：</p>
+<ul>
+<li>一部分自然是围绕 epoll，处理那些被 epoll 支持的 IO 操作</li>
+<li>一部分就是线程池（Thread poll），处理那些不被 epoll 支持的 IO 操作</li>
+</ul>
+<p>我们可以结合 libuv 的架构图来看</p>
+<p><img src="https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7941003946/3336/e900/8dc0/e79e4fa61877a6cb5eebb9bba7fb96cb.png" alt=""/></p>
+<blockquote>
+<p>引用自 <a href="http://docs.libuv.org/en/v1.x/design.html">libuv - Design overview</a></p>
+</blockquote>
+<h3 id="event-loop">event-loop</h3>
+<p>我们将以 event-loop 着手分析上面两个工作的实现细节，因为它是我们深入细节时面对的第一个障碍</p>
+<p>下面这幅图描述了 event-loop 内部的工作：</p>
+<p><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7941149650/166f/78e5/94d7/cf0de3817e3d4db037e4b05b5c291074.png" alt=""/></p>
+<blockquote>
+<p>引用自 <a href="http://docs.libuv.org/en/v1.x/design.html">libuv - Design overview</a></p>
+</blockquote>
+<p>单看流程图可能不够具体，下面是对应的 libuv 内部的实现 <a href="https://github.com/libuv/libuv/blob/v1.x/src/unix/core.c#L365">完整内容</a>：</p>
+<pre><code class="language-cpp">int uv_run(uv_loop_t* loop, uv_run_mode mode) {
+  int timeout;
+  int r;
+  int ran_pending;
+
+  r = uv__loop_alive(loop);
+  if (!r) uv__update_time(loop);
+
+  // 是循环，没错了
+  while (r != 0 &amp;&amp; loop-&gt;stop_flag == 0) {
+    uv__update_time(loop);
+    // 处理 timer 队列
+    uv__run_timers(loop);
+    // 处理 pending 队列
+    ran_pending = uv__run_pending(loop);
+    // 处理 idle 队列
+    uv__run_idle(loop);
+    // 处理 prepare 队列
+    uv__run_prepare(loop);
+
+    // 执行 io_poll
+    uv__io_poll(loop, timeout);
+    uv__metrics_update_idle_time(loop);
+
+    // 执行 check 队列
+    uv__run_check(loop);
+    // 执行 closing 队列
+    uv__run_closing_handles(loop);
+
+    r = uv__loop_alive(loop);
+    if (mode == UV_RUN_ONCE || mode == UV_RUN_NOWAIT) break;
+  }
+
+  return r;
+}
+</code></pre>
+<p>之所以各种形式的回调（比如 <code>setTimeout</code>，<code>setImmediate</code>）在优先级上会有差别，就在于它们使用的是不同的队列，而不同的队列在每次事件循环的迭代中的执行顺序不同</p>
+<h3 id="Handle和Request">Handle 和 Request</h3>
+<p>按照官网的描述，它们是对 event-loop 中执行的操作的抽象，前者表示需要长期存在的操作，后者表示短暂的操作。单看文字描述可能不太好理解，我们看一下它们的使用方式有何不同</p>
+<p>对于 Handle 表示的长期存在的操作来说，它们的 API 具有类似下面的形式：</p>
+<pre><code class="language-cpp">// IO 操作
+int uv_poll_init_socket(uv_loop_t* loop, uv_poll_t* handle, uv_os_sock_t socket);
+int uv_poll_start(uv_poll_t* handle, int events, uv_poll_cb cb);
+int uv_poll_stop(uv_poll_t* poll);
+
+// timer
+int uv_timer_init(uv_loop_t* loop, uv_timer_t* handle);
+int uv_timer_start(uv_timer_t* handle, uv_timer_cb cb, uint64_t timeout, uint64_t repeat);
+int uv_timer_stop(uv_timer_t* handle);
+</code></pre>
+<p>大致都有：初始化 -&gt; 开始 -&gt; 停止，这三个步骤（并不是全部）。很好理解吧，因为是长期存在的操作，它开始了就会持续被处理，所以需要安排一个「停止」的 API</p>
+<p>而对于 Request 表示的短暂操作来说，比如域名解析操作：</p>
+<pre><code class="language-cpp">int uv_getaddrinfo(uv_loop_t* loop, uv_getaddrinfo_t* req, uv_getaddrinfo_cb getaddrinfo_cb, /* ... */);
+</code></pre>
+<p>域名解析操作的交互形式是，我们提交需要解析的地址，方法会范围解析的结果，这样的感觉似乎有点 HTTP 1.0 请求的影子，所以按「请求」来命名就变得具体了</p>
+<p>不过 Handle 和 Request 两者不是互斥的概念，Handle 内部实现可能也用到了 Request。因为一些宏观来看的长期操作，在每个时间切片内是可以看成是 Request 的</p>
+<h3 id="timer">timer</h3>
+<p>我们通过 timer 开放出来的 API 为线索，来分析它的内部实现：</p>
+<pre><code class="language-cpp">int uv_timer_init(uv_loop_t* loop, uv_timer_t* handle);
+int uv_timer_start(uv_timer_t* handle, uv_timer_cb cb, uint64_t timeout, uint64_t repeat);
+int uv_timer_stop(uv_timer_t* handle);
+</code></pre>
+<p><code>uv_timer_init</code> 没有什么特殊的地方，只是初始化一下 <code>handle</code> 的状态，并将其添加到 <code>loop-&gt;handle_queue</code> 中</p>
+<p><code>uv_timer_start</code> 内部做了这些工作：</p>
+<pre><code class="language-cpp">int uv_timer_start(uv_timer_t* handle,
+                   uv_timer_cb cb,
+                   uint64_t timeout,
+                   uint64_t repeat) {
+  uint64_t clamped_timeout;
+
+  // loop-&gt;time 表示 loop 当前的时间。loop 每次迭代开始时，会用当次时间更新该值
+  // clamped_timeout 就是该 timer 未来超时的时间点，这里直接计算好，这样未来就不需要
+  // 计算了，直接从 timers 中取符合条件的即可
+  if (clamped_timeout &lt; timeout)
+    clamped_timeout = (uint64_t) -1;
+
+  handle-&gt;timer_cb = cb;
+  handle-&gt;timeout = clamped_timeout;
+  handle-&gt;repeat = repeat;
+  
+  // 除了预先计算好的 clamped_timeout 以外，未来当 clamped_timeout 相同时，使用这里的
+  // 自增 start_id 作为比较条件来觉得 handle 的执行先后顺序
+  handle-&gt;start_id = handle-&gt;loop-&gt;timer_counter++;
+
+  // 将 handle 插入到 timer_heap 中，这里的 heap 是 binary min heap，所以根节点就是
+  // clamped_timeout 值（或者 start_id）最小的 handle
+  heap_insert(timer_heap(handle-&gt;loop),
+              (struct heap_node*) &amp;handle-&gt;heap_node,
+              timer_less_than);
+  // 设置 handle 的开始状态
+  uv__handle_start(handle);
+
+  return 0;
+}
+</code></pre>
+<p><code>uv_timer_start</code> 内部做了这些工作：</p>
+<pre><code class="language-cpp">int uv_timer_stop(uv_timer_t* handle) {
+  if (!uv__is_active(handle))
+    return 0;
+
+  // 将 handle 移出 timer_heap，和 heap_insert 操作一样，除了移出之外
+  // 还会维护 timer_heap 以保障其始终是 binary min heap
+  heap_remove(timer_heap(handle-&gt;loop),
+              (struct heap_node*) &amp;handle-&gt;heap_node,
+              timer_less_than);
+  // 设置 handle 的状态为停止
+  uv__handle_stop(handle);
+
+  return 0;
+}
+</code></pre>
+<p>到目前为止，我们已经知道所谓的 <code>start</code> 和 <code>stop</code> 其实可以粗略地概括为，往属性 <code>loop-&gt;timer_heap</code> 中插入或者移出 handle，并且这个属性使用一个称为 binary min heap 的数据结构。binary min heap 的细节我们可以不用去深究，总之它就是保证始终把最先超时的 handle 放在第一位</p>
+<p>然后我们再回顾上文的 <code>uv_run</code>：</p>
+<pre><code class="language-cpp">int uv_run(uv_loop_t* loop, uv_run_mode mode) {
+  // ...
+  while (r != 0 &amp;&amp; loop-&gt;stop_flag == 0) {
+    // ...
+    uv__update_time(loop);
+    uv__run_timers(loop);
+    // ...
+  }
+  // ...
+}
+</code></pre>
+<p><code>uv__update_time</code> 我们已经提及过了，就是在循环开头阶段、使用当前时间设置属性 <code>loop-&gt;time</code></p>
+<p>我们只需要最后看一下 <code>uv__run_timers</code> 的内容，就可以串联整个流程：</p>
+<pre><code class="language-cpp">void uv__run_timers(uv_loop_t* loop) {
+  struct heap_node* heap_node;
+  uv_timer_t* handle;
+
+  for (;;) {
+    // 取根节点，该值保证始终是所有待执行的 handle
+    // 中，最先超时的那一个
+    heap_node = heap_min(timer_heap(loop));
+    if (heap_node == NULL)
+      break;
+
+    handle = container_of(heap_node, uv_timer_t, heap_node);
+    if (handle-&gt;timeout &gt; loop-&gt;time)
+      break;
+
+    // 停止、移出 handle、顺便维护 timer_heap
+    uv_timer_stop(handle);
+    // 如果是需要 repeat 的 handle，则重新加入到 timer_heap 中
+    // 会在下一次事件循环中、由本方法继续执行
+    uv_timer_again(handle);
+    // 执行超时 handle 其对应的回调
+    handle-&gt;timer_cb(handle);
+  }
+}
+</code></pre>
+<h3 id="pending">pending</h3>
+<h3 id="idle">idle</h3>
+<h3 id="prepare">prepare</h3>
+<h3 id="iopoll">io poll</h3>
+<h3 id="check">check</h3>
+<h3 id="closing">closing</h3>
+<p>Disk IO 是如何做到异步的</p>
+<ul>
+<li>线程池启动</li>
+<li>如何调度</li>
+<li>如何触发回调</li>
+</ul></div></div></div><div class="_3a4jt6lr4yLRJnQge009wv"><ul><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#Linux">Linux</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#epoll">epoll</a></span></div><ul><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#事件循环">事件循环</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#水平触发">水平触发</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#边缘触发">边缘触发</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#在epoll中">在 epoll 中</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#局限性">局限性</a></span></div><ul></ul></div></li></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#libuv">libuv</a></span></div><ul><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#event-loop">event-loop</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#Handle和Request">Handle 和 Request</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#timer">timer</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#pending">pending</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#idle">idle</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#prepare">prepare</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#iopoll">io poll</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#check">check</a></span></div><ul></ul></div></li><li><div class="pr9M2Qxu3rP9KbtpZMUZy"><div class="_3BS2IRzowIlPVoY1ThvbNb"><span><a class="" href="#closing">closing</a></span></div><ul></ul></div></li></ul></div></li></ul></div><div class="_1UY_ItV2UTWKutKs5b7NKg">Made with <a target="_blank" href="https://github.com/hsiaosiyuan0/gadget">gadget</a></div></div></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-core.min.js" data-manual="true"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-markup.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-clike.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-json.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-javascript.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-jsx.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-typescript.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-tsx.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-bash.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-python.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-xml-doc.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-docker.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-rust.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-nasm.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-c.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-cpp.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-xml-doc.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/toolbar/prism-toolbar.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-numbers/prism-line-numbers.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/line-highlight/prism-line-highlight.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/show-language/prism-show-language.min.js"></script><script src="https://cdn.jsdelivr.net/gh/cferdinandi/gumshoe@5.1.1/dist/gumshoe.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react@16.14.0/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@16.14.0/umd/react-dom.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react@16.14.0/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@16.14.0/umd/react-dom.production.min.js"></script><script>window["__gadget__"]={"initialProps":{"data":{"post":{"filename":"libuv","rawMeta":{"title":"Libuv 之 - 只看这篇是不够的"},"content":"# Libuv 之 - 只看这篇是不够的\n\n## Linux\n\n> As an asynchronous event-driven JavaScript runtime, Node.js is designed to build **scalable network applications**\n>\n> [About Node.js](https://nodejs.org/en/about/#about-node-js)\n\nNode.js 立志可以构建一个具有伸缩性的网络应用程序，目前的服务端环境主要还是 Linux，所以接下来将以 libuv 的 Linux 实现作为分析的切入点\n\n## epoll\n\nepoll 是由 Linux 内核提供的一个系统调用（system call），我们的应用程序可以通过它，告诉系统帮助我们同时监控多个文件描述符，当这其中的一个或者多个文件描述符的 I/O 可操作状态改变时，我们的应用程序会接收到来自系统的事件提示（event notification）\n\n### 事件循环\n\n我们通过一小段伪代码来演示使用 epoll 时的核心步骤：\n\n```cpp\n// 创建 epoll 实例\nint epfd = epoll_create(MAX_EVENTS);\n// 像 epoll 实例中添加需要监听的文件描述符\nepoll_ctl_add(epfd, listen_sock, EPOLLIN | EPOLLOUT | EPOLLET);\n\nwhile(1) {\n  // 等待来自 epoll 的通知，通知会在其中的文件描述符状态改变时\n  // 由系统通知应用。通知的形式如下：\n  //\n  // epoll_wait 调用不会立即返回，系统会在其中的文件描述符状态发生\n  // 变化时返回\n  //\n  // nfds 表示发生变化的文件描述符数量\n  // events 会保存当前的事件，它的数量就是 nfds\n  int nfds = epoll_wait(epfd, events, MAX_EVENTS, -1);\n\n  // 遍历 events，对事件作出符合应用预期的响应\n  for (int i = 0; i < nfds; i++) { \n    // consume events[i]\n  }\n}\n```\n\n> 完整例子见 [epoll-echo-server](https://github.com/going-merry0/epoll-echo-server)\n\n上面的代码可以大致概括为下图：\n\n![](https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938926095/59a4/fb8a/04fb/12af868c3b037ed48b518a77a2b9e400.png)\n\n如此一来，也出现了「事件循环」的概念，libuv 中的事件循环实现，深受它的影响\n\n说道 epoll，不得不提它的两种触发模式：水平触发（Level-triggered）、边缘触发（Edge-triggered）。因为它们关系到 epoll 的事件触发机制，且名字取得有些晦涩\n\n### 水平触发\n\n这两个术语都源自电子学领域，我们从它们的原始含义开始理解\n\n首先是水平触发：\n\n![](https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938371959/5f61/4e18/99a7/0ebb4668b4fc7cc3ba0dca5610f5dfa2.png)\n\n> [Electrical Concepts](https://electricalbaba.com/edge-triggering-and-level-triggering/)\n\n上图是表示电压变化的时序图，VH 表示电压的峰值，VL 表示电话的谷值。水平触发的含义是，随着时间的变化，只要电压处于峰值，系统就会激活对应的电路（触发）\n\n### 边缘触发\n\n![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938387141/a1a4/0aed/23ba/d0effdb9b3210269dc488f89c9a16a87.png)\n\n> [Electrical Concepts](https://electricalbaba.com/edge-triggering-and-level-triggering/)\n\n上图依然是表示电压变化的时序图，不过激活电路（触发）的条件是电压的**改变**，即电压由 VH -> VL、VL -> VH，在图中通过**边**来表示这个变化，即 Rising edge 和 Falling edge\n\n我们可以大致理解它们的形式与差别，再结合下面的 epoll 中的表现进行理解\n\n### 在 epoll 中\n\n回到 epoll 中，作为原始含义的衍生，它们当然还是具有类似电子学领域中的含义\n\n我们通过一个例子来理解，比如我们有一个 fd 表示刚建立的客户端连接，随后客户端给我们发送了 5 bytes 的内容，\n\n如果是水平触发：\n\n- 我们的应用会被系统唤醒，因为 fd 此时状态变为了可读\n- 我们从系统的缓冲区中读取 1 byte 的内容，并做了一些业务操作\n- 进入到新的一次事件循环，等待系统下一次唤醒\n- 系统继续唤醒我们的应用，因为缓冲区还有未读取的 4 bytes 内容\n\n如果是边缘触发：\n\n- 我们的应用会被系统唤醒，因为 fd 此时状态变为了可读\n- 我们从系统的缓冲区中读取 1 byte 的内容，并做了一些业务操作\n- 进入到新的一次事件循环，等待系统下一次唤醒\n- 此时系统并不会唤醒我们的应用，直到下一次客户端发送了一些内容，比如发送了 2 bytes\n- 系统唤醒我们的应用，此时缓冲区有 6 bytes = (4 + 2) bytes \n\n我们很难将水平触发、边缘触发的字面意思与上面的行为联系起来，好在我们已经预先了解过它们在电子学领域的含义\n\n水平触发，因为已经是可读状态，所以它会一直触发，直到我们读完缓冲区，且系统缓冲区没有新的客户端发送的内容；边缘触发对应的是**状态的变化**，每次有新的客户端发送内容，都会设置可读状态，因此只会在这个时机触发\n\n水平触发是 epoll 默认的触发模式，并且 libuv 中使用的也是水平触发。在了解了水平触发和边缘触发的区别后，我们其实就可以猜测 libuv 使用水平触发而不是边缘触发背后的考量：\n\n如果是边缘触发，虽然在 epoll 的固有能力上，我们不被要求一次读取完缓冲区的内容（可以等到下一次客户端发送内容时继续读取），但是实际业务中，客户端此时很可能在等待我们的响应（可以结合 HTTP 协议理解），而我们还在等待客户端的下一次写入，因此会陷入死锁的逻辑。所以一次读取完缓冲区的内容几乎就成了边缘触发模式下的必选方式，这就不可避免的造成其他回调的等待时间变长，让 CPU 时间分配在各个回调之间显得不够均匀\n\n### 局限性\n\nepoll 并不能够作用在所有的 IO 操作上，比如文件的读写操作，就无法享受到 epoll 的便利性\n\n所以 libuv 的工作可以大致概括为：\n\n- 将各种操作系统上的类似 epoll 的系统调用（比如 Unix 上的 kqueue 和 Windows 上的 IOCP）抽象出统一的 API（内部 API）\n- 对于可以利用系统调用的 IO 操作，优先使用统一后的 API\n- 对于不支持或者支持度不够的 IO 操作，使用线程池（Thread pool）的方式模拟出异步 API\n- 最后，将上面的细节封装在内部，对外提供统一的 API\n\n## libuv\n\n除去兼容性方面的工作，单以 Linux 平台来看，libuv 主要工作就是两部分：\n\n- 一部分自然是围绕 epoll，处理那些被 epoll 支持的 IO 操作\n- 一部分就是线程池（Thread poll），处理那些不被 epoll 支持的 IO 操作\n\n我们可以结合 libuv 的架构图来看\n\n![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7941003946/3336/e900/8dc0/e79e4fa61877a6cb5eebb9bba7fb96cb.png)\n> 引用自 [libuv - Design overview](http://docs.libuv.org/en/v1.x/design.html)\n\n### event-loop\n\n我们将以 event-loop 着手分析上面两个工作的实现细节，因为它是我们深入细节时面对的第一个障碍\n\n下面这幅图描述了 event-loop 内部的工作：\n\n![](https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7941149650/166f/78e5/94d7/cf0de3817e3d4db037e4b05b5c291074.png)\n> 引用自 [libuv - Design overview](http://docs.libuv.org/en/v1.x/design.html)\n\n单看流程图可能不够具体，下面是对应的 libuv 内部的实现 [完整内容](https://github.com/libuv/libuv/blob/v1.x/src/unix/core.c#L365)：\n\n```cpp\nint uv_run(uv_loop_t* loop, uv_run_mode mode) {\n  int timeout;\n  int r;\n  int ran_pending;\n\n  r = uv__loop_alive(loop);\n  if (!r) uv__update_time(loop);\n\n  // 是循环，没错了\n  while (r != 0 && loop->stop_flag == 0) {\n    uv__update_time(loop);\n    // 处理 timer 队列\n    uv__run_timers(loop);\n    // 处理 pending 队列\n    ran_pending = uv__run_pending(loop);\n    // 处理 idle 队列\n    uv__run_idle(loop);\n    // 处理 prepare 队列\n    uv__run_prepare(loop);\n\n    // 执行 io_poll\n    uv__io_poll(loop, timeout);\n    uv__metrics_update_idle_time(loop);\n\n    // 执行 check 队列\n    uv__run_check(loop);\n    // 执行 closing 队列\n    uv__run_closing_handles(loop);\n\n    r = uv__loop_alive(loop);\n    if (mode == UV_RUN_ONCE || mode == UV_RUN_NOWAIT) break;\n  }\n\n  return r;\n}\n```\n\n之所以各种形式的回调（比如 `setTimeout`，`setImmediate`）在优先级上会有差别，就在于它们使用的是不同的队列，而不同的队列在每次事件循环的迭代中的执行顺序不同\n\n### Handle 和 Request\n\n按照官网的描述，它们是对 event-loop 中执行的操作的抽象，前者表示需要长期存在的操作，后者表示短暂的操作。单看文字描述可能不太好理解，我们看一下它们的使用方式有何不同\n\n对于 Handle 表示的长期存在的操作来说，它们的 API 具有类似下面的形式：\n\n```cpp\n// IO 操作\nint uv_poll_init_socket(uv_loop_t* loop, uv_poll_t* handle, uv_os_sock_t socket);\nint uv_poll_start(uv_poll_t* handle, int events, uv_poll_cb cb);\nint uv_poll_stop(uv_poll_t* poll);\n\n// timer\nint uv_timer_init(uv_loop_t* loop, uv_timer_t* handle);\nint uv_timer_start(uv_timer_t* handle, uv_timer_cb cb, uint64_t timeout, uint64_t repeat);\nint uv_timer_stop(uv_timer_t* handle);\n```\n\n大致都有：初始化 -> 开始 -> 停止，这三个步骤（并不是全部）。很好理解吧，因为是长期存在的操作，它开始了就会持续被处理，所以需要安排一个「停止」的 API\n\n而对于 Request 表示的短暂操作来说，比如域名解析操作：\n\n```cpp\nint uv_getaddrinfo(uv_loop_t* loop, uv_getaddrinfo_t* req, uv_getaddrinfo_cb getaddrinfo_cb, /* ... */);\n```\n\n域名解析操作的交互形式是，我们提交需要解析的地址，方法会范围解析的结果，这样的感觉似乎有点 HTTP 1.0 请求的影子，所以按「请求」来命名就变得具体了\n\n不过 Handle 和 Request 两者不是互斥的概念，Handle 内部实现可能也用到了 Request。因为一些宏观来看的长期操作，在每个时间切片内是可以看成是 Request 的\n\n### timer\n\n我们通过 timer 开放出来的 API 为线索，来分析它的内部实现：\n\n```cpp\nint uv_timer_init(uv_loop_t* loop, uv_timer_t* handle);\nint uv_timer_start(uv_timer_t* handle, uv_timer_cb cb, uint64_t timeout, uint64_t repeat);\nint uv_timer_stop(uv_timer_t* handle);\n```\n\n`uv_timer_init` 没有什么特殊的地方，只是初始化一下 `handle` 的状态，并将其添加到 `loop->handle_queue` 中\n\n`uv_timer_start` 内部做了这些工作：\n\n```cpp\nint uv_timer_start(uv_timer_t* handle,\n                   uv_timer_cb cb,\n                   uint64_t timeout,\n                   uint64_t repeat) {\n  uint64_t clamped_timeout;\n\n  // loop->time 表示 loop 当前的时间。loop 每次迭代开始时，会用当次时间更新该值\n  // clamped_timeout 就是该 timer 未来超时的时间点，这里直接计算好，这样未来就不需要\n  // 计算了，直接从 timers 中取符合条件的即可\n  if (clamped_timeout < timeout)\n    clamped_timeout = (uint64_t) -1;\n\n  handle->timer_cb = cb;\n  handle->timeout = clamped_timeout;\n  handle->repeat = repeat;\n  \n  // 除了预先计算好的 clamped_timeout 以外，未来当 clamped_timeout 相同时，使用这里的\n  // 自增 start_id 作为比较条件来觉得 handle 的执行先后顺序\n  handle->start_id = handle->loop->timer_counter++;\n\n  // 将 handle 插入到 timer_heap 中，这里的 heap 是 binary min heap，所以根节点就是\n  // clamped_timeout 值（或者 start_id）最小的 handle\n  heap_insert(timer_heap(handle->loop),\n              (struct heap_node*) &handle->heap_node,\n              timer_less_than);\n  // 设置 handle 的开始状态\n  uv__handle_start(handle);\n\n  return 0;\n}\n```\n\n`uv_timer_start` 内部做了这些工作：\n\n```cpp\nint uv_timer_stop(uv_timer_t* handle) {\n  if (!uv__is_active(handle))\n    return 0;\n\n  // 将 handle 移出 timer_heap，和 heap_insert 操作一样，除了移出之外\n  // 还会维护 timer_heap 以保障其始终是 binary min heap\n  heap_remove(timer_heap(handle->loop),\n              (struct heap_node*) &handle->heap_node,\n              timer_less_than);\n  // 设置 handle 的状态为停止\n  uv__handle_stop(handle);\n\n  return 0;\n}\n```\n\n到目前为止，我们已经知道所谓的 `start` 和 `stop` 其实可以粗略地概括为，往属性 `loop->timer_heap` 中插入或者移出 handle，并且这个属性使用一个称为 binary min heap 的数据结构。binary min heap 的细节我们可以不用去深究，总之它就是保证始终把最先超时的 handle 放在第一位\n\n然后我们再回顾上文的 `uv_run`：\n\n```cpp\nint uv_run(uv_loop_t* loop, uv_run_mode mode) {\n  // ...\n  while (r != 0 && loop->stop_flag == 0) {\n    // ...\n    uv__update_time(loop);\n    uv__run_timers(loop);\n    // ...\n  }\n  // ...\n}\n```\n\n`uv__update_time` 我们已经提及过了，就是在循环开头阶段、使用当前时间设置属性 `loop->time`\n\n我们只需要最后看一下 `uv__run_timers` 的内容，就可以串联整个流程：\n\n```cpp\nvoid uv__run_timers(uv_loop_t* loop) {\n  struct heap_node* heap_node;\n  uv_timer_t* handle;\n\n  for (;;) {\n    // 取根节点，该值保证始终是所有待执行的 handle\n    // 中，最先超时的那一个\n    heap_node = heap_min(timer_heap(loop));\n    if (heap_node == NULL)\n      break;\n\n    handle = container_of(heap_node, uv_timer_t, heap_node);\n    if (handle->timeout > loop->time)\n      break;\n\n    // 停止、移出 handle、顺便维护 timer_heap\n    uv_timer_stop(handle);\n    // 如果是需要 repeat 的 handle，则重新加入到 timer_heap 中\n    // 会在下一次事件循环中、由本方法继续执行\n    uv_timer_again(handle);\n    // 执行超时 handle 其对应的回调\n    handle->timer_cb(handle);\n  }\n}\n```\n\n### pending\n\n### idle\n\n### prepare\n\n### io poll\n\n### check\n\n### closing\n\n\nDisk IO 是如何做到异步的\n\n- 线程池启动\n- 如何调度\n- 如何触发回调\n","slug":"/nodejs/libuv","toc":[{"name":"Linux","depth":2,"anchor":"#Linux","children":[]},{"name":"epoll","depth":2,"anchor":"#epoll","children":[{"name":"事件循环","depth":3,"anchor":"#事件循环","children":[]},{"name":"水平触发","depth":3,"anchor":"#水平触发","children":[]},{"name":"边缘触发","depth":3,"anchor":"#边缘触发","children":[]},{"name":"在 epoll 中","depth":3,"anchor":"#在epoll中","children":[]},{"name":"局限性","depth":3,"anchor":"#局限性","children":[]}]},{"name":"libuv","depth":2,"anchor":"#libuv","children":[{"name":"event-loop","depth":3,"anchor":"#event-loop","children":[]},{"name":"Handle 和 Request","depth":3,"anchor":"#Handle和Request","children":[]},{"name":"timer","depth":3,"anchor":"#timer","children":[]},{"name":"pending","depth":3,"anchor":"#pending","children":[]},{"name":"idle","depth":3,"anchor":"#idle","children":[]},{"name":"prepare","depth":3,"anchor":"#prepare","children":[]},{"name":"io poll","depth":3,"anchor":"#iopoll","children":[]},{"name":"check","depth":3,"anchor":"#check","children":[]},{"name":"closing","depth":3,"anchor":"#closing","children":[]}]}],"keywords":[],"mtime":1616068159644},"catalog":[{"name":"v8","url":"/post/v8","children":[{"name":"debug-v8-in-vscode","url":"/post/v8/debug-v8-in-vscode.html","children":[]},{"name":"v8 常见数据类型","url":"/post/v8/common-data-types.html","children":[]}]},{"name":"deno","url":"/post/deno","children":[{"name":"deno native plugin 内部实现机制","url":"/post/deno/native-plugin.html","children":[]}]},{"name":"crypto","url":"/post/crypto","children":[{"name":"加密算法调研","url":"/post/crypto/brief-crypto.html","children":[]}]},{"name":"nodejs","url":"/post/nodejs","children":[{"name":"Cluster 模块分析","url":"/post/nodejs/Cluster 模块分析.html","children":[]},{"name":"build-from-source","url":"/post/nodejs/build-from-source.html","children":[]},{"name":"node-addon","url":"/post/nodejs/node-addon.html","children":[]},{"name":"common-snippet","url":"/post/nodejs/common-snippet.html","children":[]},{"name":"v8 Heapsnapshot 文件解析","url":"/post/nodejs/heap-snapshot.html","children":[]},{"name":"Libuv 之 - 只看这篇是不够的","url":"/post/nodejs/libuv.html","children":[]}]},{"name":"websocket","url":"/post/websocket","children":[{"name":"WebSocket 协议 1~4 节","url":"/post/websocket/WebSocket 协议 1~4 节.html","children":[]},{"name":"WebSocket 协议 5~10 节","url":"/post/websocket/WebSocket 协议 5~10 节.html","children":[]}]},{"name":"assembly","url":"/post/assembly","children":[{"name":"汇编语言学习小结","url":"/post/assembly/汇编语言学习小结.html","children":[]}]},{"name":"typescript","url":"/post/typescript","children":[{"name":"Decorator in babel and tsc","url":"/post/typescript/decorator.html","children":[]}]},{"name":"rust","url":"/post/rust","children":[{"name":"Lifetime","url":"/post/rust/lifetime.html","children":[]}]},{"name":"oop","url":"/post/oop","children":[{"name":"midway 分析","url":"/post/oop/ioc.html","children":[]}]},{"name":"php","url":"/post/php","children":[{"name":"为什么 PHP 不适合长时间运行","url":"/post/php/为什么 PHP 不适合长时间运行.html","children":[]}]},{"name":"blockchain","url":"/post/blockchain","children":[{"name":"crypto-conditions 简述","url":"/post/blockchain/crypto-conditions 简述.html","children":[]},{"name":"实用拜占庭容错简介","url":"/post/blockchain/实用拜占庭容错简介.html","children":[]}]},{"name":"browser","url":"/post/browser","children":[{"name":"浏览器异步加载和同源策略","url":"/post/browser/浏览器异步加载和同源策略.html","children":[]}]},{"name":"cpp","url":"/post/cpp","children":[{"name":"The as-if rule","url":"/post/cpp/the-as-if-rule.html","children":[]}]},{"name":"work","url":"/post/work","children":[{"name":"Parsing in practice","url":"/post/work/parsing-in-practice.html","children":[]}]},{"name":"os","url":"/post/os","children":[{"name":"大小端序","url":"/post/os/大小端序.html","children":[]},{"name":"UTF-8 编码及检查其完整性","url":"/post/os/UTF-8 编码及检查其完整性.html","children":[]},{"name":"魔数 0x7c00","url":"/post/os/魔数0x7c00.html","children":[]},{"name":"字符集和字符编码","url":"/post/os/字符集和字符编码.html","children":[]}]},{"name":"javascript","url":"/post/javascript","children":[{"name":"Generator Function","url":"/post/javascript/generator function.html","children":[]},{"name":"解析 JSON 的成本","url":"/post/javascript/解析 JSON 的成本.html","children":[]},{"name":"Javascript 内部的字符编码","url":"/post/javascript/Javascript 内部的字符编码.html","children":[]},{"name":"闭包的作用","url":"/post/javascript/闭包的作用.html","children":[]},{"name":"闭包是什么","url":"/post/javascript/闭包是什么.html","children":[]}]},{"name":"static-analysis","url":"/post/static-analysis","children":[{"name":"使用 Rust 重写 ternjs","url":"/post/static-analysis/ternjs.html","children":[]}]},{"name":"react","url":"/post/react","children":[{"name":"build-from-source","url":"/post/react/build-from-source.html","children":[]},{"name":"bootstrap","url":"/post/react/bootstrap.html","children":[]}]}],"title":"The hard ways"}},"currentRoute":{"pattern":"/post","href":{"pathname":"/post"}},"pageModules":{"/index":["/pages/index.js"],"/post":["/pages/post.css","/pages/post.js"],"/sitemap":["/pages/sitemap.css","/pages/sitemap.js"],"/post/*":["/pages/post.css","/pages/post.js"]},"router":{"basename":"/","hash":false,"routes":["/index","/post","/sitemap","/post/*"]}};</script><script crossorigin="anonymous" src="/app.js"></script><script crossorigin="anonymous" src="/foundation.js"></script><script crossorigin="anonymous" src="/lib.js"></script><script crossorigin="anonymous" src="/shared-pages_post_tsx.js"></script><script crossorigin="anonymous" src="/pages/post.js"></script></body></html>
