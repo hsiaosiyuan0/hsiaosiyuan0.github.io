@@ -56,7 +56,7 @@ while(1) {
 
 首先是水平触发：
 
-![](https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938371959/5f61/4e18/99a7/0ebb4668b4fc7cc3ba0dca5610f5dfa2.png)
+![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7955762915/1ccf/7d9a/886a/d760581088a5655e32bb5655d48908e8.png)
 
 > [Electrical Concepts](https://electricalbaba.com/edge-triggering-and-level-triggering/)
 
@@ -64,7 +64,7 @@ while(1) {
 
 ### 边缘触发
 
-![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7938387141/a1a4/0aed/23ba/d0effdb9b3210269dc488f89c9a16a87.png)
+![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7955741499/0878/105e/b498/b035300c409e916d5f1d4bbe71154b6f.png)
 
 > [Electrical Concepts](https://electricalbaba.com/edge-triggering-and-level-triggering/)
 
