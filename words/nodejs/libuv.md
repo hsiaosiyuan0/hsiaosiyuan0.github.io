@@ -630,11 +630,11 @@ int uv__next_timeout(const uv_loop_t* loop) {
 }
 ```
 
-上面的 `uv__next_timeout` 实现中，只有在没有 timer 待处理的时候，才会是 `-1`，结合本节开头对 `epoll_wait` 的 `timeout` 参数的解释，`-1` 会让后续的 `uv__io_poll` 进入 block 状态、完全等待事件的到达
+上面的 `uv__next_timeout` 实现主要分为三部分：
 
-当有 timer，且有超时的 timer `handle->timeout <= loop->time`，则返回 `0`，这样 `uv__io_poll` 不会 block 住事件循环，这样可以快速进入下一次事件循环以执行超时的 timer
-
-当有 timer，不过都没有超时，则计算最小超时时间 `diff` 来作为 `uv__io_poll` 的阻塞时间
+- 只有在没有 timer 待处理的时候，才会是 `-1`，结合本节开头对 `epoll_wait` 的 `timeout` 参数的解释，`-1` 会让后续的 `uv__io_poll` 进入 block 状态、完全等待事件的到达
+- 当有 timer，且有超时的 timer `handle->timeout <= loop->time`，则返回 `0`，这样 `uv__io_poll` 不会 block 住事件循环，目的是为了快速进入下一次事件循环、以执行超时的 timer
+- 当有 timer，不过都没有超时，则计算最小超时时间 `diff` 来作为 `uv__io_poll` 的阻塞时间
 
 不知道大家发现没有，timeout 的计算，其核心指导思想就是要尽可能的让 CPU 时间能够在事件循环的多次迭代的、多个不同任务队列的执行、中尽可能的分配均匀，避免某个类型的任务产生很高的延迟
 
