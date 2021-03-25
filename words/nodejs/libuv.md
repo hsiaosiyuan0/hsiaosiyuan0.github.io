@@ -299,7 +299,7 @@ int uv_run(uv_loop_t* loop, uv_run_mode mode) {
 }
 ```
 
-`uv__update_time` 我们已经提及过了，就是在循环开头阶段、使用当前时间设置属性 `loop->time`
+`uv__update_time` 我们已经见过了，作用就是在循环开头阶段、使用当前时间设置属性 `loop->time`
 
 我们只需要最后看一下 `uv__run_timers` 的内容，就可以串联整个流程：
 
@@ -426,7 +426,11 @@ static int uv__run_pending(uv_loop_t* loop) {
 
 #### queue
 
-queue 会在后面的实现中多次出现，这里我们就在它第一次出现的时候，顺便简单看一下它的实现，首先是起始状态：
+和上文出现的 min heap 一样，queue 也是主要用到的数据结构，所以我们在第一次见到它的时候、顺便介绍一下
+
+min heap 的实现相对更深一些，所以提供了基于源码的注释 [heap-inl.h](https://github.com/going-merry0/libuv/blob/feature/learn/src/heap-inl.h) 让感兴趣的读者深入了解一下，而 queue 则相对就简单一些，加上源码中随处会出现操作 queue 的宏，了解这些宏到底做了什么、会让阅读源码时更加安心
+
+接下来我们就一起看看 queue 和一些常用的操作它的宏，首先是起始状态：
 
 ![](https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7986238068/35fb/5bea/944c/0027a6af84e5f63a49184f26ee255f17.png)
 
@@ -621,6 +625,12 @@ int uv__next_timeout(const uv_loop_t* loop) {
 }
 ```
 
+上面的 `uv__next_timeout` 实现中，只有在没有 timer 待处理的时候，才会是 `-1`，结合本节开头对 `epoll_wait` 的 `timeout` 参数的解释，`-1` 会让后续的 `uv__io_poll` 进入 block 状态、完全等待事件的到达
+
+当有 timer，且有超时的 timer `handle->timeout <= loop->time`，则返回 `0`，这样 `uv__io_poll` 不会 block 住事件循环，这样可以快速进入下一次事件循环以执行超时的 timer
+
+当有 timer，不过都没有超时，则计算最小超时时间 `diff` 来作为 `uv__io_poll` 的阻塞时间
+
 不知道大家发现没有，timeout 的计算，其核心指导思想就是要尽可能的让 CPU 时间能够在事件循环的多次迭代的、多个不同任务队列的执行、中尽可能的分配均匀，避免某个类型的任务产生很高的延迟
 
 #### 小栗子
@@ -782,7 +792,7 @@ static void worker(void* arg) {
 上面我们保留了相对重要的内容，并加以注释。可以大致地概括为：
 
 - 对于线程池中的线程，会通过 `uv_cond_wait` 来等待被唤醒
-- 线程被唤醒后就就从 `wq` 中主动找一个任务做，完成任务就唤醒主线程，因为回调需要在主线程被执行
+- 线程被唤醒后就从 `wq` 中主动找一个任务做，完成任务就唤醒主线程，因为回调需要在主线程被执行
 - 随后就进入下一次迭代，如果有任务，就继续完成，直至没有任务时，通过 `uv_cond_wait` 再次进入睡眠状态
 - 唤醒是通过在另外的线程中使用 `uv_cond_signal` 来通知操作系统做调度
 - 线程池是一个可伸缩的设计，当一个任务都没有时，线程会都进入睡眠状态，当任务逐渐增多时，会由活动的线程尝试唤醒睡眠中的线程
