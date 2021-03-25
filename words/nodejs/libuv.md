@@ -14,11 +14,25 @@
 
 Node.js 作为前端同学探索服务端业务的利器，自身是立志可以构建一个具有伸缩性的网络应用程序。目前的服务端环境主要还是 Linux，对于另一个主要的服务端环境 Unix，则在 API 上和 Linux 具有很高相似性，所以选择 Linux 作为起始点，说不定可以有双倍收获和双倍快乐
 
-## epoll
+## Libuv 与 Linux
 
-epoll 就是 libuv 在其 Linux 实现中使用的重要 API，我们直接深入到这一层，先来对 epoll 有个简单的了解（再深入就一头扎进内核了）
+下面是 libuv 官网的架构图：
 
-epoll 是由 Linux 内核提供的一个系统调用（system call），我们的应用程序可以通过它，告诉系统帮助我们同时监控多个文件描述符，当这其中的一个或者多个文件描述符的 I/O 可操作状态改变时，我们的应用程序会接收到来自系统的事件提示（event notification）
+![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7941003946/3336/e900/8dc0/e79e4fa61877a6cb5eebb9bba7fb96cb.png)
+
+单以 Linux 平台来看，libuv 主要工作可以简单划为两部分：
+
+- 围绕 epoll，处理那些被 epoll 支持的 IO 操作
+- 线程池（Thread pool），处理那些不被 epoll 支持的 IO 操作
+
+## epoll 简介
+
+为了追本溯源，我们将从 epoll 开始
+
+简单来说，epoll 是由 Linux 内核提供的一个系统调用（system call），我们的应用程序可以通过它：
+
+- 告诉系统帮助我们同时监控多个文件描述符
+- 当这其中的一个或者多个文件描述符的 I/O 可操作状态改变时，我们的应用程序会接收到来自系统的事件提示（event notification）
 
 ### 事件循环
 
@@ -121,22 +135,13 @@ epoll 并不能够作用在所有的 IO 操作上，比如文件的读写操作�
 - 对于不支持或者支持度不够的 IO 操作，使用线程池（Thread pool）的方式模拟出异步 API
 - 最后，将上面的细节封装在内部，对外提供统一的 API
 
-## libuv
+## 回到 libuv
 
-回到 libuv，除去兼容性方面的工作，单以 Linux 平台来看，libuv 主要工作就是两部分：
-
-- 一部分自然是围绕 epoll，处理那些被 epoll 支持的 IO 操作
-- 一部分就是线程池（Thread poll），处理那些不被 epoll 支持的 IO 操作
-
-我们可以结合 libuv 官网的架构图来看
-
-![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/7941003946/3336/e900/8dc0/e79e4fa61877a6cb5eebb9bba7fb96cb.png)
-
-> 引用自 [libuv - Design overview](http://docs.libuv.org/en/v1.x/design.html)
+回到 libuv，我们将以 event-loop 为主要脉络，结合上文提到的 epoll，以及下面将会介绍到的线程池，继续 libuv 在 Linux 上的实现细节一探究竟
 
 ### event-loop
 
-接下来，我们将以 event-loop 着手分析上面两个工作的实现细节，目的是先强化一下基本概念
+我们将结合源码来回顾一下 event-loop 基本概念
 
 下面这幅图也取自 libuv 官网，它描述了 event-loop 内部的工作：
 
@@ -144,7 +149,7 @@ epoll 并不能够作用在所有的 IO 操作上，比如文件的读写操作�
 
 > 引用自 [libuv - Design overview](http://docs.libuv.org/en/v1.x/design.html)
 
-单看流程图可能不够具体，下面是对应的 libuv 内部的实现 [完整内容](https://github.com/libuv/libuv/blob/v1.x/src/unix/core.c#L365)：
+单看流程图可能太抽象，下面是对应的 libuv 内部的实现 [完整内容](https://github.com/libuv/libuv/blob/v1.x/src/unix/core.c#L365)：
 
 ```cpp
 int uv_run(uv_loop_t* loop, uv_run_mode mode) {
@@ -690,7 +695,7 @@ int main() {
 
 #### 创建
 
-因为我们已经知道读写文件的操作是无法使用 epoll 的，那么就顺着这个线索，通过 [uv_fs_read](https://github.com/going-merry0/libuv/blob/feature/learn/src/unix/fs.c#L1891) 的内部实现，找到 `uv__work_submit` 方法，发现是在其中初始化的线程池：
+因为我们已经知道读写文件的操作是无法使用 epoll 的，那么就顺着这个线索，通过 [uv_fs_read](https://github.com/going-merry0/libuv/blob/feature/learn/src/unix/fs.c#L1891) 的内部实现，找到 [uv__work_submit](https://github.com/going-merry0/libuv/blob/feature/learn/src/threadpool.c#L256) 方法，发现是在其中初始化的线程池：
 
 ```cpp
 void uv__work_submit(uv_loop_t* loop,
@@ -700,6 +705,7 @@ void uv__work_submit(uv_loop_t* loop,
                      void (*done)(struct uv__work* w, int status)) {
   uv_once(&once, init_once);
   // ...
+  post(&w->wq, kind);
 }
 ```
 
@@ -721,6 +727,23 @@ static void init_threads(void) {
 ```
 
 通过上面的实现，我们知道默认的线程池中线程的数量是 `4`，并且可以通过 `UV_THREADPOOL_SIZE` 环境变量重新指定该数值
+
+除了对线程池进行单例延迟创建，`uv__work_submit` 当然还是会提交任务的，这部分工作是由 `post(&w->wq, kind)` 完成的，我们来看下 [post](https://github.com/going-merry0/libuv/blob/feature/learn/src/threadpool.c#L142:13) 方法的实现细节：
+
+```cpp
+static void post(QUEUE* q, enum uv__work_kind kind) {
+  uv_mutex_lock(&mutex);
+  // ...
+  // 将任务插入到 `wq` 这个线程共享的队列中
+  QUEUE_INSERT_TAIL(&wq, q);
+  // 如果有空闲线程，则通知它们开始工作
+  if (idle_threads > 0)
+    uv_cond_signal(&cond);
+  uv_mutex_unlock(&mutex);
+}
+```
+
+可以发现对于提交任务，其实就是将任务插入到线程共享队列 `wq`，并且有空闲线程时才会通知它们工作。那么，如果此时没有空闲线程的话，是不是任务就被忽略了呢？答案是否，因为工作线程会在完成当前工作后，主动检查 `wq` 队列是否还有待完成的工作，有的话会继续完成，没有的话，则进入睡眠，等待下次被唤醒（后面会继续介绍这部分细节）
 
 #### 任务如何调度
 
@@ -993,6 +1016,12 @@ static void uv__async_send(uv_loop_t* loop) {
 }
 ```
 
+我们最后通过一副意识流的图，对上面的线程池的流程进行概括：
+
+![](https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8063142835/f101/d650/81b1/41fc9b9f358eddb516c4f86f0ccd6f68.png)
+
+上图中我们的任务是在 `uv__run_idle(loop);` 执行的回调中通过 `uv__work_submit` 完成的，但是实际上，对于使用事件循环的应用而言，整个应用的时间片都划分在了各个不同的队列回调中，所以实际上、从其余的队列中提交任务也是可能的
+
 ### closing
 
 我们开头已经介绍过，只有 Handle 才配备了关闭的 API，因为 Request 是一个短暂任务。Handle 的关闭需要使用 [uv_close](https://github.com/going-merry0/libuv/blob/feature/learn/src/unix/core.c#L108)：
@@ -1035,7 +1064,7 @@ void uv__make_close_pending(uv_handle_t* handle) {
 }
 ```
 
-调用 `uv_close` 关闭 Handle 后，libuv 会先释放 Handle 占用的资源（比如关闭 fd），随后通过调用 `uv__make_close_pending` 把 handle 连接到 `closing_handles` 队列中，该队会在事件循环中被 `uv__run_closing_handles(loop)` 调用所执行
+调用 `uv_close` 关闭 Handle 后，libuv 会先释放 Handle 占用的资源（比如关闭 fd），随后通过调用 `uv__make_close_pending` 把 handle 连接到 `closing_handles` 队列中，该队列会在事件循环中被 `uv__run_closing_handles(loop)` 调用所执行
 
 使用了事件循环后，业务代码的执行时机都在回调中，由于 `closing_handles` 是最后一个被执行的队列，所以在其余队列的回调中、那些执行 `uv_close` 时传递的回调，都会在当次迭代中被执行
 
