@@ -23,9 +23,17 @@
 ```bash
 mkdir /var/tmp/ccache 2>/dev/null
 ccache -o cache_dir=/var/tmp/ccache
-ccache -o max_size=5.0G
-export CC="ccache gcc" # macos 是 export CC="ccache cc"
-export CXX="ccache g++" # macos 是 export CC="ccache c++"
+
+# 大小根据当前可用磁盘空间酌情而定
+ccache -o max_size=30.0G
+
+# 对于 Linux 系统，使用下面的设定
+export CC="ccache gcc"
+export CXX="ccache g++"
+
+# 官方没有说明的是，对于 macos，需要使用下面的设定
+export CC="ccache cc"
+export CXX="ccache c++"
 ```
 
 ## 编译源码
