@@ -160,3 +160,12 @@ NewSpace::NewSpace(Heap* heap, v8::PageAllocator* page_allocator,
 64bit 上 max_semi_space_size 默认是 16M，可以通过 `--max_semi_space_size` 进行修改，单位是 MB，实际大小可能会略大于参数指定的大小，向上取整到 2^n MB
 
 min_semi_space_size 默认是 1MB 可以通过 `--min_semi_space_size` 进行修改，单位是 MB，可以指定超过 `max_semi_space_size` 大小的值，但生效的大小不会超过 `max_semi_space_size` 的设定
+
+```mermaid
+classDiagram
+HeapObject --> Map
+```
+
+map 创建的时候会通过 [Map::StartInobjectSlackTracking](https://github.com/nodejs/node/blob/9cd523d148dcefa6dd86cb7ef6448520aad5c574/deps/v8/src/objects/map.cc#L2685) 设置一个倒数计数器 `7`
+
+Runtime_CompleteInobjectSlackTrackingForMap 重新计算大小

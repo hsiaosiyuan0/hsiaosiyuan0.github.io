@@ -370,7 +370,7 @@ class A {
 const a = new A();
 ```
 
-上面的 a 会占用 92 个字节，具体的计算过程如下：
+上面的 a 会占用 96 个字节，具体的计算过程如下：
 
 1. 首先会先编译函数 A，因为 v8 的延迟编译技术，非 IIFE 的函数编译被推迟到被使用的时候
 2. 编译完函数 A 之后，结合自身属性数量，以及遍历原型链收集继承的属性数量，记为 `expected_nof_properties`
@@ -506,3 +506,27 @@ V(kHeaderSize, 0) \
 ```
 
 ## 把 delete 退化的部分梳理清楚
+
+v8 生成的汇编代码
+
+- [CodeStubAssembler::AllocateJSObjectFromMap](https://github.com/nodejs/node/blob/9cd523d148dcefa6dd86cb7ef6448520aad5c574/deps/v8/src/codegen/code-stub-assembler.cc#L3399)
+- [CodeStubAssembler::InitializeJSObjectFromMap](https://github.com/nodejs/node/blob/9cd523d148dcefa6dd86cb7ef6448520aad5c574/deps/v8/src/codegen/code-stub-assembler.cc#L3416)
+- [CodeStubAssembler::InitializeJSObjectBodyWithSlackTracking](https://github.com/nodejs/node/blob/9cd523d148dcefa6dd86cb7ef6448520aad5c574/deps/v8/src/codegen/code-stub-assembler.cc#L3460)
+- [Runtime_CompleteInobjectSlackTrackingForMap](https://github.com/nodejs/node/blob/9cd523d148dcefa6dd86cb7ef6448520aad5c574/deps/v8/src/runtime/runtime-object.cc#L838)
+
+
+cpp 创建对象
+
+- [JSObject::New](https://github.com/nodejs/node/blob/9cd523d148dcefa6dd86cb7ef6448520aad5c574/deps/v8/src/objects/js-objects.cc#L2019)
+
+StartInobjectSlackTracking
+
+
+所有 headers 定义在 /Users/hsiao/Developer/node/out/Release/obj/gen/torque-output-root/torque-generated/field-offsets-tq.h
+
+
+如果没有的话，第一次添加
+
+https://github.com/hsiaosiyuan0/v8/blob/21a23587de194bf429ac773b6e075c72eaa0040c/src/objects/lookup.h#L19
+
+hiddenClass 在内部就是 map
