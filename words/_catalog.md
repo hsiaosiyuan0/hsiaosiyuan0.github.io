@@ -19,6 +19,7 @@
   - [common-snippet](/nodejs/common-snippet.md)
   - [v8 Heapsnapshot 文件解析](/nodejs/heap-snapshot.md)
   - [Libuv 之 - 只看这篇是不够的](/nodejs/libuv.md)
+  - [Objects in v8](/nodejs/object-in-v8.md)
 
 - [websocket](/websocket)
 
