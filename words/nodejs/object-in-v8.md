@@ -305,6 +305,8 @@ const a = { p1: 1 };
 
 运行上面的代码，会发现 `inobject properties` 数量是 1，这里没有 8 个的预留空间，是因为从对象字面量创建经过的是 [CreateObjectLiteral](https://github.com/hsiaosiyuan0/v8/blob/51140a440949dbbeea7a4e6c2185ccdeb8b6276e/src/runtime/runtime-literals.cc#L374) 方法，其内部没有预留空间的策略，而是 [直接使用](https://github.com/nodejs/node/blob/9cd523d148dcefa6dd86cb7ef6448520aad5c574/deps/v8/src/objects/map.cc#L2003) 编译收集的信息，这与从构造函数创建经过的 [JSObject::New](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/js-objects.cc#L2122) 方法内部的策略不同
 
+从对象字面量创建会使用字面量中的属性数作为 `inobject properties` 的数量，因此后续添加的属性会是 fast 型
+
 ### 空对象字面量
 
 和空构造函数的情况类似，空对象字面量的大小也需要另外讨论：
@@ -331,7 +333,7 @@ inobject、fast、slow 三种模式的存在，是基于分而治之的理念。
 1. 在 inobject 配额足够的情况下，属性优先被当成 inobject 型的
 2. 当 inobject 配个不足的情况下，属性被当成是 fast 型的
 3. 当 fast 型的配额也不足的情况下，对象整个切换成 slow 模式
-4. 中间某一步骤中，执行了 `delete` 操作，对象也会整个切换成 slow 模式
+4. 中间某一步骤中，执行了 `delete` 操作删除属性（除了删除最后一个顺位的属性以外，删除其余顺位的属性都会）让对象整个切换成 slow 模式
 6. 如果某个对象被设置为另一个函数对象的 `property` 属性，则该对象也会切换成 slow 模式，见 [JSObject::OptimizeAsPrototype](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/js-objects.cc#L4421)
 5. 一旦对象切换成 slow 模式，从开发者的角度，就基本可以认为该对象不会再切换成 fast 模式了（虽然引擎内部的一些特殊情况下会使用 [JSObject::MigrateSlowToFast](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/js-objects.cc#L3415) 切换回 fast）
 
@@ -406,7 +408,7 @@ slack tracking 是根据构造函数调用的次数来的，所以使用对象�
 - 当继续超过 fast 型的配额后，对象整个切换到 slow 型
 - 初始 inobject 的配额会因为使用的是「构造函数创建」还是「对象字面量」创建而不同，前者根据编译器收集的信息（大致属性数 + 8，且上限为 252），后者是固定的 4
 - 使用 `Object.create(null)` 创建的对象直接是 slow 型
-- 中途任意时刻使用 `delete` 或者将对象设置为另一个构造函数的 `prototype` 属性，都会将对象整个切换到 slow 型
+- 中途任意时刻使用 `delete` 删除了除最后顺位的属性以外的其余顺位的属性，或者将对象设置为另一个构造函数的 `prototype` 属性，都会将对象整个切换到 slow 型
 - 目前来看，切换到 slow 型后将不能再回到 fast 型
 
 在实际使用时，我们不必考虑上面的细节，只要确保在有条件的情况下：

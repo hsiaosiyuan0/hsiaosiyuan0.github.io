@@ -301,34 +301,40 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-class CtorFromBabel {
-  constructor() {
-    _defineProperty(this, "a", 1);
-  }
+// class CtorFromBabel {
+//   constructor() {
+//     _defineProperty(this, "a", 1);
+//   }
 
-  m1() {}
-}
+//   m1() {}
+// }
 
-class CtorFromTsc {
-  constructor() {
-    this.a = 1;
-  }
-  m1() {}
-}
+// class CtorFromTsc {
+//   constructor() {
+//     this.a = 1;
+//   }
+//   m1() {}
+// }
 
-const o1 = new CtorFromBabel();
-const o2 = new CtorFromTsc();
+// const o1 = new CtorFromBabel();
+// const o2 = new CtorFromTsc();
 
-const cnt = 100000;
+// const cnt = 100000;
 
-console.time("CtorFromBabel");
-for (let i = 0; i < cnt; i++) {
-  void o1.a;
-}
-console.timeEnd("CtorFromBabel");
+// console.time("CtorFromBabel");
+// for (let i = 0; i < cnt; i++) {
+//   void o1.a;
+// }
+// console.timeEnd("CtorFromBabel");
 
-console.time("CtorFromTsc");
-for (let i = 0; i < cnt; i++) {
-  void o2.a;
-}
-console.timeEnd("CtorFromTsc");
+// console.time("CtorFromTsc");
+// for (let i = 0; i < cnt; i++) {
+//   void o2.a;
+// }
+// console.timeEnd("CtorFromTsc");
+
+let a = { a: 1, b: 2 };
+%DebugPrint(a);
+let c = { d: 1, e: 2, f: 3 };
+delete c.d;
+%DebugPrint(c);
