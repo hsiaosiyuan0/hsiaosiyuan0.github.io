@@ -375,7 +375,7 @@ DebugPrint: 0x1a98617377e1: [JS_OBJECT_TYPE]
 - 当使用了 19 个属性时，已经有 15 个属性是 fast 型 `PropertyArray[15]`
 - 当使用了 20 个属性时，因为超过了上限，对象整体切换成了 slow 型 `NameDictionary[101]`
 
-至于为什么 inobject 显示的是 `FixedArray`，只是因为当没有使用到 fast 型的时候 `propertiesOrHash_ptr` 默认指向了一个 `empty_fixed_array`，与兴趣的可以看 [property_array](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/js-objects-inl.h#L656)
+至于为什么 inobject 显示的是 `FixedArray`，只是因为当没有使用到 fast 型的时候 `propertiesOrHash_ptr` 默认指向了一个 `empty_fixed_array`，有兴趣的同学可以通过阅读 [property_array](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/js-objects-inl.h#L656) 来确认
 
 ## slack tracking
 
