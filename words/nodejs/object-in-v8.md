@@ -83,7 +83,7 @@ pointer tagging 技术简单来说，就是利用地址都是按字长对齐（�
 
 map 一般也称为 HiddenClass，它描述了对象的元信息，比如对象的大小（instance_size）等等。map 也是继承自 `HeapObject`，因此它本身也是受 GC 管理的对象，JSObject 中的 map 字段是指向堆上的 map 对象的指针
 
-我们可以结合 map 源码中注释的 [Map layout](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/map.h#L106) 和下图来理解 map 的内存拓扑形式：
+我们可以结合 map 源码中注释的 [Map layout](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/map.h#L106) 和下图来理解 map 的内存的拓扑形式：
 
 ![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8337468799/91b9/bb3f/22f5/be187174241caaa89d2f8f9bef6465fb.png)
 
