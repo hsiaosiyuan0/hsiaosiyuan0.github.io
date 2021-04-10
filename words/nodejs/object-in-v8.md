@@ -1,8 +1,3 @@
----
-title: Objects in v8
-description: 当要深入了解 v8 内部的内存管理细节时，首先需要了解对象在 v8 中的处理方式，本文将结合源码对 v8 中的对象处理进行简单介绍
----
-
 ![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8339370587/db9e/6e1e/846d/d0b81afaa378653b45fe6b1bad780d14.png)
 
 > 图片来源：[siliconangle.com](https://siliconangle.com/2016/10/10/upcoming-chrome-update-will-speed-web-pages-with-better-memory-usage/)
