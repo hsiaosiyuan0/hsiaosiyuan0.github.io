@@ -1,6 +1,13 @@
-# Objects in v8
+---
+title: Objects in v8
+description: 当要深入了解 v8 内部的内存管理细节时，首先需要了解对象在 v8 中的处理方式，本文将结合源码对 v8 中的对象处理进行简单介绍
+---
 
-当要深入了解 v8 内部的内存管理细节时，首先需要了解对象在 v8 中的处理方式，本文将结合源码对 v8 中的对象处理进行简单介绍
+![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8339370587/db9e/6e1e/846d/d0b81afaa378653b45fe6b1bad780d14.png)
+
+> 图片来源：[siliconangle.com](https://siliconangle.com/2016/10/10/upcoming-chrome-update-will-speed-web-pages-with-better-memory-usage/)
+
+> 本文作者：[肖思元](https://github.com/hsiaosiyuan0)
 
 ## TaggedImpl
 
@@ -55,7 +62,7 @@ pointer tagging 技术简单来说，就是利用地址都是按字长对齐（�
 - native 代码通过 `ptr_` 来引用堆上的对象，如果是 smi 则无需访问 GC 的堆
 - 如果要操作堆上对象的字段，则需进一步通过在对象所属的类的定义中、硬编码的偏移量来完成
 
-各个类中的字段的偏移量都定义在 [field-offsets-tq.h](https://github.com/hsiaosiyuan0/v8/blob/learn/out/x64.debug/gen/torque-generated/field-offsets.h) 中。之所以要手动硬编码，是因为这些类需要通过 GC 来分配，而是不是直接使用 native 的堆，所以不能利用 cpp 编译器自动生成的偏移量了
+各个类中的字段的偏移量都定义在 [field-offsets-tq.h](https://github.com/hsiaosiyuan0/v8/blob/learn/out/x64.debug/gen/torque-generated/field-offsets.h) 中。之所以要手动硬编码，是因为这些类的实例内存需要通过 GC 来分配，而是不是直接使用 native 的堆，所以就不能利用 cpp 编译器自动生成的偏移量了
 
 我们通过一个图例来解释一下编码方式（64bit 系统）：
 
@@ -63,9 +70,9 @@ pointer tagging 技术简单来说，就是利用地址都是按字长对齐（�
 
 - 图中通过不同的颜色表示对象自身定义的区域和继承的区域
 - Object 中没有字段，所以 `Object::kHeaderSize` 是 `0`
-- HeapObject 是 Object 类的子类，因此它的字段偏移起始值是 `Object::kHeaderSize` [code](https://github.com/nodejs/node/blob/fb180ac1107c7f8e7dea9c973844dae93b2eda04/deps/v8/src/objects/heap-object.h#L202)，HeapObject 只有一个字段偏移 `kMapOffset` 值等于 `Object::kHeaderSize` 即 `0`，因为该字段大小是 `kTaggedSize`，因此 `HeapObject:kHeaderSize` 是 8bytes
-- JSReceiver 是 HeapObject 类的子类，因此它的字段偏移起始值是 `HeapObject:kHeaderSize` [code](https://github.com/nodejs/node/blob/fb180ac1107c7f8e7dea9c973844dae93b2eda04/deps/v8/src/objects/js-objects.h#L277)，JSReceiver 也只有一个字段偏移 `kPropertiesOrHashOffset`，其值为 `HeapObject:kHeaderSize` 即 8bytes，因为该字段大小是 `kTaggedSize`，因此 `JSReceiver::kHeaderSize` 为 16bytes
-- JSObject 是 JSReceiver 的子类，因此它的字段偏移起始值是 `JSReceiver::kHeaderSize` [code](), JSObject 也只有一个字段偏移 `kElementsOffset`，值为 `JSReceiver::kHeaderSize` 即 16bytes
+- HeapObject 是 Object 类的子类，因此它的字段偏移起始值是 `Object::kHeaderSize`（[参考代码](https://github.com/nodejs/node/blob/fb180ac1107c7f8e7dea9c973844dae93b2eda04/deps/v8/src/objects/heap-object.h#L202)），HeapObject 只有一个字段偏移 `kMapOffset` 值等于 `Object::kHeaderSize` 即 `0`，因为该字段大小是 `kTaggedSize`（在 64bit 系统上该值为 8），所以 `HeapObject:kHeaderSize` 是 8bytes
+- JSReceiver 是 HeapObject 类的子类，因此它的字段偏移起始值是 `HeapObject:kHeaderSize`（[参考代码](https://github.com/nodejs/node/blob/fb180ac1107c7f8e7dea9c973844dae93b2eda04/deps/v8/src/objects/js-objects.h#L277)），JSReceiver 也只有一个字段偏移 `kPropertiesOrHashOffset`，其值为 `HeapObject:kHeaderSize` 即 8bytes，因为该字段大小是 `kTaggedSize`，所以 `JSReceiver::kHeaderSize` 为 16bytes（加上了继承的 8bytes）
+- JSObject 是 JSReceiver 的子类，因此它的字段偏移起始值是 `JSReceiver::kHeaderSize`（[参考代码](https://github.com/hsiaosiyuan0/v8/blob/21eeca5d0f3e7073efd7f481c54bc303fd98712f/out/x64.debug/gen/torque-generated/src/objects/js-objects-tq.inc#L40)）, JSObject 也只有一个字段偏移 `kElementsOffset`，值为 `JSReceiver::kHeaderSize` 即 16bytes，最后 `JSObject::kHeaderSize` 就是 24bytes
 
 根据上面的分析结果，最终通过手动编码实现的继承后，JSObject 中一共有三个偏移量：
 
@@ -296,6 +303,169 @@ const o = new Ctor();
 
 关于上面的计算过程，可以通过 [shared-function-info.cc](https://github.com/hsiaosiyuan0/v8/blob/3f9ff062b053155df7897f199e80a8bafe7c34df/src/objects/shared-function-info.cc#L565) 进一步探究
 
+### Class
+
+上文我们都是直接将函数对象当做构造函数来使用的，而 ES6 中早已支持了 Class，接下来我们来看下使用 Class 来实例化对象的情况
+
+其实 Class 只是一个语法糖，JS 语言标准对 Class 的运行时语义定义在 [ClassDefinitionEvaluation](https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation) 一节中。简单来说就是同样会创建一个函数对象（并设置该函数的名称为 Class 名），这样随后我们的 `new Class` 其实和我们 `new FunctionObject` 的语义一致
+
+```js
+function Ctor() {}
+class Class1 {}
+
+%DebugPrint(Ctor);
+%DebugPrint(Class1);
+```
+
+我们可以运行上面的代码，会发现 `Ctor` 和 `Class1` 都是 `JS_FUNCTION_TYPE`
+
+我们之前已经介绍过，初始的 inobject properties 数量会借助编译时收集的信息，所以下面的两个形式是等价的，且 inobject properties 数量都是 11（3 + 8）：
+
+```js
+function Ctor() {
+  this.p1 = 1;
+  this.p2 = 2;
+  this.p3 = 3;
+}
+class Class1 {
+  p1 = 1;
+  p2 = 2;
+  p3 = 3;
+}
+class Class2 {
+  p1 = 1;
+  p2 = 2;
+  p3 = 3;
+}
+const o1 = new Ctor();
+const o2 = new Class1();
+const o3 = new Class2();
+%DebugPrint(o1);
+%DebugPrint(o2);
+%DebugPrint(o3);
+```
+
+在编译阶段的收集的属性数称为「预估属性数」，因为其定位只是在预估，所以逻辑很简单，在解解析函数或者 Class 定义的时候，发了一个设置属性的语句就让「预估属性数」累加 1。下面的形式是等价的，都会将「预估属性数」识别为 0 而造成 inobject properties 初始值被设定为 10（上文有讲道过，当 estimated 为 0 时，总是会分配固定的个数 2，再加上预分配 8，会让初始 inobject 数定成 10）：
+
+```js
+function Ctor() {}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+
+class Class1 {
+  constructor() {
+    _defineProperty(this, "p1", 1);
+    _defineProperty(this, "p2", 2);
+    _defineProperty(this, "p3", 3);
+  }
+}
+
+const o1 = new Ctor();
+const o2 = new Class1();
+%DebugPrint(o1);
+%DebugPrint(o2);
+```
+
+`Class1` 构造函数中的 `_defineProperty` 对于目前的预估逻辑来说太复杂了，预估逻辑设计的简单并不是因为从技术上不能分析上面的例子，而是因为 JS 语言的动态性，与为了保持启动速度（也是动态语言的优势）让这里不太适合使用过重的静态分析技术
+
+`_defineProperty` 的形式其实是 babel 目前编译的结果，结合后面会介绍的 slack tracking 来说，即使这里预估数不符合我们的预期，但也不会有太大的影响，因为我们的单个类的属性个数超过 10 的情况在整个应用中来看也不会是大多数，不过如果我们考虑继承的情况：
+
+```js
+class Class1 {
+  p11 = 1;
+  p12 = 1;
+  p13 = 1;
+  p14 = 1;
+  p15 = 1;
+}
+
+class Class2 extends Class1 {
+  p21 = 1;
+  p22 = 1;
+  p23 = 1;
+  p24 = 1;
+  p25 = 1;
+}
+
+class Class3 extends Class2 {
+  p31 = 1;
+  p32 = 1;
+  p33 = 1;
+  p34 = 1;
+  p35 = 1;
+}
+
+const o1 = new Class3();
+%DebugPrint(o1);
+```
+
+因为继承形式的存在，很可能经过多次继承，我们的属性数会超过 10。我们打印上面的代码，会发现 inobject properties 是 23（15 + 8），如果经过 babel 编译，则代码会变成：
+
+```js
+"use strict";
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+class Class1 {
+  constructor() {
+    _defineProperty(this, "p11", 1);
+    _defineProperty(this, "p12", 1);
+    _defineProperty(this, "p13", 1);
+    _defineProperty(this, "p14", 1);
+    _defineProperty(this, "p15", 1);
+  }
+}
+
+class Class2 extends Class1 {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "p21", 1);
+    _defineProperty(this, "p22", 1);
+    _defineProperty(this, "p23", 1);
+    _defineProperty(this, "p24", 1);
+    _defineProperty(this, "p25", 1);
+  }
+}
+
+class Class3 extends Class2 {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "p31", 1);
+    _defineProperty(this, "p32", 1);
+    _defineProperty(this, "p33", 1);
+    _defineProperty(this, "p34", 1);
+    _defineProperty(this, "p35", 1);
+  }
+}
+
+const o1 = new Class3();
+%DebugPrint(o1);
+```
+
+上面的 inobject properties 数量只有 14 个，原因是 Class3 的 inobject 属性数预估值、还需要加上其祖先类的 inobject 属性数的预估值，其两个祖先类的预估值都是 2（因为编译期没有收集到数量而默认分配的固定数量 2），因此 Class3 的 inobject 属性预估值就是 `6 = 2 + 2 + 2`，加上额外分配的 8 个，最后是 14 个
+
+而我们实际的属性数量是 15 个，这就导致第 15 个属性 `p35` 被分配成了 fast 型
+
+在实际使用中，为了减少心智负担，我们只需要：
+
+- 将属性都统一在构造函数中初始化，而不要散落地写在某些成员方法中，目的是让编辑器可以收集到合适的 inobject 属性数预估值
+- 在编写库代码的时候，尽量减少引入类似 babel 的编译环节，或者保证可以正确设置其 preset 以保证编译结果符合我们的预期（不过我当前的试验结果 babel 总是会将上面的代码编译成 `_defineProperty` 的形式）
+- 有条件的话，使用 typescript 和 tsc
+
 ## 从对象字面量创建
 
 ```js
@@ -334,12 +504,12 @@ inobject、fast、slow 三种模式的存在，是基于分而治之的理念。
 2. 当 inobject 配个不足的情况下，属性被当成是 fast 型的
 3. 当 fast 型的配额也不足的情况下，对象整个切换成 slow 模式
 4. 中间某一步骤中，执行了 `delete` 操作删除属性（除了删除最后一个顺位的属性以外，删除其余顺位的属性都会）让对象整个切换成 slow 模式
-6. 如果某个对象被设置为另一个函数对象的 `property` 属性，则该对象也会切换成 slow 模式，见 [JSObject::OptimizeAsPrototype](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/js-objects.cc#L4421)
-5. 一旦对象切换成 slow 模式，从开发者的角度，就基本可以认为该对象不会再切换成 fast 模式了（虽然引擎内部的一些特殊情况下会使用 [JSObject::MigrateSlowToFast](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/js-objects.cc#L3415) 切换回 fast）
+5. 如果某个对象被设置为另一个函数对象的 `property` 属性，则该对象也会切换成 slow 模式，见 [JSObject::OptimizeAsPrototype](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/js-objects.cc#L4421)
+6. 一旦对象切换成 slow 模式，从开发者的角度，就基本可以认为该对象不会再切换成 fast 模式了（虽然引擎内部的一些特殊情况下会使用 [JSObject::MigrateSlowToFast](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/js-objects.cc#L3415) 切换回 fast）
 
-上面的切换的逻辑看起来好像很繁琐（并且也可能并不是全部情况），但其实背后的思路很简单，inobject 和 fast 都是「偏静态」的优化手段，而 slow 则是完全动态的形式，当对象频繁地动态添加属性、或者执行了 `delete` 操作，则预测它很可能未来还会频繁的变动，那么使用纯动态的形式可能会更好，所以切换成 slow 模式
+上面的切换规则看起来好像很繁琐（并且也可能并不是全部情况），但其实背后的思路很简单，inobject 和 fast 都是「偏静态」的优化手段，而 slow 则是完全动态的形式，当对象频繁地动态添加属性、或者执行了 `delete` 操作，则预测它很可能未来还会频繁的变动，那么使用纯动态的形式可能会更好，所以切换成 slow 模式
 
-关于 fast 型的配合我们可以稍微了解一下，fast 型是存放在 PropertyArray 中的，这个数组以每次 [kFieldsAdded](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/js-objects.h#L781)（当前是 3）的步长扩充其长度，目前有一个 [kFastPropertiesSoftLimit](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/map.h#L944)（当前是 12）作为其 limit，而 [Map::TooManyFastProperties](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/map-inl.h#L166) 中使用的是 `>`，所以 fast 型目前的配额最大是 15
+关于 fast 型的配额我们可以稍微了解一下，fast 型是存放在 PropertyArray 中的，这个数组以每次 [kFieldsAdded](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/js-objects.h#L781)（当前版本是 3）的步长扩充其长度，目前有一个 [kFastPropertiesSoftLimit](https://github.com/hsiaosiyuan0/v8/blob/089218a87a7a69d9694c7c3020387063eb232c72/src/objects/map.h#L944)（当前是 12）作为其 limit，而 [Map::TooManyFastProperties](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/map-inl.h#L166) 中使用的是 `>`，所以 fast 型目前的配额最大是 15
 
 大家可以使用下面的代码测试：
 
@@ -368,7 +538,7 @@ DebugPrint: 0x3f0726bbde89: [JS_OBJECT_TYPE]
 # 20
 DebugPrint: 0x1a98617377e1: [JS_OBJECT_TYPE]
  #...
- - properties: 0x1a9861738781 <NameDictionary[101]> 
+ - properties: 0x1a9861738781 <NameDictionary[101]>
 ```
 
 - 上面的输出中，当使用了 4 个属性时，它们都是 inobject 型的 `FixedArray[0]`
@@ -394,7 +564,7 @@ construction_counter 计数的形式类似下图：
 
 ![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8336423345/e106/4d16/2e64/51316ae8008b4d5f6c96489d1538d4ed.png)
 
-slack tracking 是根据构造函数调用的次数来的，所以使用对象字面量创建的对象无法利用其提高空间利用率，这也侧面说明了上文提到的空字面量的创建，默认预分配的是 4 个而不像构造函数创建那样预留 8 个
+slack tracking 是根据构造函数调用的次数来的，所以使用对象字面量创建的对象无法利用其提高空间利用率，这也侧面说明了上文提到的空字面量的创建，默认预分配的是 4 个而不像构造函数创建那样预留 8 个（因为无法利用 slack tracking 后续提高空间利用率，所以只能在开始的时候就节流）
 
 可以通过 [Slack tracking in V8](https://v8.dev/blog/slack-tracking) 进一步了解其实现的细节
 
@@ -417,3 +587,5 @@ slack tracking 是根据构造函数调用的次数来的，所以使用对象�
 - 如果需要大量的动态添加属性，或者需要删除属性，直接使用 Map 对象会更好（虽然引擎内部也会自动切换，但是直接用 Map 更符合这样的场景，也省去了内部切换的消耗）
 
 本文简单结合源码介绍了一下 v8 中是如何处理对象的，希望可以有幸作为大家深入了解 v8 内存管理的初始读物
+
+> 本文发布自 [网易云音乐大前端团队](https://github.com/x-orpheus)，文章未经授权禁止任何形式的转载。我们常年招收前端、iOS、Android，如果你准备换工作，又恰好喜欢云音乐，那就加入我们 grp.music-fe (at) corp.netease.com！
