@@ -455,11 +455,9 @@ const o1 = new Class3();
 
 而我们实际的属性数量是 15 个，这就导致第 15 个属性 `p35` 被分配成了 fast 型，回顾没有经过 babel 编译的代码，所有属性都会是 inobject 型的
 
-在实际使用中，为了轻松的避免一些意外情况，我们只需要：
+最初发现 babel 和 tsc 的编译结果不同，后者未使用 `_defineProperty` 的形式，以为是 babel 编译实现有瑕疵。后面发现 babel 的结果其实是标准中规定的行为，见 [Public instance fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields#public_instance_fields) - 实例字段是使用 `Object.defineProperty` 添加的。对于 tsc 来说，开启 [useDefineForClassFields](https://www.typescriptlang.org/tsconfig#useDefineForClassFields) 后可以达到相同的编译结果（在目前的 deno-v1.9 中这个选项被默认开启了）
 
-- 将属性都统一在构造函数中初始化，而不要散落地写在某些成员方法中，目的是让编辑器可以收集到合适的 inobject 属性数预估值
-- 在编写库代码的时候，尽量减少引入类似 babel 的编译环节，或者保证可以正确设置其 preset 以保证编译结果符合我们的预期（不过我当前的试验结果 babel 总是会将上面的代码编译成 `_defineProperty` 的形式）
-- 有条件的话，使用 typescript 和 tsc
+本来是想说大家可以选择 tsc 的，但现在看来在一些对性能有极致要求的场景下，避免引入编译环节或许是最好的方法
 
 ## 从对象字面量创建
 
@@ -557,7 +555,7 @@ DebugPrint: 0x1a98617377e1: [JS_OBJECT_TYPE]
 
 construction_counter 计数的形式类似下图：
 
-![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8336423345/e106/4d16/2e64/51316ae8008b4d5f6c96489d1538d4ed.png)
+![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8395758093/b639/6e3d/3bdd/98e331a37430b9187ff03c09cc4daff6.png)
 
 slack tracking 是根据构造函数调用的次数来的，所以使用对象字面量创建的对象无法利用其提高空间利用率，这也侧面说明了上文提到的空字面量的创建，默认预分配的是 4 个而不像构造函数创建那样预留 8 个（因为无法利用 slack tracking 后续提高空间利用率，所以只能在开始的时候就节流）
 

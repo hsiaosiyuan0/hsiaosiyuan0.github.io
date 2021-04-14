@@ -285,22 +285,6 @@
 //   m1() {}
 // }
 
-"use strict";
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true,
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
-
 // class CtorFromBabel {
 //   constructor() {
 //     _defineProperty(this, "a", 1);
@@ -333,8 +317,46 @@ function _defineProperty(obj, key, value) {
 // }
 // console.timeEnd("CtorFromTsc");
 
-let a = { a: 1, b: 2 };
-%DebugPrint(a);
-let c = { d: 1, e: 2, f: 3 };
-delete c.d;
-%DebugPrint(c);
+// "use strict";
+// class Ctor {
+//   constructor() {
+//     Object.defineProperty(this, "a", {
+//       enumerable: true,
+//       configurable: true,
+//       writable: true,
+//       value: 1,
+//     });
+//   }
+//   m1() {}
+// }
+
+// const a = new Ctor();
+// %DebugPrint(a);
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+
+class Class1 {
+  constructor() {
+    _defineProperty(this, "p1", 1);
+    _defineProperty(this, "p2", 1);
+    _defineProperty(this, "p3", 1);
+    _defineProperty(this, "p4", 1);
+    _defineProperty(this, "p5", 1);
+    _defineProperty(this, "p6", 1);
+  }
+}
+
+const o1 = new Class1();
+%DebugPrint(o1);
