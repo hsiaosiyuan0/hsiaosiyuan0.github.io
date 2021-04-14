@@ -1,9 +1,6 @@
 ![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8339370587/db9e/6e1e/846d/d0b81afaa378653b45fe6b1bad780d14.png)
 
 > 图片来源：[siliconangle.com](https://siliconangle.com/2016/10/10/upcoming-chrome-update-will-speed-web-pages-with-better-memory-usage/)
-
-> 本文作者：[肖思元](https://github.com/hsiaosiyuan0)
-
 ## TaggedImpl
 
 下图是 v8 中涉及 Object 实现的部分类的继承关系图示：
