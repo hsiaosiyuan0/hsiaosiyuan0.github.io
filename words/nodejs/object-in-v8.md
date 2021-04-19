@@ -1,30 +1,44 @@
 ![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8339370587/db9e/6e1e/846d/d0b81afaa378653b45fe6b1bad780d14.png)
 
 > 图片来源：[siliconangle.com](https://siliconangle.com/2016/10/10/upcoming-chrome-update-will-speed-web-pages-with-better-memory-usage/)
+
+## 前言
+
+文本将和大家一起简单了解一下 v8 内部是如何处理对象的，以及 v8 为了高速化对象属性的访问所做的一些优化的细节。除了结合现有的资料外，本文还链接了一些实现所对应的源码位置，以节约大家后续需要结合源码进行深入时所花的时间
+
+本文的目的是了解 v8 的内部实现细节，大家可以根据自己的情况来决定是否需要先阅读下面的资料：
+
+- [A tour of V8: object representation](https://www.jayconrod.com/posts/52/a-tour-of-v8--object-representation) 
+- [Fast properties in V8](https://v8.dev/blog/fast-properties)
+
 ## TaggedImpl
+
+在 v8 内部实现中，所有对象都是从 [TaggedImpl](https://github.com/nodejs/node/blob/2883c855e0105b51e5c8020d21458af109ffe3d4/deps/v8/src/objects/tagged-impl.h#L24) 派生的
 
 下图是 v8 中涉及 Object 实现的部分类的继承关系图示：
 
 ![](https://p5.music.126.net/obj/wo3DlcOGw6DClTvDisK1/8304310575/c597/25af/bc41/94a33ed41ec0b7d7a0a098a59f07eb9a.png)
 
-所有对象都是从 [TaggedImpl](https://github.com/nodejs/node/blob/2883c855e0105b51e5c8020d21458af109ffe3d4/deps/v8/src/objects/tagged-impl.h#L24) 派生的，而 TaggedImpl 所抽象的逻辑是「打标签」，所以我们需要进一步了解「标签」的含义
+TaggedImpl 所抽象的逻辑是「打标签」，所以我们需要进一步了解「标签」的含义
 
 v8 的 GC 是「准确式 GC，Precise GC」，与之相对的是「保守式 GC，Conservative GC」
 
-GC 的任务就是帮助我们自动管理堆上的内存。当一个对象被 GC 识别为垃圾对象之后，GC 就需要对其占用的内存进行回收，随之而来的问题是 GC 如何判断指针和非指针，因为我们知道对象的属性可能是值属性、或者引用堆上的其他内容：
+GC 的任务就是帮助我们自动管理堆上的内存。当一个对象被 GC 识别为垃圾对象之后，GC 就需要对其占用的内存进行回收，随之而来的问题是 GC 如何判断指针和非指针，因为我们知道对象的属性可能是值属性、或者引用堆上的其他内容（指针）：
 
 ```ts
 type Object = Record<string, number>;
 const obj = { field1: 1 };
 ```
 
+上面的代码我们通过 `Record` 来模拟对象的数据结构，其实就是简单的键值对。不过我们把值都定义成了 number 类型，这是因为对于值类型，我们直接存放它们的值就可以了，而对于引用类型，我们则存放它们的内存地址，而内存地址也是值，所以就都用 number 表示了
+
 保守式 GC 的优势是与应用之间的耦合性很低，为了达到这样的设计目的，就要让 GC 尽可能少的依赖应用提供的信息，结果就是 GC 无法准确判断某个值表示的是指针还是非指针。比如上面的例子，保守式 GC 无法准确知道 `field1` 的值 `1` 是表示数值，还是指针
 
-当然保守式 GC 并不是完全不能识别指针，它可以根据应用具体的使用内存时的行为特点（所以也并不是完全解耦），对指针和非指针进行猜测
+当然保守式 GC 并不是完全不能识别指针，它可以根据应用具体的使用内存时的行为特点（所以也并不是完全解耦），对指针和非指针进行猜测。简单来说就是硬编码一些猜测的逻辑，比如我们知道应用中的一些确定行为，那么我们就不用和应用交互，直接把这部分逻辑硬编码到 GC 实现中就可以了。比如我们知道身份证的编码格式，如果要验证一串数字是不是身份证，我们可以根据编码格式来验证，也可以调用公安的 API（如果有的话），前者就是保守式 GC 的工作方式，可以验证出一部分，但是对于那些符合格式、但却不存在的号码，则也会被识别为身份证
 
 我们知道如果一个内存地址被意外释放，那么一定会导致应用后续进入错误的状态、甚至崩溃。保守式 GC 为了应对这个问题，当它在标记活动对象时，会把看起来像是指针的地址都标记为活动的，这样就不会发生内存被意外释放的问题了，「保守式」之名也因此而得。不过随之而来的是，某些可能已经是垃圾的对象存活了下来，因此保守式 GC 存在压迫堆的风险
 
-v8 的 GC 是准确式 GC，准确式 GC 就需要和应用进行紧密配合了，TaggedImpl 就是为了配合 GC 识别指针和非指针而定义的。TaggedImpl 使用的是称为 [pointer tagging](https://en.wikipedia.org/wiki/Tagged_pointer) 的技术（在 [Pointer Compression in V8](https://v8.dev/blog/pointer-compression) 有提及）
+v8 的 GC 是准确式 GC，准确式 GC 就需要和应用进行紧密配合了，TaggedImpl 就是为了配合 GC 识别指针和非指针而定义的。TaggedImpl 使用的是称为 [pointer tagging](https://en.wikipedia.org/wiki/Tagged_pointer) 的技术（该技术在 [Pointer Compression in V8](https://v8.dev/blog/pointer-compression) 有提及）
 
 pointer tagging 技术简单来说，就是利用地址都是按字长对齐（字长的整数倍）的特性。这个特性是这样来的：
 
@@ -40,6 +54,8 @@ pointer tagging 技术简单来说，就是利用地址都是按字长对齐（�
 比如，对于 GC 而言，`0b110` 表示的是数值 `0b11`（使用时需右移一位），对于 `0b111` 表示的是指针 `0b110`（寻址时需减 1）。
 
 通过打标签的操作，GC 就可以认为，如果某个地址最低二进制位是 `0` 则该位置就是 [Smi - small integer](https://github.com/nodejs/node/blob/2883c855e0105b51e5c8020d21458af109ffe3d4/deps/v8/src/objects/smi.h#L23)，否则就是 [HeapObject](https://github.com/nodejs/node/blob/fb180ac1107c7f8e7dea9c973844dae93b2eda04/deps/v8/src/objects/heap-object.h#L24)
+
+可以参考 [垃圾回收的算法与实现](https://item.jd.com/12010270.html) 一书来更加系统的了解 GC 实现的细节
 
 ## Object
 
@@ -100,7 +116,7 @@ map 一般也称为 HiddenClass，它描述了对象的元信息，比如对象�
 
 ## inobject、fast
 
-上面我们介绍到 named properties 会关联到对象的 `propertiesOrHash` 指针指向的数据结构，不过那并不是全貌，v8 内置了 3 种关联属性的形式：
+上面我们介绍到 named properties 会关联到对象的 `propertiesOrHash` 指针指向的数据结构，而用于存储属性的数据结构，v8 并不是直接选择了常见的 [hash map](https://www.geeksforgeeks.org/hashing-data-structure/)，而是内置了 3 种关联属性的形式：
 
 - inobject
 - fast
@@ -118,13 +134,13 @@ inobject 就和它的名字一样，表示属性值对应的指针直接保存�
 - PropertyDetails，表示字段的元信息，比如 `IsReadOnly`、`IsEnumerable` 等
 - value，只有常量时才会存入其中，如果是 `1` 表示该位置未被使用（可以结合上文的标签进行理解）
 
-为了访问属性：
+为了访问 inobject 或者 fast 属性（相关实现在 [LookupIterator::LookupInRegularHolder](https://github.com/hsiaosiyuan0/v8/blob/997d88e64fd48cc8772c1c5d4b60d89b9310fcfe/src/objects/lookup.cc#L1160)）：
 
 1. v8 需要先根据属性名，在 `DescriptorArray` 中搜索到属性值在 inobject array（inobject 因为是连续的内存地址，所以可以看成是数组）或者 property array （图中最左边）中的索引
 
-2. 然后结合数组首地址与指针偏移、拿到属性值的指针，再通过属性值的指针，访问具体的属性值 [code](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/js-objects-inl.h#L348)
+2. 然后结合数组首地址与指针偏移、拿到属性值的指针，再通过属性值的指针，访问具体的属性值（相关实现在 [JSObject::FastPropertyAtPut](https://github.com/hsiaosiyuan0/v8/blob/627b6b2f06e2046d193ae9c809d0561fcaf8559b/src/objects/js-objects-inl.h#L348)）
 
-inobject 相比 fast 要更快，这是因为：
+inobject 相比 fast 要更快，这是因为 fast 属性多了一次间接寻址：
 
 1. inobject 属性知道了其属性值的索引之后，直接根据对象的首地址进行偏移即可（inobject array 之前的 `map_ptr`，`propertiesOrHash_ptr`，`elements_ptr` 是固定的大小）
 
@@ -154,6 +170,11 @@ a.c = 2;
 在为 `a` 分配空间时，虽然 `A` 只有 1 个属性 `b`，但是 v8 选择的 `expected_nof_properties` 值会比实际所需的 1 大。因为 JS 语言的动态性，多分配的空间可以让后续动态添加的属性也能享受 inobject 的效率，比如例子中的 `a.c = 2`，`c` 也是 inobject property，尽管它是后续动态添加的
 
 ## slow
+
+slow 相比 fast 和 inobject 更慢，是因为 slow 型的属性访问无法使用 inline cache 技术进行优化，跟多关于 inline cache 的细节可以参考：
+
+- [Inline caching](https://en.wikipedia.org/wiki/Inline_caching)
+- [Explaining JavaScript VMs in JavaScript - Inline Caches](https://mrale.ph/blog/2012/06/03/explaining-js-vms-in-js-inline-caches.html)
 
 slow 是和 inobject、fast 互斥的，当进入 slow 模式后，对象内的属性结构如下：
 
@@ -311,7 +332,7 @@ class Class1 {}
 
 我们可以运行上面的代码，会发现 `Ctor` 和 `Class1` 都是 `JS_FUNCTION_TYPE`
 
-我们之前已经介绍过，初始的 inobject properties 数量会借助编译时收集的信息，所以下面的两个形式是等价的，且 inobject properties 数量都是 11（3 + 8）：
+我们之前已经介绍过，初始的 inobject properties 数量会借助编译时收集的信息，所以下面的几个形式是等价的，且 inobject properties 数量都是 11（3 + 8）：
 
 ```js
 function Ctor() {
@@ -325,9 +346,11 @@ class Class1 {
   p3 = 3;
 }
 class Class2 {
-  p1 = 1;
-  p2 = 2;
-  p3 = 3;
+  constructor() {
+    this.p1 = 1;
+    this.p2 = 2;
+    this.p3 = 3;
+  }
 }
 const o1 = new Ctor();
 const o2 = new Class1();
@@ -337,11 +360,12 @@ const o3 = new Class2();
 %DebugPrint(o3);
 ```
 
-在编译阶段的收集的属性数称为「预估属性数」，因为其定位只是在预估，所以逻辑很简单，在解解析函数或者 Class 定义的时候，发了一个设置属性的语句就让「预估属性数」累加 1。下面的形式是等价的，都会将「预估属性数」识别为 0 而造成 inobject properties 初始值被设定为 10（上文有讲道过，当 estimated 为 0 时，总是会分配固定的个数 2，再加上预分配 8，会让初始 inobject 数定成 10）：
+在编译阶段的收集的属性数称为「预估属性数」，因为其只需提供预估的精度，所以逻辑很简单，在解解析函数或者 Class 定义的时候，发了一个设置属性的语句就让「预估属性数」累加 1。下面的形式是等价的，都会将「预估属性数」识别为 0 而造成 inobject properties 初始值被设定为 10（上文有讲道过，当 estimated 为 0 时，总是会分配固定的个数 2，再加上预分配 8，会让初始 inobject 数定成 10）：
 
 ```js
 function Ctor() {}
 
+// babel runtime patch
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -563,12 +587,12 @@ slack tracking 是根据构造函数调用的次数来的，所以使用对象�
 我们可以将上文的重点部分小结如下：
 
 - 对象的属性有三种模式：inobject，fast，slow
-- 三种模式由左往右的访问效率递减
+- 三种模式的属性访问效率由左往右递减
 - 属性默认使用 inobject 型，超过预留配额后，继续添加的属性属于 fast 型
 - 当继续超过 fast 型的配额后，对象整个切换到 slow 型
 - 初始 inobject 的配额会因为使用的是「构造函数创建」还是「对象字面量」创建而不同，前者根据编译器收集的信息（大致属性数 + 8，且上限为 252），后者是固定的 4
 - 使用 `Object.create(null)` 创建的对象直接是 slow 型
-- 中途任意时刻使用 `delete` 删除了除最后顺位的属性以外的其余顺位的属性，或者将对象设置为另一个构造函数的 `prototype` 属性，都会将对象整个切换到 slow 型
+- 对于任意对象 A，在其声明周期内，使用 `delete` 删除了除最后顺位以外的其余顺位的属性，或者将 A 设置为另一个构造函数的 `prototype` 属性，都会将对象 A 整个切换为 slow 型
 - 目前来看，切换到 slow 型后将不能再回到 fast 型
 
 在实际使用时，我们不必考虑上面的细节，只要确保在有条件的情况下：
@@ -577,3 +601,12 @@ slack tracking 是根据构造函数调用的次数来的，所以使用对象�
 - 如果需要大量的动态添加属性，或者需要删除属性，直接使用 Map 对象会更好（虽然引擎内部也会自动切换，但是直接用 Map 更符合这样的场景，也省去了内部切换的消耗）
 
 本文简单结合源码介绍了一下 v8 中是如何处理对象的，希望可以有幸作为大家深入了解 v8 内存管理的初始读物
+
+## 参考资料
+
+- [垃圾回收的算法与实现](https://item.jd.com/12010270.html)
+- [A tour of V8: object representation](https://www.jayconrod.com/posts/52/a-tour-of-v8--object-representation)
+- [V8 引擎 JSObject 结构解析和内存优化思路](https://zhuanlan.zhihu.com/p/55903492)
+- [Fast properties in V8](https://v8.dev/blog/fast-properties)
+- [Pointer Compression in V8](https://v8.dev/blog/pointer-compression)
+- [Slack tracking in V8](https://v8.dev/blog/slack-tracking)
