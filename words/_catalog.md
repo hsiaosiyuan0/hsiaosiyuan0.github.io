@@ -90,8 +90,6 @@
 
 - [ripplet](/ripplet)
 
-  - [码个自己的语言](/ripplet/create_your_own_lang.md)
-
-- [dev](/dev)
+  - [create_your_own_lang](/ripplet/create_your_own_lang.md)
 
 - [esbuild](/esbuild)
