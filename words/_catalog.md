@@ -83,13 +83,5 @@
 
   - [使用 Rust 重写 ternjs](/static-analysis/ternjs.md)
 
-- [react](/react)
-
-  - [build-from-source](/react/build-from-source.md)
-  - [bootstrap](/react/bootstrap.md)
-
-- [ripplet](/ripplet)
-
-  - [create_your_own_lang](/ripplet/create_your_own_lang.md)
-
-- [esbuild](/esbuild)
+- [craft](/craft)
+  - [制作一个属于自己的语言](/craft/create_your_own_lang.md)

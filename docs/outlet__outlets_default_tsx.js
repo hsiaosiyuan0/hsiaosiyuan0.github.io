@@ -87,29 +87,7 @@ var MobileHtml = /*#__PURE__*/function (_Html) {
         href: "https://cdn.jsdelivr.net/npm/material-icons@0.3.1/css/material-icons.min.css"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(gadget_js__WEBPACK_IMPORTED_MODULE_2__.Styles, {
         list: styles
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("body", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("a", {
-        id: "fork-me",
-        href: "https://github.com/hsiaosiyuan0/hsiaosiyuan0.github.io",
-        style: {
-          position: "fixed",
-          top: 0,
-          right: 0,
-          border: 0,
-          width: 150,
-          height: 150,
-          zIndex: 3000
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("img", {
-        style: {
-          position: "absolute",
-          top: 0,
-          right: 0,
-          border: 0
-        },
-        src: "https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67",
-        alt: "Fork me on GitHub",
-        "data-canonical-src": "https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
-      })), children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("body", null, children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
         src: "https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-core.min.js",
         "data-manual": true
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
