@@ -84,4 +84,8 @@
   - [使用 Rust 重写 ternjs](/static-analysis/ternjs.md)
 
 - [craft](/craft)
+
   - [制作一个属于自己的语言](/craft/create_your_own_lang.md)
+
+- [daily](/daily)
+  - [初唐四杰](/daily/初唐四杰.md)
