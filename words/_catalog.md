@@ -88,4 +88,8 @@
   - [制作一个属于自己的语言](/craft/create_your_own_lang.md)
 
 - [go](/go)
+
   - [Go 语言中的 Generic 设计缺陷](/go/bad_in_generic_syntax.md)
+
+- [daily](/daily)
+  - [初唐四杰](/daily/初唐四杰.md)
