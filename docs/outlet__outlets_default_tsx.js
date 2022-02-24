@@ -123,6 +123,8 @@ var MobileHtml = /*#__PURE__*/function (_Html) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
         src: "https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-xml-doc.min.js"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
+        src: "https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-go.min.js"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
         src: "https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/toolbar/prism-toolbar.min.js"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
         src: "https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"

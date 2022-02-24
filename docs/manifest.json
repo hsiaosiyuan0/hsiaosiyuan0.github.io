@@ -28,8 +28,8 @@
     ]
   },
   "pageOutletMap": {
-    "/post": "outlet__outlets_default_tsx",
     "/index": "outlet__outlets_default_tsx",
-    "/sitemap": "outlet__outlets_default_tsx"
+    "/sitemap": "outlet__outlets_default_tsx",
+    "/post": "outlet__outlets_default_tsx"
   }
 }
