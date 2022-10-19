@@ -32,7 +32,7 @@ export function Node(data: NodeData) {
       );
     }
     return (
-      <div className={styles.title} style={{ paddingLeft: data.indent }}>
+      <div className={styles.title}>
         <i className={data.children.length ? "mi mi-arrow-drop-down" : ""}></i>
         <span>{data.name}</span>
       </div>
@@ -53,7 +53,7 @@ export function Node(data: NodeData) {
           const indent = data.indent ?? 0;
           return (
             <li key={i}>
-              <Node {...cd} indent={indent + (data.children.length ? 15 : 0)} />
+              <Node {...cd} indent={indent + (data.children.length ? 28 : 0)} />
             </li>
           );
         })}

@@ -193,10 +193,7 @@ function Node(data) {
     }
 
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_8___default().createElement("div", {
-      className: _components_sidebar_index_pure_scss__WEBPACK_IMPORTED_MODULE_10__.default.title,
-      style: {
-        paddingLeft: data.indent
-      }
+      className: _components_sidebar_index_pure_scss__WEBPACK_IMPORTED_MODULE_10__.default.title
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_8___default().createElement("i", {
       className: data.children.length ? "mi mi-arrow-drop-down" : ""
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_8___default().createElement("span", null, data.name));
@@ -215,7 +212,7 @@ function Node(data) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_8___default().createElement("li", {
       key: i
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_8___default().createElement(Node, _extends({}, cd, {
-      indent: indent + (data.children.length ? 15 : 0)
+      indent: indent + (data.children.length ? 28 : 0)
     })));
   })));
 }

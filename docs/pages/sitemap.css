@@ -72,6 +72,9 @@
   box-sizing: border-box;
   width: calc(100% - 8px);
   cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .Z_a6ax5LrTSVASNRR2aN6 ._3quX88R9lR5BSdfAKHIoaF ._15sI_H5F3ci3xYIfWDB4vZ:hover {
   border-radius: 0 12px 12px 0;
@@ -87,6 +90,7 @@
   display: none;
 }
 .Z_a6ax5LrTSVASNRR2aN6 ._3quX88R9lR5BSdfAKHIoaF > ._15sI_H5F3ci3xYIfWDB4vZ i {
+  font-size: 18px;
   transform: rotate(-90deg);
   transition: all ease-in-out 0.35s;
 }

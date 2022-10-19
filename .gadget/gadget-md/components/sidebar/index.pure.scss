@@ -53,6 +53,10 @@
       width: calc(100% - 8px);
       cursor: pointer;
 
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+
       &:hover {
         border-radius: 0 12px 12px 0;
         background: rgb(241, 243, 244);
@@ -75,6 +79,7 @@
 
     & > .title {
       i {
+        font-size: 18px;
         transform: rotate(-90deg);
         transition: all ease-in-out 0.35s;
       }

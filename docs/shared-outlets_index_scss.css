@@ -600,6 +600,12 @@ html {
   text-size-adjust: 100%;
 }
 
+code,
+a,
+p {
+  word-break: break-word;
+}
+
 body {
   background-color: var(--devsite-body-background, var(--devsite-background-0));
 }
