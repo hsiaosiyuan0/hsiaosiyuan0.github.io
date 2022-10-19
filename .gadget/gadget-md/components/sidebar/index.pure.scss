@@ -11,6 +11,7 @@
   padding: 20px 0;
   box-sizing: border-box;
   overflow: auto;
+  padding: 10px 8px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -74,7 +75,6 @@
 
     & > .title {
       i {
-        min-width: 24px;
         transform: rotate(-90deg);
         transition: all ease-in-out 0.35s;
       }
@@ -87,6 +87,11 @@
     &.open > .title {
       i {
         transform: rotate(0);
+        font-size: 18px;
+
+        &:after {
+          font-size: 18px;
+        }
       }
     }
   }
