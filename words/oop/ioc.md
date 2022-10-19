@@ -1,4 +1,4 @@
-# midway 分析
+# Midway 分析
 
 按目前项目主页的描述，当前默认分支是 [serverless](https://github.com/midwayjs/midway/tree/serverless)，该分支主要提供跨平台的 Serverless 能力，这部分工作是在原有的全栈框架的基础上，抽象不同 Serverless 平台的差异，对外提供相对一致的 Serverless 接口
 

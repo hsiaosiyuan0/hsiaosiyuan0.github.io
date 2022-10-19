@@ -1,3 +1,5 @@
+# WebSocket 协议 1~4 节
+
 此文仅作为 [RFC6455](https://tools.ietf.org/html/rfc6455) 的学习笔记
 
 ## 1.1 背景知识

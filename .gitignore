@@ -29,4 +29,5 @@ test/fixtures/**/.fbkpm
 *.vsix
 .press
 .vscode
-
+.env
+secret.yaml

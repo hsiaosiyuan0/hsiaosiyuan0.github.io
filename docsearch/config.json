@@ -1,0 +1,38 @@
+{
+  "index_name": "docs",
+  "start_urls": [
+    "https://blog.thehardways.me/",
+    "https://blog.thehardways.me/post/v8/debug-v8-in-vscode.html"
+  ],
+  "sitemap_alternate_links": true,
+  "stop_urls": [
+    "/tests"
+  ],
+  "selectors": {
+    "lvl0": ".article h1",
+    "lvl1": ".article h2",
+    "lvl2": ".article h3",
+    "lvl3": ".article h4",
+    "lvl4": ".article h5",
+    "lvl5": ".article h6",
+    "text": ".article p, .article li"
+  },
+  "strip_chars": " .,;:#",
+  "custom_settings": {
+    "separatorsToIndex": "_",
+    "attributesForFaceting": [
+      "language",
+      "version",
+      "type"
+    ],
+    "attributesToRetrieve": [
+      "hierarchy",
+      "content",
+      "anchor",
+      "url",
+      "url_without_anchor",
+      "type"
+    ]
+  },
+  "nb_hits": 12684
+}

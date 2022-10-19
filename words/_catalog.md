@@ -1,6 +1,6 @@
 - [v8](/v8)
 
-  - [debug-v8-in-vscode](/v8/debug-v8-in-vscode.md)
+  - [在 VSCode 中调试 v8 源码](/v8/debug-v8-in-vscode.md)
   - [v8 常见数据类型](/v8/common-data-types.md)
 
 - [deno](/deno)
@@ -14,9 +14,9 @@
 - [nodejs](/nodejs)
 
   - [Cluster 模块分析](</nodejs/Cluster 模块分析.md>)
-  - [build-from-source](/nodejs/build-from-source.md)
-  - [node-addon](/nodejs/node-addon.md)
-  - [common-snippet](/nodejs/common-snippet.md)
+  - [从源码构建 node.js](/nodejs/build-from-source.md)
+  - [Node.js 扩展](/nodejs/node-addon.md)
+  - [Node 源码中的常见代码](/nodejs/common-snippet.md)
   - [v8 Heapsnapshot 文件解析](/nodejs/heap-snapshot.md)
   - [Libuv 之 - 只看这篇是不够的](/nodejs/libuv.md)
   - [Objects in V8](/nodejs/object-in-v8.md)
@@ -41,7 +41,7 @@
 
 - [oop](/oop)
 
-  - [midway 分析](/oop/ioc.md)
+  - [Midway 分析](/oop/ioc.md)
 
 - [php](/php)
 
@@ -49,7 +49,7 @@
 
 - [blockchain](/blockchain)
 
-  - [crypto-conditions 简述](</blockchain/crypto-conditions 简述.md>)
+  - [Crypto-conditions 简述](</blockchain/crypto-conditions 简述.md>)
   - [实用拜占庭容错简介](/blockchain/实用拜占庭容错简介.md)
 
 - [browser](/browser)
@@ -91,5 +91,5 @@
 
   - [Go 语言中的 Generic 设计缺陷](/go/bad_in_generic_syntax.md)
 
-- [daily](/daily)
-  - [初唐四杰](/daily/初唐四杰.md)
+- [scratch](/scratch)
+  - [初唐四杰](/scratch/初唐四杰.md)

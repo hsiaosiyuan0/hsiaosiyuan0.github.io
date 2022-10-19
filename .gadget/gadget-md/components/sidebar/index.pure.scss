@@ -58,8 +58,11 @@
       }
 
       &.active {
-        color: #1a73e8;
-        font-weight: 400;
+        color: var(
+          --devsite-nav-color-active,
+          var(--devsite-link-color-active, var(--devsite-link-color))
+        );
+        font-weight: var(--devsite-nav-font-weight-active, 500);
         border-radius: 0 12px 12px 0;
         background: rgb(232, 240, 254);
       }

@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "typing": "gadget typing",
+    "index": "./re-index.sh",
     "build": "export BUILD_DIST=docs && gadget print"
   },
   "keywords": [],

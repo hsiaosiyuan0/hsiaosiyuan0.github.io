@@ -5,6 +5,8 @@ import {
   EventAfterRouteChanged,
   EventBeforeRouteChanged,
 } from "gadget.js";
+import { DocSearch } from "@docsearch/react";
+
 import styles from "@/components/header/index.pure.scss";
 
 export function scrollToAnchor(hash: string, offset: number) {
@@ -65,6 +67,15 @@ export function Header(props: HeaderProps) {
       <LoadingBar color="#2998ff" ref={bar} shadow={true} />
       <div className={styles.header}>
         <div className={styles.title}>{props.title}</div>
+
+        <div style={{ paddingRight: 20 }}>
+          <DocSearch
+            appId="299FUZ9D59"
+            indexName="docs"
+            apiKey="a7ffa344b9b153f296727ffdf841953d"
+          />
+        </div>
+
         <div className={styles.sitemap}>
           <a href="/sitemap.html">all</a>
         </div>

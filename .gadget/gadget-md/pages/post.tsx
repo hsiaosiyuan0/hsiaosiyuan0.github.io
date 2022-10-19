@@ -37,7 +37,7 @@ export default function PostView(props: {
     <div>
       <Header title={title} />
       <Sidebar className={styles.sidebar} data={catalog}></Sidebar>
-      <div className={[styles.post, "line-numbers"].join(" ")}>
+      <div className={[styles.post, "article", "line-numbers"].join(" ")}>
         <Head>
           <title>{post.rawMeta.title}</title>
         </Head>

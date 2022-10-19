@@ -20,7 +20,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react_top_loading_bar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-top-loading-bar */ "./node_modules/react-top-loading-bar/dist/index.modern.js");
 /* harmony import */ var gadget_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! gadget.js */ "./node_modules/gadget.js/salver/index.ts");
+/* harmony import */ var _docsearch_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @docsearch/react */ "./node_modules/@docsearch/react/dist/esm/DocSearch.js");
 /* harmony import */ var _components_header_index_pure_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/components/header/index.pure.scss */ "./components/header/index.pure.scss");
+
 
 
 
@@ -92,6 +94,14 @@ function Header(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default().createElement("div", {
     className: _components_header_index_pure_scss__WEBPACK_IMPORTED_MODULE_5__.default.title
   }, props.title), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default().createElement("div", {
+    style: {
+      paddingRight: 20
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default().createElement(_docsearch_react__WEBPACK_IMPORTED_MODULE_6__.DocSearch, {
+    appId: "299FUZ9D59",
+    indexName: "docs",
+    apiKey: "a7ffa344b9b153f296727ffdf841953d"
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default().createElement("div", {
     className: _components_header_index_pure_scss__WEBPACK_IMPORTED_MODULE_5__.default.sitemap
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default().createElement("a", {
     href: "/sitemap.html"

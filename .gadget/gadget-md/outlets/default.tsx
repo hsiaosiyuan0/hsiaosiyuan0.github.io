@@ -18,7 +18,7 @@ export default class MobileHtml extends Html {
           />
           <link
             rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/prism-themes@1.5.0/themes/prism-vsc-dark-plus.css"
+            href="https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css"
           />
           <link
             rel="stylesheet"
@@ -39,6 +39,10 @@ export default class MobileHtml extends Html {
           <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/material-icons@0.3.1/css/material-icons.min.css"
+          ></link>
+          <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.2.1/dist/style.min.css"
           ></link>
           <Styles list={styles} />
         </head>

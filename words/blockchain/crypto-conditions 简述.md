@@ -1,4 +1,4 @@
-# crypto-conditions 简述
+# Crypto-conditions 简述
 
 > 下文将 crypto-conditions 简称为 cc
 > cc 的详细的文档描述见 [ietf](https://tools.ietf.org/html/draft-thomas-crypto-conditions-04)

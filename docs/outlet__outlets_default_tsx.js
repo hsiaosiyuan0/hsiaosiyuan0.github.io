@@ -69,7 +69,7 @@ var MobileHtml = /*#__PURE__*/function (_Html) {
         content: "width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1, user-scalable=no, viewport-fit=cover"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("link", {
         rel: "stylesheet",
-        href: "https://cdn.jsdelivr.net/npm/prism-themes@1.5.0/themes/prism-vsc-dark-plus.css"
+        href: "https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-dark.min.css"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("link", {
         rel: "stylesheet",
         href: "https://cdn.jsdelivr.net/npm/prismjs@1.22.0/plugins/toolbar/prism-toolbar.css"
@@ -85,6 +85,9 @@ var MobileHtml = /*#__PURE__*/function (_Html) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("link", {
         rel: "stylesheet",
         href: "https://cdn.jsdelivr.net/npm/material-icons@0.3.1/css/material-icons.min.css"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("link", {
+        rel: "stylesheet",
+        href: "https://cdn.jsdelivr.net/npm/@docsearch/css@3.2.1/dist/style.min.css"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(gadget_js__WEBPACK_IMPORTED_MODULE_2__.Styles, {
         list: styles
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("body", null, children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
