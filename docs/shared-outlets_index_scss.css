@@ -711,8 +711,13 @@ code[class*=language-] {
   background: transparent !important;
 }
 
+blockquote p {
+  margin: 8px 0;
+}
+
 @media only screen and (max-width: 600px) {
-  #fork-me {
+  #fork-me,
+.DocSearch-Button {
     display: none;
   }
 }
