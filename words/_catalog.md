@@ -94,3 +94,4 @@
 - [scratch](/scratch)
   - [初唐四杰](/scratch/初唐四杰.md)
   - [最好的博客工具](/scratch/最好的博客工具.md)
+  - [鲁迅](/scratch/鲁迅.md)
