@@ -10,8 +10,7 @@
       "lib.js"
     ],
     "shared": [
-      "shared-pages_post_tsx.js",
-      "shared-outlets_index_scss.css"
+      "shared-pages_post_tsx.js"
     ]
   },
   "pages": {
@@ -29,7 +28,7 @@
   },
   "pageOutletMap": {
     "/index": "outlet__outlets_default_tsx",
-    "/sitemap": "outlet__outlets_default_tsx",
-    "/post": "outlet__outlets_default_tsx"
+    "/post": "outlet__outlets_default_tsx",
+    "/sitemap": "outlet__outlets_default_tsx"
   }
 }

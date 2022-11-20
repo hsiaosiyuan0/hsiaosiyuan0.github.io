@@ -45,6 +45,20 @@ export default class MobileHtml extends Html {
             href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.2.1/dist/style.min.css"
           ></link>
           <Styles list={styles} />
+
+          <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-64334326-2"
+          ></script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-64334326-2');`,
+            }}
+          />
         </head>
         <body>
           {children}

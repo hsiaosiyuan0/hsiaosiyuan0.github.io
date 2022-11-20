@@ -90,6 +90,13 @@ var MobileHtml = /*#__PURE__*/function (_Html) {
         href: "https://cdn.jsdelivr.net/npm/@docsearch/css@3.2.1/dist/style.min.css"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement(gadget_js__WEBPACK_IMPORTED_MODULE_2__.Styles, {
         list: styles
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
+        async: true,
+        src: "https://www.googletagmanager.com/gtag/js?id=UA-64334326-2"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
+        dangerouslySetInnerHTML: {
+          __html: "window.dataLayer = window.dataLayer || [];\n            function gtag(){dataLayer.push(arguments);}\n            gtag('js', new Date());\n\n            gtag('config', 'UA-64334326-2');"
+        }
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("body", null, children, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("script", {
         src: "https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-core.min.js",
         "data-manual": true
