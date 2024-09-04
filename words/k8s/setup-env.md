@@ -1,17 +1,69 @@
+## 背景
+
+前端构建流水线使用 tekton，需要具备基本的运维知识。通过本地部署 k8s 来了解其中的组件
+
 ## 准备机器
 
-4 台虚拟机：
+目标是准备 4 台虚拟机：
 
+1. master 1 台(4CPUs 4GB)
+
+2. worker node 3 台(2CPUs 2GB)
+
+先创建作为 master 的虚拟机，然后通过「拷贝虚拟机」的方式创建剩余的机器以节约时间
+
+镜像选择 [ubuntu 20.04.6](https://mirrors.aliyun.com/ubuntu-releases/20.04.6/)，安装的过程根据向导来即可，这里就跳过了
+
+安装完毕进入系统
+
+设置 [清华源](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/) 后更新系统：
+
+```bash
+sudo apt update && sudo apt upgrade
 ```
-master (4C4G)
-node1 (2C2G)
-node2 (2C2G)
-node3 (2C2G)
+
+允许远程登录：
+
+```bash
+# 安装 ssh-server
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl status ssh
 ```
 
-[ubuntu 22.04](https://mirrors.aliyun.com/ubuntu-releases/22.04/ubuntu-22.04.4-desktop-amd64.iso?spm=a2c6h.25603864.0.0.2b7e45f8oHZTnH)
+设置系统启动后进命令行，而不是图形节目，节约下不必要的内存
 
-设置 [清华源](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)
+```bash
+sudo vi /etc/default/grub
+```
+
+设置下面的内容：
+
+```bash
+GRUB_CMDLINE_LINUX_DEFAULT="text"
+GRUB_TERMINAL=console
+GRUB_RECORDFAIL_TIMEOUT=1
+```
+
+然后生效上面的配置:
+
+```bash
+sudo update-grub
+sudo systemctl enable multi-user.target --force
+sudo systemctl set-default multi-user.target
+```
+
+创建 NAT 网络，设置 DHCP
+
+![](../images/network.jpg)
+
+![](../images/dhcp.jpg)
+
+设置虚拟机使用 NAT Network
+
+![](../images/NAT_network.jpg)
+
+> 后面只需要打开虚拟机，然后从宿主机上 SSH 远程进虚拟机即可
 
 关闭 swap（kubelet 要求）：
 
@@ -29,36 +81,18 @@ sudo vim /etc/fstab
 sudo reboot
 ```
 
-允许远程登录：
+## 设置虚拟机 DNS
 
 ```bash
-# 安装 ssh-server
-sudo apt update
-sudo apt install openssh-server
-sudo systemctl status ssh
+# 忽略网络自动设置的 dns
+sudo nmcli connection modify 'Wired connection 1' ipv4.ignore-auto-dns yes
+# 手动指定
+sudo nmcli connection modify 'Wired connection 1' ipv4.dns "8.8.8.8"
 
-# 防火墙准入 ssh
-sudo ufw allow ssh
+# 重启网络服务
+sudo nmcli connection reload
+sudo systemctl restart NetworkManager
 ```
-
-
-然后拷贝虚拟机实例
-
-![](../images/clone_vm.jpg)
-
-注意分配新的 mac 地址
-
-![](../images/new_mac.jpg)
-
-使用 NAT，设置 DHCP
-
-![](../images/network.jpg)
-
-![](../images/dhcp.jpg)
-
-设置虚拟机使用 NAT Network
-
-![](../images/NAT_network.jpg)
 
 ## 安装 docker
 
@@ -77,8 +111,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 # Add the Docker repository to APT sources:
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-sudo apt update
-sudo apt upgrade
+sudo apt update && sudo apt upgrade
 
 # 安装 docker
 sudo apt install docker-ce
@@ -107,46 +140,20 @@ EOF
 sudo vim /etc/containerd/config.toml
 # 注释掉 disabled_plugins = ["cri"]
 
-
 ## 重启
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+# 系统启动后自动运行
 sudo systemctl enable docker
 ```
 
-## 安装 cri-dockerd
+> 从 1.22 开始 kubelet 默认使用 systemd，需要统一 kubelet 和 docker 的 `cgroupdriver`
 
-> apt install docker.io 时才需要手动安装
-
-k8s 需要 cri-dockerd 驱动 docker，安装方式：
+## 安装 kubeadm kubelet kubectl
 
 ```bash
-# 下载
-wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.15/cri-dockerd_0.3.15.3-0.ubuntu-jammy_amd64.deb
+sudo mkdir /etc/apt/keyrings/
 
-# 安装
-sudo dpkg -i cri-dockerd_0.3.15.3-0.ubuntu-jammy_amd64.deb
-
-# 启动服务
-sudo systemctl daemon-reload
-sudo systemctl enable cri-docker.service
-sudo systemctl enable --now cri-docker.socket
-
-# 确定 cri-dockerd 已运行
-systemctl status cri-docker.socket
-```
-
-## 安装 kubeadm
-
-下载 kubelet kubeadm kubectl (1.19.3):
-
-- [kubelet](https://dl.k8s.io/v1.30.3/bin/linux/amd64/kubelet)
-
-- [kubeadm](https://cdn.dl.k8s.io/release/v1.19.3/bin/linux/amd64/kubeadm)
-
-- [kubectl](https://dl.k8s.io/v1.19.3/bin/linux/amd64/kubectl)
-
-```bash
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
@@ -199,15 +206,33 @@ net.ipv4.ip_forward = 1
 sudo sysctl --system
 ```
 
+## 拷贝虚拟机
+
+然后拷贝虚拟机实例
+
+![](../images/clone_vm.jpg)
+
+注意分配新的 mac 地址
+
+![](../images/new_mac.jpg)
+
+## 设置 master
+
 ```bash
-kubeadm init --pod-network-cidr=10.244.0.0/16 \
-          --control-plane-endpoint=master \
-          --upload-certs
+sudo systemctl daemon-reload && sudo systemctl restart kubelet
+
+# hosts 中加入 master 机器名（创建虚拟机时设置的机器名）
+sudo vim /etc/hosts
+# 127.0.0.1 master
+
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint=master --upload-certs
 ```
 
-> 从 1.22 开始 kubelet 默认使用 systemd
+> 上面的命令会从 docker hub 拉去必要的初始化镜像，所以需要确保网络通畅
 
-```
+注意保存一下命令成功的结果，以便后续加入节点：
+
+```bash
 Your Kubernetes control-plane has initialized successfully!
 
 To start using your cluster, you need to run the following as a regular user:
@@ -226,9 +251,9 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 
 You can now join any number of the control-plane node running the following command on each as root:
 
-  kubeadm join master:6443 --token m731wc.8gcbtat2yzlyu9y6 \
-        --discovery-token-ca-cert-hash sha256:71b3b7a423bf5dc0a6433d34c15b163782fbbe956e718dd2a64aaae651c5b142 \
-        --control-plane --certificate-key a7bdc95f61ef4bae2e66cdab4bc68efff1652d4d5e0dadf0ea6a529e15508327
+  kubeadm join master:6443 --token dzo1ct.rajg40qyvd7z2z1r \
+        --discovery-token-ca-cert-hash sha256:b076e42813911124fc89c23f17c2e852d82ebc3223542bea1f48af37cee3f2cf \
+        --control-plane --certificate-key fe2ee380b7d0d89287176bd8691498825b65f8d6ca7ee9398d5000ac7f6894ee
 
 Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
 As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use
@@ -236,36 +261,266 @@ As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you c
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join master:6443 --token m731wc.8gcbtat2yzlyu9y6 \
-        --discovery-token-ca-cert-hash sha256:71b3b7a423bf5dc0a6433d34c15b163782fbbe956e718dd2a64aaae651c5b142
+kubeadm join master:6443 --token dzo1ct.rajg40qyvd7z2z1r \
+        --discovery-token-ca-cert-hash sha256:b076e42813911124fc89c23f17c2e852d82ebc3223542bea1f48af37cee3f2cf
 ```
 
-> [!NOTE]
-> 网络一定要通畅，否则下载不了镜像，会导致 kubelet 间歇性重启，查看 containerd 的日志会发现类似 `failed to setup network for podsandbox` 之类的报错
-
+设置下 kubectl 的认证信息：
 
 ```bash
+sudo mkdir -p $HOME/.kube/
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+sudo chown -R $(id -u):$(id -g) $HOME/.kube/
 ```
 
+设置网络：
 
-### 创建 Pod Network
+```bash
+sudo systemctl stop apparmor && sudo systemctl disable apparmor
+sudo systemctl restart containerd.service
+sudo systemctl restart kubelet.service
+```
+
+创建 Pod Network
 
 ```bash
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 ```
 
-### 关闭 AppArmor
+## 设置 worker node
 
-关闭安全策略以便 Worker Node 可以加入进来
+设置网络：
 
 ```bash
 sudo systemctl stop apparmor && sudo systemctl disable apparmor
+sudo systemctl restart containerd.service
+sudo systemctl restart kubelet.service
+```
+
+加入集群
+
+```bash
+sudo kubeadm join master:6443 --token dzo1ct.rajg40qyvd7z2z1r \
+        --discovery-token-ca-cert-hash sha256:b076e42813911124fc89c23f17c2e852d82ebc3223542bea1f48af37cee3f2cf
+```
+
+## 创建 user account
+
+创建私钥
+
+```bash
+openssl genpkey -out hsy.key -algorithm Ed25519
+```
+
+创建 certificate signing request (CSR)
+
+```bash
+# 用户名 user, group: fed
+openssl req -new -key hsy.key -out hsy.csr -subj "/CN=hsy/O=fed"
+cat hsy.csr | base64 | tr -d "\n"
+```
+
+> 有的网页里通过 `,` 分隔 `-subj` 中的内容，比如 `-subj "/CN=hsy,/O=fed"` 是不对的，会导致 user name 被识别成 `hsy,`
+
+将 CSR 发到 k8s 中，创建文件 `csr.yaml`，输入下面内容：
+
+```yaml
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: hsy
+spec:
+  request: 上一步的输出
+  signerName: kubernetes.io/kube-apiserver-client
+  expirationSeconds: 31536000 # one year
+  usages:
+    - client auth
+```
+
+执行：
+
+```bash
+k apply -f csr.yaml
+k certificate approve hsy
+```
+
+创建用户配置：
+
+```bash
+kubectl get csr/hsy -o jsonpath="{.status.certificate}" | base64 -d > hsy.crt
+
+# 往配置文件中增加 user
+kubectl --kubeconfig ~/.kube/config config set-credentials hsy --client-key hsy.key --client-certificate hsy.crt --embed-certs=true
+
+# 将 user 和 context 绑定
+kubectl --kubeconfig ~/.kube/config config set-context hsy --cluster kubernetes --user hsy
+```
+
+新创建的 user account 默认时没有权限的：
+
+```bash
+# 切换到新帐号
+kubectl config use-context hsy
+
+k get nodes
+# Error from server (Forbidden): nodes is forbidden: User "hsy" cannot list resource "nodes" in API group "" at the cluster scope: RBAC: clusterrole.rbac.authorization.k8s.io "node-viewer" not found
+```
+
+创建一个 Cluster role，名为 `node-viewer`，可以查看节点信息：
+
+```bash
+# 切回管理帐号
+kubectl config use-context kubernetes-admin@kubernetes
+
+# nodes 属于 cluster scope，所以创建 cluster role
+kubectl create clusterrole node-viewer --verb=list,get --resource=nodes
+
+# 将用户所在的组和 Role 进行绑定
+kubectl create clusterrolebinding node-viewer-fed --clusterrole=node-viewer --group=fed
 ```
 
 ## 创建 namespace
 
-## 创建 service account
+创建一个名为 `fed` 的 namespace 用于管理前端相关的资源
 
-## 部署 tekton，指定 namespace
+```bash
+k create namespace fed
+```
+
+创建一个 Role，名为 `fed-viewer` 用于查看 namespace 下的资源：
+
+```bash
+k create role fed-viewer --verb=list,get,watch --resource=pods,deployments --namespace=fed
+```
+
+将用户所在的组和 Role 进行绑定
+
+```bash
+k create rolebinding fed-viewer --role=fed-viewer --group=fed --namespace=fed
+```
+
+这样当使用 `hsy` 帐号时，若要查看 pods，则必须指定 namespace:
+
+```bash
+k get pods --namespace=fed
+```
+
+创建一个 Role，名为 `fed-writer`，用于部署 pod
+
+```bash
+k create role fed-writer --verb=create,update,patch,delete --resource=pods,deployments --namespace=fed
+k create rolebinding fed-writer --role=fed-writer --group=fed --namespace=fed
+```
+
+使用 hsy 帐号在不指定 namespace 的情况下执行 hello-world:
+
+```bash
+k create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.39 -- /agnhost netexec --http-port=8080
+# error: failed to create deployment: deployments.apps is forbidden: User "hsy" cannot create resource "deployments" in API group "apps" in the namespace "default"
+```
+
+可见命令执行失败，指定 namespace 为 fed:
+
+```bash
+k create deployment hello-node --image=registry.k8s.io/e2e-test-images/agnhost:2.39 --namespace fed -- /agnhost netexec --http-port=8080
+# deployment.apps/hello-node created
+```
+
+## 为 namespace 绑定节点
+
+```bash
+sudo vim /etc/kubernetes/manifests/kube-apiserver.yaml
+```
+
+在 `--enable-admission-plugins` 中增加 Admission-plugin `PodNodeSelector`:
+
+```yaml
+spec:
+  containers:
+  - command:
+    - kube-apiserver
+    - --advertise-address=10.0.2.15
+    - --allow-privileged=true
+    - --authorization-mode=Node,RBAC
+    - --client-ca-file=/etc/kubernetes/pki/ca.crt
+    - --enable-admission-plugins=NodeRestriction,PodNodeSelector
+```
+
+重启 kubelet
+
+```bash
+sudo systemctl restart kubelet.service
+```
+
+编辑 namespace，增加 `scheduler.alpha.kubernetes.io/node-selector` 注解:
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    scheduler.alpha.kubernetes.io/node-selector: kubernetes.io/hostname=node1
+  creationTimestamp: "2024-08-12T11:21:21Z"
+  labels:
+    kubernetes.io/metadata.name: fed
+  name: fed
+  resourceVersion: "24281"
+  uid: 7cba4f97-c237-4682-acf8-cff27179bc33
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active
+```
+
+实际的节点 label 可以这样查看：
+
+```bash
+k get nodes --show-labels
+```
+
+再次部署 hello-world:
+
+```bash
+k create deployment hello-node1 --image=registry.k8s.io/e2e-test-images/agnhost:2.39 --namespace fed -- /agnhost netexec --http-port=8080
+```
+
+可以发现 hello-node1 的 Pod 被调度到 node1 上：
+
+```bash
+k get pods -o wide --namespace fed
+```
+
+```
+NAME                           READY   STATUS    RESTARTS   AGE     IP           NODE    NOMINATED NODE   READINESS GATES
+hello-node-55fdcd95bf-vrphw    1/1     Running   0          87m     10.244.2.2   node2   <none>           <none>
+hello-node1-86495748b6-br7tx   1/1     Running   0          4m58s   10.244.1.2   node1   <none>           <none>
+```
+
+## 小结
+
+小结分两部分，其一是我们对 k8s 有了一个大致的了解：
+
+- kukeadm 是一个管理软件，创建 master node 或者往集群加入 worker node
+
+- kubelet 则是节点上的 agent，master 节点用于部署管控组件进行任务调度，worker 节点这用于响应调度、创建 Pods 执行任务
+
+- kubectl 则是用户侧的命令行，通过和 master 节点中的 api-server 通信，管理集群
+
+其二是我们可以梳理出一个前后的隔离的 tekton 方案：
+
+1. tekton 部署在前端的 ns 下面，比如 fed-ns
+
+2. 创建一个 user account，比如 fed-mgr
+
+3. 创建一个 role，fed-mgr-role，可以管理 fed-ns 下面的资源
+
+4. 创建一个 rolebinding，关联 fed-mgr 和 fed-mgr-role
+
+5. fed-ns 设置了 scheduler.alpha.kubernetes.io/node-selector 绑定前端构建节点
+
+这样一来 fed-mgr 只能操作 fed-ns 下面的资源，并且 fed-ns 下的 Pod 会调度到前端构建节点，这样应该不会影 horizon 组件
+
+另一个方案是现在杭州的形式，前后的共用一个 tekeon，只是前端的构建 Pod 指定 node-selector 到前端构建机，由于是技术中心统一的 tekton，所以也就和现在一致交由 PE 运维
+
+两个方案 PE 都会和云原生团队讨论评估，在不影响系统稳定性和运维工作量的情况下，开放一定的权限
