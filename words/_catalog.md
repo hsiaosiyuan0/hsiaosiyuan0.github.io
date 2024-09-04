@@ -92,6 +92,14 @@
   - [Go 语言中的 Generic 设计缺陷](/go/bad_in_generic_syntax.md)
 
 - [scratch](/scratch)
+
   - [初唐四杰](/scratch/初唐四杰.md)
   - [最好的博客工具](/scratch/最好的博客工具.md)
   - [鲁迅](/scratch/鲁迅.md)
+
+- [dailycpp](/dailycpp)
+
+  - [modern-cpp](/dailycpp/modern-cpp.md)
+
+- [dailyalgo](/dailyalgo)
+  - [Graph theory](/dailyalgo/graph.md)
